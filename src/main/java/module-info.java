@@ -2,6 +2,7 @@ module com.example.theknife {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.xml;
+    requires com.opencsv;
 
 
     opens com.example.theknife to javafx.fxml;
