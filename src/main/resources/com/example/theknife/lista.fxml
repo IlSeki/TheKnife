@@ -4,10 +4,15 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.ControllorePrincipale">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.theknife.ControllorePrincipale"
+            stylesheets="/data/stile.css">
     <children>
-        <TableView fx:id="tabellaRistoranti" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <TableView fx:id="tabellaRistoranti"
+                   AnchorPane.topAnchor="0.0"
+                   AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0"
+                   AnchorPane.rightAnchor="0.0">
             <columns>
                 <TableColumn fx:id="colonnaNome" text="Nome" />
                 <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo" />

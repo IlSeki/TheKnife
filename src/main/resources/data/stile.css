@@ -1,3 +1,81 @@
+/* Impostazioni generali: background neutro e font moderni */
+.root {
+    -fx-background-color: #f0f2f5; /* Tonalità molto chiara, quasi neutra */
+    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+}
+
+/* Card di login: container centrale pulito con padding, angoli arrotondati e leggera ombra */
+.login-card {
+    -fx-background-color: #ffffff;
+    -fx-padding: 40px 30px;
+    -fx-spacing: 20px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 15, 0, 0, 4);
+    -fx-max-width: 320px;
+}
+
+/* Titolo del login: grande, accattivante, con buon contrasto */
+.login-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: 600;
+    -fx-text-fill: #333333;
+    -fx-alignment: center;
+}
+
+/* Stile per i campi di input: puliti, con bordo sottile e leggero effetto focus */
+.login-textfield {
+    -fx-pref-height: 40px;
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+    -fx-background-color: #fafafa;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 0 10px;
+}
+
+/* Bottone principale (Accedi): colore caldo e vibrante per attirare l'attenzione */
+.primary-button {
+    -fx-background-color: #e74c3c;  /* Rosso vivace */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0, 0, 2);
+}
+.primary-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+/* Bottone secondario (Accedi senza login): stile outline con accento freddo */
+.secondary-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db; /* Blu accattivante, comunica opzione alternativa */
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-border-color: #3498db;
+    -fx-border-width: 1;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 10px 20px;
+    -fx-cursor: hand;
+}
+.secondary-button:hover {
+    -fx-background-color: #3498db;
+    -fx-text-fill: #ffffff;
+}
+
+/* Effetto focus per i TextField e PasswordField (cambia bordo in blu) */
+.login-textfield:focused {
+    -fx-border-color: #3498db;
+}
+
+
+
+
 .table-view .column-header,
 .table-view .column-header-background .filler {
     -fx-background-color:  #6622CC;
