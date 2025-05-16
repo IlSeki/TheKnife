@@ -2,16 +2,19 @@
 
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="com.example.theknife.ControllorePrincipale">
-    <TableView fx:id="tabellaRistoranti" prefHeight="400.0" prefWidth="600.0">
-        <columns>
-            <TableColumn fx:id="colonnaNome" text="Nome" prefWidth="120"/>
-            <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo" prefWidth="150"/>
-            <TableColumn fx:id="colonnaLocalita" text="Località" prefWidth="120"/>
-            <TableColumn fx:id="colonnaPrezzo" text="Prezzo" prefWidth="70"/>
-            <TableColumn fx:id="colonnaCucina" text="Cucina" prefWidth="130"/>
-        </columns>
-    </TableView>
-</VBox>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.ControllorePrincipale">
+    <children>
+        <TableView fx:id="tabellaRistoranti" AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+                   AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <columns>
+                <TableColumn fx:id="colonnaNome" text="Nome" />
+                <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo" />
+                <TableColumn fx:id="colonnaLocalita" text="Località" />
+                <TableColumn fx:id="colonnaPrezzo" text="Prezzo" />
+                <TableColumn fx:id="colonnaCucina" text="Cucina" />
+            </columns>
+        </TableView>
+    </children>
+</AnchorPane>
