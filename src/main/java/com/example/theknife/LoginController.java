@@ -51,6 +51,10 @@ public class LoginController {
      *
      * @param event L'evento generato dal clic sul pulsante.
      */
+    private void accessoUtente(ActionEvent event) {
+
+    }
+
     @FXML
     private void handleSkipLogin(ActionEvent event) {
         try {
