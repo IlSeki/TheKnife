@@ -171,27 +171,49 @@
     -fx-border-width: 0px;
 }
 
-    .text-field {
-        -fx-border-color: grey;
-        -fx-border-width: 1px;
-        -fx-border-radius: 15px;
+/* Stili per i campi di testo (unificati) */
+.text-field, .search-field {
+    -fx-border-color: grey;
+    -fx-border-width: 1px;
+    -fx-border-radius: 15px;
+    -fx-background-radius: 15px;
+    -fx-padding: 5px 10px;
 }
 
-#customlabel {
+/* Stile per l'intestazione e le etichette principali */
+.header-label, #customlabel {
     -fx-background-color: rgba(200, 193, 197, 0.8);
     -fx-border-color: grey;
     -fx-border-width: 3px;
     -fx-border-style: solid;
+    -fx-font-family: "Microsoft Tai Le Bold";
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
 }
 
-.menu-button {
+/* Stile per il pulsante di menu e filtri */
+.filter-menu, .menu-button {
     -fx-background-color: rgba(188, 181, 184, 0.8);
     -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-font-family: "Microsoft Tai Le Bold";
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
 }
-.menu-button .arrow {
+
+.filter-menu .arrow, .menu-button .arrow {
     -fx-background-color: black;
 }
 
+/* Stile per la lista dei risultati */
+.result-list, .list-view {
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-radius: 5px;
+}
+
+/* Colori per grafici */
 .default-color0.chart-pie { -fx-pie-color: #da3743; } /* Colore principale The Fork */
 .default-color1.chart-pie { -fx-pie-color: #2b6da3; } /* Blu complementare */
 .default-color2.chart-pie { -fx-pie-color: #26a69a; } /* Verde acqua */
