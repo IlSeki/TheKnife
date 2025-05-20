@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.gluonhq.charm.glisten.control.TextField?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
@@ -8,31 +7,23 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
 
-
+<?import javafx.scene.control.TextField?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.MenuRicerca">
-   <children>
-      <Label id="customlabel" layoutX="-9.0" layoutY="-4.0" prefHeight="58.0" prefWidth="794.0" stylesheets="@../../../data/stile.css" text="                    Ricerca">
-         <font>
-            <Font name="Microsoft Tai Le Bold" size="18.0" />
-         </font>
-      </Label>
-      <TextField layoutX="161.0" layoutY="11.0" prefHeight="33.0" prefWidth="230.0" stylesheets="@../../../data/stile.css" />
-      <ListView layoutX="-1.0" layoutY="54.0" prefHeight="442.0" prefWidth="786.0" stylesheets="@../../../data/stile.css" />
-      <ImageView fitHeight="43.0" fitWidth="45.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../../../../../../../../Downloads/608ae0a50517f5000437cce0.png" />
-         </image>
-      </ImageView>
-      <MenuButton layoutX="668.0" layoutY="6.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="107.0" stylesheets="@../../../data/stile.css" text="Filtri">
-        <items>
-          <MenuItem mnemonicParsing="false" text="Action 1" />
-          <MenuItem mnemonicParsing="false" text="Action 2" />
-        </items>
-         <font>
-            <Font name="Microsoft Tai Le Bold" size="18.0" />
-         </font>
-      </MenuButton>
-   </children>
+    <children>
+        <Label id="customlabel" layoutX="-9.0" layoutY="-4.0" prefHeight="58.0" prefWidth="794.0" styleClass="header-label" text="                    Ricerca" />
+        <TextField layoutX="161.0" layoutY="11.0" prefHeight="33.0" prefWidth="230.0" styleClass="search-field" />
+        <ListView layoutX="-1.0" layoutY="54.0" prefHeight="442.0" prefWidth="786.0" styleClass="result-list" />
+        <ImageView fitHeight="43.0" fitWidth="45.0" layoutY="4.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@/loghi/Astolfo.png" />
+            </image>
+        </ImageView>
+        <MenuButton layoutX="668.0" layoutY="6.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="107.0" styleClass="filter-menu" text="Filtri">
+            <items>
+                <MenuItem mnemonicParsing="false" text="Action 1" />
+                <MenuItem mnemonicParsing="false" text="Action 2" />
+            </items>
+        </MenuButton>
+    </children>
 </AnchorPane>

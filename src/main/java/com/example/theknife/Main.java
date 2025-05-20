@@ -53,9 +53,10 @@ public class Main extends Application {
         Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
         double width = screenBounds.getWidth() * 0.8;   // usa l'80% della larghezza disponibile
         double height = screenBounds.getHeight() * 0.8; // usa l'80% dell'altezza disponibile
+        System.out.println(getClass().getResource("/loghi/Astolfo.png"));
 
         // Carica il file FXML per la schermata di login
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("menu.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), width, height);
 
         // Applica il foglio di stile CSS dal classpath
