@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.theknife.ControllorePrincipale"
+            fx:controller="com.example.theknife.RistorantiController"
             stylesheets="/data/stile.css">
     <children>
         <TableView fx:id="tabellaRistoranti"

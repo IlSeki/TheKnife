@@ -16,16 +16,30 @@ import java.util.Arrays;
 import java.util.ResourceBundle;
 
 /**
- * Controller principale per gestire la visualizzazione dei ristoranti.
+ * La classe {@code RistorantiController} funge da controller principale per l'interfaccia utente
+ * dell'applicazione "The Knife". In qualità di controller JavaFX, essa implementa l'interfaccia
+ * {@link Initializable} per garantire l'inizializzazione corretta dei componenti grafici definiti in FXML
+ * e per stabilire il legame tra il modello dei dati (classe {@link Ristorante}) e la vista.
  *
  * <p>
- * Questo controller carica i dati da un file CSV incluso nelle risorse del JAR e li mostra in una TableView.
+ * Le funzionalità principali della classe includono:
+ * <ul>
+ *   <li>Collegamento delle proprietà del modello ai componenti grafici, in particolare alle colonne della
+ *       {@code TableView} che visualizza i dati relativi ai ristoranti.</li>
+ *   <li>Caricamento dei dati da un file CSV presente tra le risorse del progetto, mediante il metodo
+ *       {@link #caricaDatiCSV()}.</li>
+ *   <li>Impostazione dei dati caricati nella {@code TableView} per una visualizzazione dinamica e interattiva.</li>
+ *   <li>Debug durante il caricamento dei dati, mediante la stampa in console della working directory e delle
+ *       prime cinque righe lette dal CSV.</li>
+ * </ul>
  * </p>
  *
- * @author [...]
+ * @author Samuele Secchi, 761031, Sede CO
  * @version 1.0
+ * @see Ristorante
+ * @since 2025-05-13
  */
-public class ControllorePrincipale implements Initializable {
+public class RistorantiController implements Initializable {
 
     @FXML
     private TableView<Ristorante> tabellaRistoranti;
@@ -42,6 +56,19 @@ public class ControllorePrincipale implements Initializable {
 
     private final ObservableList<Ristorante> listaRistoranti = FXCollections.observableArrayList();
 
+    /**
+     * Inizializza il controller, configurando i componenti dell'interfaccia utente e caricando i dati
+     * dei ristoranti dal file CSV. Durante l'inizializzazione vengono:
+     * <ul>
+     *   <li>Stampata la working directory per scopi di debug.</li>
+     *   <li>Associate le proprietà del modello alle corrispondenti colonne della {@code TableView}.</li>
+     *   <li>Richiamato il metodo {@link #caricaDatiCSV()} per il caricamento dei dati dai file di risorsa.</li>
+     *   <li>Impostati i dati caricati nella {@code TableView} per la visualizzazione.</li>
+     * </ul>
+     *
+     * @param location  L'URL di localizzazione della risorsa FXML (non utilizzato).
+     * @param resources Le risorse aggiuntive per l'inizializzazione (non utilizzate).
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Stampa la working directory per verificare il contesto d'esecuzione (utile per debug)
@@ -62,9 +89,21 @@ public class ControllorePrincipale implements Initializable {
     }
 
     /**
-     * Carica i dati dei ristoranti da un file CSV incluso nelle risorse del JAR.
-     * Il file CSV deve essere posizionato in: src/main/resources/data/michelin_my_maps.csv.
-     * Vengono stampate le prime 5 righe per scopi di debug.
+     * Carica i dati dei ristoranti da un file CSV presente nelle risorse del programma e li
+     * aggiunge alla lista interna dei ristoranti. <br>
+     * Il metodo utilizza {@code getResourceAsStream("/data/michelin_my_maps.csv")} per accedere al file CSV,
+     * legge la riga di intestazione per confermare il formato e processa le righe successive. Per scopi di debug,
+     * vengono stampate in output le prime cinque righe lette. <br>
+     * Ad ogni riga vengono estratti i campi necessari (ad es. nome, indirizzo, coordinate, ecc.) e, tramite
+     * conversioni specifiche (per esempio, {@code Double.parseDouble} per longitudine e latitudine), viene creato
+     * un oggetto {@link Ristorante} che viene aggiunto alla lista dei ristoranti. <br>
+     * In caso di errori nella lettura o nella conversione dei dati, il metodo gestisce le eccezioni internamente,
+     * stampando il relativo messaggio d’errore e proseguendo con il caricamento.
+     *
+     * @author Samuele Secchi, 761031, Sede CO
+     * @param Nessuno - Questo metodo non richiede parametri.
+     * @return Nessuno - Il metodo non restituisce alcun valore.
+     * @throws Nessuno - Tutte le eccezioni vengono gestite internamente e non vengono propagate.
      */
     private void caricaDatiCSV() {
         // Usa getResourceAsStream per accedere al CSV incluso nelle risorse

@@ -1,146 +1,178 @@
-/* Impostazioni generali: background neutro e font moderni */
+/* Impostazioni generali: background più raffinato e font eleganti */
 .root {
-    -fx-background-color: #f0f2f5; /* Tonalità molto chiara, quasi neutra */
-    -fx-font-family: "Segoe UI", "Roboto", sans-serif;
+    -fx-background-color: #f8f9fa; /* Sfondo leggermente più chiaro e neutro */
+    -fx-font-family: "Montserrat", "Segoe UI", "Roboto", sans-serif;
 }
 
-/* Card di login: container centrale pulito con padding, angoli arrotondati e leggera ombra */
+/* Card di login: container centrale pulito con proporzioni migliorate e ombra più raffinata */
 .login-card {
     -fx-background-color: #ffffff;
-    -fx-padding: 40px 30px;
-    -fx-spacing: 20px;
-    -fx-background-radius: 8px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 15, 0, 0, 4);
-    -fx-max-width: 320px;
+    -fx-padding: 45px 35px;
+    -fx-spacing: 22px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 20, 0, 0, 5);
+    -fx-max-width: 340px;
 }
 
-/* Titolo del login: grande, accattivante, con buon contrasto */
+/* Titolo del login: più elegante e moderno con spaziatura migliorata */
 .login-title {
-    -fx-font-size: 28px;
-    -fx-font-weight: 600;
-    -fx-text-fill: #333333;
+    -fx-font-size: 30px;
+    -fx-font-weight: 700;
+    -fx-text-fill: #1a1a1a;
     -fx-alignment: center;
+    -fx-padding: 0 0 10px 0;
 }
 
-/* Stile per i campi di input: puliti, con bordo sottile e leggero effetto focus */
+/* Stile per i campi di input: più raffinato con transizioni più fluide */
 .login-textfield {
-    -fx-pref-height: 40px;
-    -fx-font-size: 14px;
+    -fx-pref-height: 48px;
+    -fx-font-size: 15px;
     -fx-text-fill: #333333;
-    -fx-background-color: #fafafa;
-    -fx-border-color: #dcdcdc;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
     -fx-border-width: 1;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
-    -fx-padding: 0 10px;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 0 15px;
 }
 
-/* Bottone principale (Accedi): colore caldo e vibrante per attirare l'attenzione */
+/* Bottone principale (Accedi): colore più raffinato e stile moderno */
 .primary-button {
-    -fx-background-color: #e74c3c;  /* Rosso vivace */
+    -fx-background-color: #da3743; /* Rosso distintivo di The Fork */
     -fx-text-fill: #ffffff;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
-    -fx-background-radius: 4px;
-    -fx-padding: 10px 20px;
+    -fx-background-radius: 6px;
+    -fx-padding: 12px 24px;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.15), 4, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 5, 0, 0, 2);
 }
 .primary-button:hover {
-    -fx-background-color: #c0392b;
+    -fx-background-color: #c1272d; /* Versione più scura per hover */
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 6, 0, 0, 3);
 }
 
-/* Bottone secondario (Accedi senza login): stile outline con accento freddo */
+/* Bottone secondario (Accedi senza login): stile outline più elegante */
 .secondary-button {
     -fx-background-color: transparent;
-    -fx-text-fill: #3498db; /* Blu accattivante, comunica opzione alternativa */
-    -fx-font-size: 14px;
+    -fx-text-fill: #2b6da3; /* Blu più sofisticato */
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
-    -fx-border-color: #3498db;
-    -fx-border-width: 1;
-    -fx-border-radius: 4px;
-    -fx-background-radius: 4px;
-    -fx-padding: 10px 20px;
+    -fx-border-color: #2b6da3;
+    -fx-border-width: 1.5;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 11px 22px;
     -fx-cursor: hand;
 }
 .secondary-button:hover {
-    -fx-background-color: #3498db;
+    -fx-background-color: #2b6da3;
     -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
 }
 
-/* Effetto focus per i TextField e PasswordField (cambia bordo in blu) */
+/* Effetto focus per i TextField e PasswordField (stile più raffinato) */
 .login-textfield:focused {
-    -fx-border-color: #3498db;
+    -fx-border-color: #da3743; /* Usa il colore principale di The Fork */
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(three-pass-box, rgba(218, 55, 67, 0.15), 4, 0, 0, 0);
 }
 
-
-
+/* Stile tabella migliorato per un look moderno */
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-padding: 0;
+    -fx-border-color: #eeeeee;
+    -fx-border-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 10, 0, 0, 3);
+}
 
 .table-view .column-header,
 .table-view .column-header-background .filler {
-    -fx-background-color:  #6622CC;
+    -fx-background-color: #da3743; /* Colore The Fork */
+    -fx-background-radius: 8px 8px 0 0;
+    -fx-padding: 5px;
 }
-.table-view .column-header .label{
+
+.table-view .column-header .label {
     -fx-text-fill: white;
-    -fx-font-weight: bold;
+    -fx-font-weight: 600;
+    -fx-font-size: 14px;
     -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10px 5px;
 }
-.table-view .cell{
-    -fx-cell-size: 35;
+
+.table-view .cell {
+    -fx-cell-size: 40;
     -fx-alignment: center-left;
-    -fx-background-color: #29292D;
-    -fx-border-color: #29292D;
-    -fx-text-fill: lightgray;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #f0f0f0;
+    -fx-text-fill: #333333;
+    -fx-font-size: 13px;
     -fx-alignment: CENTER_LEFT;
-
+    -fx-padding: 5px 10px;
 }
+
+.table-row-cell:odd {
+    -fx-background-color: #f9f9f9;
+}
+
 .table-row-cell:selected {
-    -fx-background-color: whitesmoke;
-    -fx-text-background-color:  #6622CC;
-
-
+    -fx-background-color: #f1f1fc;
+    -fx-text-background-color: #da3743;
+    -fx-font-weight: bold;
 }
 
-/* scroll bar starts here */
-
-/* The increment and decrement button CSS class of scrollbar */
-.table-view .increment-button ,.table-view .decrement-button {
-    -fx-background-color:transparent;
-    -fx-background-radius: 2em;
-
-}
-
-/* The main scrollbar **track** CSS class  */
-.table-view .scroll-bar:horizontal .track,
-.table-view .scroll-bar:vertical .track{
+/* Scrollbar moderno e minimale */
+.table-view .scroll-bar:horizontal,
+.table-view .scroll-bar:vertical {
     -fx-background-color: transparent;
-    -fx-border-color:derive( #6622CC,80%);
-
-    -fx-background-radius: 2em;
-    -fx-border-radius:2em;
 }
 
-/* The main scrollbar **thumb** CSS class which we drag every time (movable) */
+.table-view .increment-button,
+.table-view .decrement-button {
+    -fx-background-color: transparent;
+    -fx-background-radius: 2em;
+    -fx-padding: 5px;
+}
+
+.table-view .scroll-bar:horizontal .track,
+.table-view .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+}
+
 .table-view .scroll-bar:horizontal .thumb,
 .table-view .scroll-bar:vertical .thumb {
-    -fx-background-color:derive( #6622CC,90%);
-    -fx-background-insets: 2, 0, 0;
-    -fx-background-radius: 2em;
-
+    -fx-background-color: #d0d0d0;
+    -fx-background-radius: 10px;
 }
 
-/* chart properties */
+.table-view .scroll-bar:horizontal .thumb:hover,
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #b0b0b0;
+}
 
+/* Stile grafico moderno */
 .chart {
-    -fx-padding: 10px;
+    -fx-padding: 15px;
     -fx-background-color: transparent;
     -fx-legend-visible: false;
 }
+
 .chart-plot-background {
-    -fx-background-color:transparent;
+    -fx-background-color: transparent;
 }
 
 .chart-pie {
-    -fx-border-color: derive(-fx-pie-color, 1%);
+    -fx-border-color: transparent;
     -fx-border-width: 0px;
 }
+
+.default-color0.chart-pie { -fx-pie-color: #da3743; } /* Colore principale The Fork */
+.default-color1.chart-pie { -fx-pie-color: #2b6da3; } /* Blu complementare */
+.default-color2.chart-pie { -fx-pie-color: #26a69a; } /* Verde acqua */
+.default-color3.chart-pie { -fx-pie-color: #ff9e00; } /* Arancione */
+.default-color4.chart-pie { -fx-pie-color: #7c43bd; } /* Viola */
