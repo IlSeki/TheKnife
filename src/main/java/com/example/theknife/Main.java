@@ -55,7 +55,7 @@ public class Main extends Application {
         double height = screenBounds.getHeight() * 0.8; // usa l'80% dell'altezza disponibile
 
         // Carica il file FXML per la schermata di login
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("recensioni.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), width, height);
 
         // Applica il foglio di stile CSS dal classpath

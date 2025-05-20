@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane id="appRoot" stylesheets="@../../../data/stile.css"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.example.theknife.RecensioniController">
+    <children>
+        <HBox id="mainHBox" spacing="10.0" AnchorPane.bottomAnchor="10.0"
+              AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
+              AnchorPane.topAnchor="10.0">
+            <children>
+                <!-- TableView con id univoco -->
+                <TableView id="reviewTable" fx:id="tableView" HBox.hgrow="ALWAYS">
+                    <columns>
+                        <TableColumn id="reviewColumnStelle" fx:id="colStelle" text="Stelle" />
+                        <TableColumn id="reviewColumnRecensione" fx:id="colRecensione" text="Recensione" />
+                    </columns>
+                </TableView>
+                <!-- VBox laterale con id univoco -->
+                <VBox id="sideVBox" prefWidth="218.0" spacing="10.0">
+                    <children>
+                        <!-- ComboBox con id univoco -->
+                        <ComboBox id="reviewComboBox" fx:id="comboBox" editable="true" promptText="numero stelle" />
+                        <!-- PieChart con id univoco -->
+                        <PieChart id="reviewPieChart" fx:id="pieChart" VBox.vgrow="ALWAYS" />
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>
