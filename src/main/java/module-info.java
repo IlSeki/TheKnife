@@ -3,6 +3,7 @@ module com.example.theknife {
     requires javafx.fxml;
     requires java.xml;
     requires com.opencsv;
+    requires java.desktop;
 
 
     opens com.example.theknife to javafx.fxml;

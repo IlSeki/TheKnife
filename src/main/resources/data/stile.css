@@ -171,6 +171,27 @@
     -fx-border-width: 0px;
 }
 
+    .text-field {
+        -fx-border-color: grey;
+        -fx-border-width: 1px;
+        -fx-border-radius: 15px;
+}
+
+#customlabel {
+    -fx-background-color: rgba(200, 193, 197, 0.8);
+    -fx-border-color: grey;
+    -fx-border-width: 3px;
+    -fx-border-style: solid;
+}
+
+.menu-button {
+    -fx-background-color: rgba(188, 181, 184, 0.8);
+    -fx-border-radius: 10px;
+}
+.menu-button .arrow {
+    -fx-background-color: black;
+}
+
 .default-color0.chart-pie { -fx-pie-color: #da3743; } /* Colore principale The Fork */
 .default-color1.chart-pie { -fx-pie-color: #2b6da3; } /* Blu complementare */
 .default-color2.chart-pie { -fx-pie-color: #26a69a; } /* Verde acqua */
