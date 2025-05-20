@@ -220,62 +220,58 @@
 .default-color3.chart-pie { -fx-pie-color: #ff9e00; } /* Arancione */
 .default-color4.chart-pie { -fx-pie-color: #7c43bd; } /* Viola */
 
-/* Regole aggiuntive per la pagina Recensioni con id univoci */
+/* ============
+   Tema Chiaro
+   ============*/
 
-/* Contenitore principale */
+/* Contenitore principale (AnchorPane) */
 #appRoot {
-    /* Colore di sfondo neutro e luminoso per un look minimal */
-    -fx-background-color: #f0f2f5;
-    -fx-padding: 20px;
+    -fx-background-color: #f9f9f9;
+    -fx-padding: 10;
 }
 
 /* HBox principale */
 #mainHBox {
-    /* Centratura e spazio tra gli elementi per un layout pulito */
-    -fx-alignment: center;
-    -fx-spacing: 15px;
+    -fx-spacing: 10;
 }
 
-/* TableView specifica per le recensioni */
+/* TableView: Sfondo bianco senza contorni marcati */
 #reviewTable {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+/* Header delle colonne della TableView: Ora con sfondo bianco neutro */
+.table-view .column-header-background {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* VBox laterale: Sfondo bianco e padding */
+#sideVBox {
+    -fx-background-color: white;
+    -fx-padding: 10;
+    -fx-border-color: transparent;
+}
+
+/* ComboBox: Sfondo bianco e bordo leggero in grigio chiaro */
+#reviewComboBox {
+    -fx-background-color: white;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-padding: 5;
+    -fx-prompt-text-fill: #888;
+}
+
+/* PieChart: Sfondo trasparente senza contorni */
+#reviewPieChart {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-table-cell-border-color: transparent; /* Rimuove i bordi interni */
-}
-
-/* Colonne della TableView */
-#reviewColumnStelle,
-#reviewColumnRecensione {
-    /* Testo moderno e leggero con padding adeguato per la leggibilità */
-    -fx-font-size: 14px;
-    -fx-padding: 8px;
-    -fx-alignment: CENTER_LEFT;
-}
-
-/* VBox laterale a destra (contenente ComboBox e PieChart) */
-#sideVBox {
-    /* Stile "card" minimal con angoli arrotondati, padding generoso e un'ombra leggera */
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 10px;
-    -fx-padding: 15px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
-}
-
-/* ComboBox delle recensioni */
-#reviewComboBox {
-    /* Aspetto pulito e moderno con bordi sottili e angoli arrotondati */
-    -fx-font-size: 14px;
-    -fx-background-radius: 5px;
-    -fx-border-radius: 5px;
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 1px;
-    -fx-padding: 5px 8px;
-    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
-}
-
-/* PieChart delle recensioni */
-#reviewPieChart {
-    /* Assicurare trasparenza di fondo e aggiungere un po' di padding per "respirare" */
-    -fx-background-color: transparent;
-    -fx-padding: 10px;
 }
