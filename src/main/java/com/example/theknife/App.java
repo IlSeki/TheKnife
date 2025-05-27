@@ -56,7 +56,7 @@ public class App extends Application {
         System.out.println(getClass().getResource("/loghi/Astolfo.png"));
 
         // Carica il file FXML per la schermata di login
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("recensioni.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), width, height);
 
         // Applica il foglio di stile CSS dal classpath
