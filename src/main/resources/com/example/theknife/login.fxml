@@ -2,50 +2,122 @@
 
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Separator?>
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.example.theknife.LoginController"
-            prefWidth="600" prefHeight="400"
+            prefWidth="600" prefHeight="500"
             stylesheets="/data/stile.css">
     <children>
-        <!-- Una VBox centrata che contiene una "card" di login -->
-        <VBox alignment="CENTER" spacing="10.0"
+        <!-- VBox principale centrata con la form di login -->
+        <VBox alignment="CENTER" spacing="20.0"
               AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
               AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <children>
-                <!-- Card di login con stile professionale -->
-                <VBox spacing="20" alignment="CENTER" styleClass="login-card">
+                <!-- Card di login principale -->
+                <VBox spacing="25" alignment="CENTER" styleClass="login-card" maxWidth="400">
                     <children>
                         <!-- Titolo -->
-                        <Label text="Benvenuto in TheKnife" styleClass="login-title"/>
+                        <VBox spacing="5" alignment="CENTER">
+                            <children>
+                                <Label text="Benvenuto in TheKnife" styleClass="login-title"/>
+                                <Label text="Accedi al tuo account o registrati per iniziare"
+                                       style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
+                            </children>
+                        </VBox>
 
-                        <!-- Input per il nome utente - AGGIORNATO -->
-                        <TextField fx:id="campoUsername" promptText="Nome Utente"
-                                   maxWidth="280" styleClass="login-textfield"/>
+                        <!-- Sezione Login -->
+                        <VBox spacing="15" alignment="CENTER">
+                            <children>
+                                <Label text="LOGIN"
+                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
 
-                        <!-- Input per la password (nascosta) - AGGIORNATO -->
-                        <PasswordField fx:id="campoPassword" promptText="Password"
-                                       maxWidth="280" styleClass="login-textfield"/>
+                                <!-- Campo Username -->
+                                <VBox spacing="5">
+                                    <children>
+                                        <Label text="Username" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                                        <TextField fx:id="campoUsername" promptText="Inserisci il tuo username"
+                                                   maxWidth="300" styleClass="login-textfield"/>
+                                    </children>
+                                </VBox>
 
-                        <!-- Bottone principale per il login - AGGIORNATO -->
-                        <Button fx:id="pulsanteAccesso" text="Accedi"
-                                maxWidth="280" styleClass="primary-button"
-                                onAction="#gestisciAccesso"/>
+                                <!-- Campo Password -->
+                                <VBox spacing="5">
+                                    <children>
+                                        <Label text="Password" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                                        <PasswordField fx:id="campoPassword" promptText="Inserisci la tua password"
+                                                       maxWidth="300" styleClass="login-textfield"/>
+                                    </children>
+                                </VBox>
 
-                        <!-- Bottone per accesso senza login - AGGIORNATO -->
-                        <Button fx:id="pulsanteSenzaLogin" text="Accedi senza login"
-                                maxWidth="280" styleClass="secondary-button"
-                                onAction="#gestisciAccessoSenzaLogin"/>
+                                <!-- Bottone Accedi -->
+                                <Button text="Accedi" maxWidth="300" styleClass="primary-button"
+                                        onAction="#gestisciAccesso"/>
+                            </children>
+                        </VBox>
 
-                        <!-- Informazioni di debug aggiornate con password corrette -->
-                        <Label text="Test utenti: mario.rossi/hello, giulia.bianchi/secret, luca.verdi/password"
-                               style="-fx-font-size: 10px; -fx-text-fill: #666666; -fx-wrap-text: true;"
-                               maxWidth="280"/>
+                        <!-- Separatore -->
+                        <VBox spacing="10" alignment="CENTER">
+                            <children>
+                                <Separator maxWidth="250"/>
+                                <Label text="OPPURE"
+                                       style="-fx-font-size: 11px; -fx-text-fill: #888888;"/>
+                                <Separator maxWidth="250"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Sezione Registrazione -->
+                        <VBox spacing="15" alignment="CENTER">
+                            <children>
+                                <Label text="NUOVO UTENTE"
+                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+
+                                <VBox spacing="8" alignment="CENTER">
+                                    <children>
+                                        <Label text="Non sei ancora registrato?"
+                                               style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
+                                        <Label text="Crea un account per accedere a tutte le funzionalità"
+                                               style="-fx-font-size: 11px; -fx-text-fill: #888888; -fx-wrap-text: true;"
+                                               maxWidth="280"/>
+                                    </children>
+                                </VBox>
+
+                                <!-- Bottone Registrati -->
+                                <Button text="Registrati Ora" maxWidth="300" styleClass="secondary-button"
+                                        onAction="#gestisciRegistrazione"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Separatore -->
+                        <VBox spacing="10" alignment="CENTER">
+                            <children>
+                                <Separator maxWidth="250"/>
+                                <Label text="ACCESSO LIMITATO"
+                                       style="-fx-font-size: 11px; -fx-text-fill: #888888;"/>
+                            </children>
+                        </VBox>
+
+                        <!-- Sezione Accesso Ospite -->
+                        <VBox spacing="10" alignment="CENTER">
+                            <children>
+                                <Label text="Vuoi solo dare un'occhiata?"
+                                       style="-fx-font-size: 11px; -fx-text-fill: #666666;"/>
+
+                                <!-- Bottone Accesso Ospite -->
+                                <Button text="Continua come Ospite" maxWidth="300" styleClass="guest-button"
+                                        onAction="#gestisciAccessoSenzaLogin"/>
+
+                                <Label text="* Funzionalità limitate per utenti non registrati"
+                                       style="-fx-font-size: 9px; -fx-text-fill: #999999; -fx-wrap-text: true;"
+                                       maxWidth="280"/>
+                            </children>
+                        </VBox>
 
                     </children>
                 </VBox>

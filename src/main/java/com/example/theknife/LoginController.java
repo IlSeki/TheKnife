@@ -29,15 +29,16 @@ import java.util.List;
  * e la navigazione verso diverse interfacce in base al ruolo dell'utente.
  *
  * <p>
- * Il controller supporta due modalità di accesso:
+ * Il controller supporta diverse modalità di accesso:
  * <ul>
  *   <li>Accesso con credenziali: verifica username e password cifrata tramite SHA-256</li>
  *   <li>Accesso diretto senza login: accesso come utente non registrato</li>
+ *   <li>Registrazione: collegamento alla schermata di registrazione nuovi utenti</li>
  * </ul>
  * </p>
  *
  * @author Samuele Secchi, 761031, Sede CO
- * @version 2.0
+ * @version 3.0
  * @since 2025-05-27
  */
 public class LoginController {
@@ -126,6 +127,64 @@ public class LoginController {
         } catch (Exception e) {
             e.printStackTrace();
             mostraAvviso("Errore", "Errore durante l'accesso: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    /**
+     * Metodo invocato alla pressione del pulsante "Registrati".
+     * Reindirizza l'utente alla schermata di registrazione.
+     *
+     * @param evento L'evento generato dal clic sul pulsante di registrazione.
+     */
+    @FXML
+    private void gestisciRegistrazione(ActionEvent evento) {
+        try {
+            // Debug: verifica se il file esiste
+            System.out.println("DEBUG: Tentativo di caricare registrazione.fxml");
+            if (getClass().getResource("registrazione.fxml") == null) {
+                System.out.println("ERROR: File registrazione.fxml non trovato nel classpath");
+                mostraAvviso("Errore", "File registrazione.fxml non trovato!\n" +
+                        "Verifica che il file sia presente nella directory src/main/resources/", Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Carica il file FXML della registrazione
+            FXMLLoader caricatore = new FXMLLoader(getClass().getResource("registrazione.fxml"));
+            Parent radice = caricatore.load();
+
+            // Calcola le dimensioni della finestra
+            Rectangle2D limitiSchermo = Screen.getPrimary().getVisualBounds();
+            double larghezza = Math.min(700, limitiSchermo.getWidth() * 0.6);
+            double altezza = Math.min(600, limitiSchermo.getHeight() * 0.8);
+
+            // Crea la scena
+            Scene scena = new Scene(radice, larghezza, altezza);
+
+            // Applica il CSS se disponibile
+            try {
+                String cssPath = "/data/stile.css";
+                if (getClass().getResource(cssPath) != null) {
+                    scena.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
+                } else {
+                    System.out.println("WARNING: File CSS non trovato: " + cssPath);
+                }
+            } catch (Exception e) {
+                System.out.println("WARNING: Errore nel caricamento CSS: " + e.getMessage());
+            }
+
+            // Imposta la nuova scena
+            Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+            palcoscenico.setTitle("TheKnife - Registrazione");
+            palcoscenico.setScene(scena);
+            palcoscenico.show();
+
+            System.out.println("DEBUG: Schermata di registrazione caricata con successo");
+
+        } catch (IOException e) {
+            System.out.println("ERROR: Impossibile caricare registrazione.fxml - " + e.getMessage());
+            e.printStackTrace();
+            mostraAvviso("Errore", "Impossibile caricare la schermata di registrazione.\n" +
+                    "Dettagli: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
