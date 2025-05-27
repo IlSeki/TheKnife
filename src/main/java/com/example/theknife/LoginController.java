@@ -43,59 +43,71 @@ import java.util.List;
 public class LoginController {
 
     @FXML
-    private TextField usernameField;
+    private TextField campoUsername;
 
     @FXML
-    private PasswordField passwordField;
+    private PasswordField campoPassword;
 
     /**
      * Metodo invocato alla pressione del pulsante "Accedi".
      * Verifica le credenziali inserite dall'utente confrontandole con il file CSV.
      * In caso di successo, reindirizza l'utente all'interfaccia appropriata in base al ruolo.
      *
-     * @param event L'evento generato dal clic sul pulsante di login.
+     * @param evento L'evento generato dal clic sul pulsante di login.
      */
     @FXML
-    private void handleLogin(ActionEvent event) {
-        String username = usernameField.getText().trim();
-        String password = passwordField.getText();
+    private void gestisciAccesso(ActionEvent evento) {
+        String username = campoUsername.getText().trim();
+        String password = campoPassword.getText();
 
         // Validazione input
         if (username.isEmpty() || password.isEmpty()) {
-            showAlert("Errore", "Inserisci username e password!", Alert.AlertType.WARNING);
+            mostraAvviso("Errore", "Inserisci username e password!", Alert.AlertType.WARNING);
             return;
         }
 
         try {
             // Carica gli utenti dal file CSV
-            List<User> users = loadUsersFromCSV();
+            List<Utente> utenti = caricaUtentiDaCSV();
+
+            System.out.println("DEBUG: Utenti caricati: " + utenti.size());
 
             // Cifra la password inserita per il confronto
-            String hashedPassword = hashPassword(password);
+            String passwordCifrata = cifraPassword(password);
+            System.out.println("DEBUG: Password cifrata: " + passwordCifrata);
 
             // Cerca l'utente con username e password corrispondenti
-            User authenticatedUser = null;
-            for (User user : users) {
-                if (user.username.equals(username) && user.password.equals(hashedPassword)) {
-                    authenticatedUser = user;
+            Utente utenteAutenticato = null;
+            for (Utente utente : utenti) {
+                System.out.println("DEBUG: Confronto con utente: " + utente.getUsername() +
+                        " - Password nel file: " + utente.getPasswordHash());
+
+                if (utente.getUsername().equals(username) && utente.getPasswordHash().equals(passwordCifrata)) {
+                    utenteAutenticato = utente;
                     break;
                 }
             }
 
-            if (authenticatedUser != null) {
+            if (utenteAutenticato != null) {
                 // Autenticazione riuscita - salva i dati utente e reindirizza
-                UserSession.setCurrentUser(authenticatedUser.nome, authenticatedUser.cognome,
-                        authenticatedUser.username, authenticatedUser.ruolo);
-                redirectToMainInterface(event, authenticatedUser.ruolo);
+                SessioneUtente.impostaUtenteCorrente(
+                        utenteAutenticato.getNome(),
+                        utenteAutenticato.getCognome(),
+                        utenteAutenticato.getUsername(),
+                        utenteAutenticato.getRuolo()
+                );
+
+                System.out.println("DEBUG: Utente autenticato: " + utenteAutenticato.toString());
+                reindirizzaAllInterfacciaPrincipale(evento, utenteAutenticato.getRuolo());
             } else {
                 // Credenziali errate
-                showAlert("Errore di Autenticazione", "Username o password non corretti!", Alert.AlertType.ERROR);
-                passwordField.clear(); // Pulisce il campo password per sicurezza
+                mostraAvviso("Errore di Autenticazione", "Username o password non corretti!", Alert.AlertType.ERROR);
+                campoPassword.clear(); // Pulisce il campo password per sicurezza
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Errore", "Errore durante l'autenticazione: " + e.getMessage(), Alert.AlertType.ERROR);
+            mostraAvviso("Errore", "Errore durante l'autenticazione: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -103,17 +115,17 @@ public class LoginController {
      * Metodo invocato alla pressione del pulsante "Accedi senza login".
      * Permette l'accesso come utente non registrato con funzionalità limitate.
      *
-     * @param event L'evento generato dal clic sul pulsante.
+     * @param evento L'evento generato dal clic sul pulsante.
      */
     @FXML
-    private void handleSkipLogin(ActionEvent event) {
+    private void gestisciAccessoSenzaLogin(ActionEvent evento) {
         try {
             // Imposta la sessione come utente non registrato
-            UserSession.setCurrentUser("Ospite", "", "", "ospite");
-            redirectToMainInterface(event, "ospite");
+            SessioneUtente.impostaUtenteCorrente("Ospite", "", "", "ospite");
+            reindirizzaAllInterfacciaPrincipale(evento, "ospite");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Errore", "Errore durante l'accesso: " + e.getMessage(), Alert.AlertType.ERROR);
+            mostraAvviso("Errore", "Errore durante l'accesso: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -123,26 +135,47 @@ public class LoginController {
      * @return Lista degli utenti caricati dal file CSV.
      * @throws IOException Se si verifica un errore durante la lettura del file.
      */
-    private List<User> loadUsersFromCSV() throws IOException {
-        List<User> users = new ArrayList<>();
+    private List<Utente> caricaUtentiDaCSV() throws IOException {
+        List<Utente> utenti = new ArrayList<>();
 
-        try (InputStream is = getClass().getResourceAsStream("/data/utenti.csv");
-             BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+        try (InputStream inputStream = getClass().getResourceAsStream("/data/utenti.csv");
+             BufferedReader lettore = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
-            if (is == null) {
+            if (inputStream == null) {
                 throw new IOException("File utenti.csv non trovato in /data/");
             }
 
-            String line = reader.readLine(); // Salta l'header
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length >= 7) {
-                    users.add(new User(parts[0], parts[1], parts[2], parts[3], parts[4], parts[5], parts[6]));
+            String riga = lettore.readLine(); // Salta l'header
+            System.out.println("DEBUG: Header CSV: " + riga);
+
+            while ((riga = lettore.readLine()) != null) {
+                if (!riga.trim().isEmpty()) {
+                    String[] parti = riga.split(",");
+                    System.out.println("DEBUG: Parsing riga: " + riga);
+                    System.out.println("DEBUG: Parti trovate: " + parti.length);
+
+                    if (parti.length >= 7) {
+                        // Costruttore: nome, cognome, username, passwordHash, dataNascita, luogoDomicilio, ruolo
+                        Utente utente = new Utente(
+                                parti[0].trim(),  // Nome
+                                parti[1].trim(),  // Cognome
+                                parti[2].trim(),  // Username
+                                parti[3].trim(),  // Password (già cifrata nel CSV)
+                                parti[4].trim(),  // DataNascita
+                                parti[5].trim(),  // LuogoDomicilio
+                                parti[6].trim()   // Ruolo
+                        );
+                        utenti.add(utente);
+                        System.out.println("DEBUG: Utente aggiunto: " + utente.toString());
+                    } else {
+                        System.out.println("DEBUG: Riga ignorata (parti insufficienti): " + riga);
+                    }
                 }
             }
         }
 
-        return users;
+        System.out.println("DEBUG: Totale utenti caricati: " + utenti.size());
+        return utenti;
     }
 
     /**
@@ -152,82 +185,95 @@ public class LoginController {
      * @return L'hash SHA-256 della password in formato esadecimale.
      * @throws NoSuchAlgorithmException Se l'algoritmo SHA-256 non è disponibile.
      */
-    private String hashPassword(String password) throws NoSuchAlgorithmException {
+    private String cifraPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
 
-        StringBuilder hexString = new StringBuilder();
+        StringBuilder stringaEsadecimale = new StringBuilder();
         for (byte b : hash) {
             String hex = Integer.toHexString(0xff & b);
             if (hex.length() == 1) {
-                hexString.append('0');
+                stringaEsadecimale.append('0');
             }
-            hexString.append(hex);
+            stringaEsadecimale.append(hex);
         }
 
-        return hexString.toString();
+        return stringaEsadecimale.toString();
     }
 
     /**
      * Reindirizza l'utente all'interfaccia principale appropriata in base al ruolo.
      *
-     * @param event L'evento ActionEvent per ottenere lo stage corrente.
+     * @param evento L'evento ActionEvent per ottenere lo stage corrente.
      * @param ruolo Il ruolo dell'utente ("cliente", "ristoratore", "ospite").
      * @throws IOException Se si verifica un errore durante il caricamento dell'interfaccia.
      */
-    private void redirectToMainInterface(ActionEvent event, String ruolo) throws IOException {
-        String fxmlFile;
-        String windowTitle;
+    private void reindirizzaAllInterfacciaPrincipale(ActionEvent evento, String ruolo) throws IOException {
+        String fileFxml;
+        String titoloFinestra;
 
         // Determina quale interfaccia caricare in base al ruolo
         switch (ruolo.toLowerCase()) {
             case "cliente":
-                fxmlFile = "lista.fxml"; // Interfaccia per i clienti
-                windowTitle = "TheKnife - Area Cliente";
+                fileFxml = "/lista.fxml"; // Interfaccia per i clienti
+                titoloFinestra = "TheKnife - Area Cliente";
                 break;
             case "ristoratore":
-                fxmlFile = "ristoratore.fxml"; // Interfaccia per i ristoratori
-                windowTitle = "TheKnife - Area Ristoratore";
+                fileFxml = "/ristoratore.fxml"; // Interfaccia per i ristoratori
+                titoloFinestra = "TheKnife - Area Ristoratore";
                 break;
             case "ospite":
             default:
-                fxmlFile = "lista.fxml"; // Interfaccia per utenti non registrati
-                windowTitle = "TheKnife - Ospite";
+                fileFxml = "/lista.fxml"; // Interfaccia per utenti non registrati
+                titoloFinestra = "TheKnife - Ospite";
                 break;
         }
 
-        // Carica il file FXML appropriato
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
-        Parent root = loader.load();
+        try {
+            // Carica il file FXML appropriato
+            FXMLLoader caricatore = new FXMLLoader(getClass().getResource(fileFxml));
+            Parent radice = caricatore.load();
 
-        // Calcola le dimensioni dinamiche dello schermo
-        Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-        double width = screenBounds.getWidth() * 0.8;
-        double height = screenBounds.getHeight() * 0.8;
+            // Calcola le dimensioni dinamiche dello schermo
+            Rectangle2D limitiSchermo = Screen.getPrimary().getVisualBounds();
+            double larghezza = limitiSchermo.getWidth() * 0.8;
+            double altezza = limitiSchermo.getHeight() * 0.8;
 
-        // Crea la scena con le dimensioni calcolate
-        Scene scene = new Scene(root, width, height);
-        scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
+            // Crea la scena con le dimensioni calcolate
+            Scene scena = new Scene(radice, larghezza, altezza);
 
-        // Ottieni lo stage corrente e imposta la nuova scena
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setTitle(windowTitle);
-        stage.setScene(scene);
-        stage.show();
+            // Applica il CSS se disponibile
+            try {
+                scena.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
+            } catch (Exception e) {
+                System.out.println("WARNING: File CSS non trovato, continuo senza stili");
+            }
+
+            // Ottieni lo stage corrente e imposta la nuova scena
+            Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+            palcoscenico.setTitle(titoloFinestra);
+            palcoscenico.setScene(scena);
+            palcoscenico.show();
+
+        } catch (IOException e) {
+            System.out.println("ERROR: Impossibile caricare " + fileFxml);
+            e.printStackTrace();
+            mostraAvviso("Errore", "Impossibile caricare l'interfaccia: " + fileFxml, Alert.AlertType.ERROR);
+        }
     }
 
     /**
      * Mostra un dialog di avviso all'utente.
      *
-     * @param title Il titolo del dialog.
-     * @param message Il messaggio da visualizzare.
-     * @param alertType Il tipo di alert (INFO, WARNING, ERROR).
+     * @param titolo Il titolo del dialog.
+     * @param messaggio Il messaggio da visualizzare.
+     * @param tipoAvviso Il tipo di alert (INFO, WARNING, ERROR).
      */
-    private void showAlert(String title, String message, Alert.AlertType alertType) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    private void mostraAvviso(String titolo, String messaggio, Alert.AlertType tipoAvviso) {
+        Alert avviso = new Alert(tipoAvviso);
+        avviso.setTitle(titolo);
+        avviso.setHeaderText(null);
+        avviso.setContentText(messaggio);
+        avviso.showAndWait();
     }
 }

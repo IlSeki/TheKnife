@@ -1,5 +1,5 @@
 Nome,Cognome,Username,Password,DataNascita,LuogoDomicilio,Ruolo
-Mario,Rossi,mario.rossi,01d78cde2365535ed93abaae48a9abc2,1985-03-15,Milano,cliente
+Mario,Rossi,mario.rossi,ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f,1985-03-15,Milano,cliente
 Giulia,Bianchi,giulia.bianchi,ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f,1990-07-22,Roma,cliente
 Luca,Verdi,luca.verdi,b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb980b1d7785e5976ec049b46df5f1326af5a2ea6d103fd07c95385ffab0cacbc86991,1978-11-03,Napoli,ristoratore
 Anna,Neri,anna.neri,a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3,1992-01-30,Torino,cliente
