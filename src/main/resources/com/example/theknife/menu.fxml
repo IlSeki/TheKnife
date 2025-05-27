@@ -8,65 +8,30 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
 
-<AnchorPane fx:id="rootPane" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.MenuRicerca">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.MenuRicerca">
     <children>
-        <!-- Header che si estende per tutta la larghezza -->
-        <VBox AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-            <children>
-                <!-- Barra di ricerca e filtri -->
-                <HBox spacing="10.0" style="-fx-padding: 10;">
-                    <children>
-                        <Label id="customlabel" text="Ricerca" styleClass="header-label" stylesheets="@../../../data/stile.css"
-                               style="-fx-min-width: 120; -fx-pref-width: 120;" />
+        <Label id="customlabel" layoutX="-9.0" layoutY="-4.0" prefHeight="58.0" prefWidth="794.0" styleClass="header-label" stylesheets="@../../../data/stile.css" text="                    Ricerca" />
 
-                        <!-- Campo di ricerca che si espande -->
-                        <TextField fx:id="searchField" promptText="Inserisci termini di ricerca..."
-                                   styleClass="search-field" stylesheets="@../../../data/stile.css"
-                                   HBox.hgrow="ALWAYS" />
+        <!-- TextField collegato al controller con fx:id -->
+        <TextField fx:id="searchField" layoutX="161.0" layoutY="11.0" prefHeight="33.0" prefWidth="230.0" promptText="Cerca ristorante..." styleClass="search-field" stylesheets="@../../../data/stile.css" />
 
-                        <!-- Menu filtri -->
-                        <MenuButton text="Filtri" styleClass="filter-menu" stylesheets="@../../../data/stile.css"
-                                    style="-fx-min-width: 100; -fx-pref-width: 100;">
-                            <items>
-                                <MenuItem text="Tutti" />
-                                <MenuItem text="Per Nome" />
-                                <MenuItem text="Per Categoria" />
-                                <MenuItem text="Per Valutazione" />
-                            </items>
-                        </MenuButton>
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
+        <!-- ListView collegata al controller con fx:id -->
+        <ListView fx:id="resultList" layoutX="-1.0" layoutY="54.0" prefHeight="442.0" prefWidth="786.0" styleClass="result-list" stylesheets="@../../../data/stile.css" />
 
-        <!-- Contenuto principale -->
-        <HBox AnchorPane.topAnchor="70.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
-              AnchorPane.bottomAnchor="10.0" spacing="10.0">
-            <children>
-                <!-- Lista risultati che si espande -->
-                <ListView fx:id="resultsList" styleClass="result-list" stylesheets="@../../../data/stile.css"
-                          HBox.hgrow="ALWAYS" />
+        <!-- Immagine che si sovrappone alla ListView - potresti volerla rimuovere o riposizionare -->
+        <ImageView fitHeight="58.0" fitWidth="50.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" visible="true">
+            <image>
+                <Image url="@../../../loghi/Astolfo.png" />
+            </image>
+        </ImageView>
 
-                <!-- Pannello laterale con immagine (opzionale, può essere nascosto su schermi piccoli) -->
-                <VBox fx:id="sidePanel" spacing="10.0" style="-fx-min-width: 200; -fx-pref-width: 300; -fx-max-width: 400;">
-                    <children>
-                        <ImageView fx:id="imageView" fitWidth="280.0" preserveRatio="true"
-                                   style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 3);">
-                            <image>
-                                <Image url="@../../../loghi/Astolfo.png" />
-                            </image>
-                        </ImageView>
-
-                        <!-- Spazio per altre informazioni -->
-                        <Label text="Informazioni aggiuntive" style="-fx-font-weight: bold;" />
-                        <Label text="Qui puoi aggiungere dettagli, statistiche o altri elementi."
-                               wrapText="true" />
-                    </children>
-                </VBox>
-            </children>
-        </HBox>
+        <MenuButton layoutX="668.0" layoutY="6.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="107.0" styleClass="filter-menu" stylesheets="@../../../data/stile.css" text="Filtri">
+            <items>
+                <MenuItem mnemonicParsing="false" text="Per Nome" />
+                <MenuItem mnemonicParsing="false" text="Per Città" />
+                <MenuItem mnemonicParsing="false" text="Per Tipo Cucina" />
+            </items>
+        </MenuButton>
     </children>
 </AnchorPane>
