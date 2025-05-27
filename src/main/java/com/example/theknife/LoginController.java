@@ -215,21 +215,30 @@ public class LoginController {
         // Determina quale interfaccia caricare in base al ruolo
         switch (ruolo.toLowerCase()) {
             case "cliente":
-                fileFxml = "/lista.fxml"; // Interfaccia per i clienti
+                fileFxml = "lista.fxml"; // Interfaccia per i clienti
                 titoloFinestra = "TheKnife - Area Cliente";
                 break;
             case "ristoratore":
-                fileFxml = "/ristoratore.fxml"; // Interfaccia per i ristoratori
+                fileFxml = "ristoratore.fxml"; // Interfaccia per i ristoratori
                 titoloFinestra = "TheKnife - Area Ristoratore";
                 break;
             case "ospite":
             default:
-                fileFxml = "/lista.fxml"; // Interfaccia per utenti non registrati
+                fileFxml = "lista.fxml"; // Interfaccia per utenti non registrati
                 titoloFinestra = "TheKnife - Ospite";
                 break;
         }
 
         try {
+            // Debug: verifica se il file esiste
+            System.out.println("DEBUG: Tentativo di caricare: " + fileFxml);
+            if (getClass().getResource(fileFxml) == null) {
+                System.out.println("ERROR: File " + fileFxml + " non trovato nel classpath");
+                mostraAvviso("Errore", "File interfaccia non trovato: " + fileFxml +
+                        "\nVerifica che il file sia presente nella directory src/main/resources/", Alert.AlertType.ERROR);
+                return;
+            }
+
             // Carica il file FXML appropriato
             FXMLLoader caricatore = new FXMLLoader(getClass().getResource(fileFxml));
             Parent radice = caricatore.load();
@@ -244,9 +253,14 @@ public class LoginController {
 
             // Applica il CSS se disponibile
             try {
-                scena.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
+                String cssPath = "/data/stile.css";
+                if (getClass().getResource(cssPath) != null) {
+                    scena.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
+                } else {
+                    System.out.println("WARNING: File CSS non trovato: " + cssPath);
+                }
             } catch (Exception e) {
-                System.out.println("WARNING: File CSS non trovato, continuo senza stili");
+                System.out.println("WARNING: Errore nel caricamento CSS: " + e.getMessage());
             }
 
             // Ottieni lo stage corrente e imposta la nuova scena
@@ -255,10 +269,13 @@ public class LoginController {
             palcoscenico.setScene(scena);
             palcoscenico.show();
 
+            System.out.println("DEBUG: Interfaccia caricata con successo: " + fileFxml);
+
         } catch (IOException e) {
-            System.out.println("ERROR: Impossibile caricare " + fileFxml);
+            System.out.println("ERROR: Impossibile caricare " + fileFxml + " - " + e.getMessage());
             e.printStackTrace();
-            mostraAvviso("Errore", "Impossibile caricare l'interfaccia: " + fileFxml, Alert.AlertType.ERROR);
+            mostraAvviso("Errore", "Impossibile caricare l'interfaccia: " + fileFxml +
+                    "\nDettagli: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
