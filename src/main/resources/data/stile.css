@@ -1,7 +1,13 @@
+/* ============================================
+   STILE.CSS - VERSIONE COMPLETA AGGIORNATA
+   Mantiene tutto il CSS esistente + migliorie responsive
+   ============================================ */
+
 /* Impostazioni generali: background più raffinato e font eleganti */
 .root {
     -fx-background-color: #f8f9fa; /* Sfondo leggermente più chiaro e neutro */
     -fx-font-family: "Montserrat", "Segoe UI", "Roboto", sans-serif;
+    -fx-font-size: 14px; /* Dimensione base responsive */
 }
 
 /* Card di login: container centrale pulito con proporzioni migliorate e ombra più raffinata */
@@ -46,6 +52,7 @@
     -fx-padding: 12px 24px;
     -fx-cursor: hand;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 5, 0, 0, 2);
+    -fx-min-height: 40px; /* Aggiunto per responsività */
 }
 .primary-button:hover {
     -fx-background-color: #c1272d; /* Versione più scura per hover */
@@ -64,6 +71,7 @@
     -fx-background-radius: 6px;
     -fx-padding: 11px 22px;
     -fx-cursor: hand;
+    -fx-min-height: 38px; /* Aggiunto per responsività */
 }
 .secondary-button:hover {
     -fx-background-color: #2b6da3;
@@ -78,7 +86,7 @@
     -fx-effect: dropshadow(three-pass-box, rgba(218, 55, 67, 0.15), 4, 0, 0, 0);
 }
 
-/* Stile tabella migliorato per un look moderno */
+/* Stile tabella migliorato per un look moderno e responsive */
 .table-view {
     -fx-background-color: #ffffff;
     -fx-background-radius: 8px;
@@ -98,13 +106,13 @@
 .table-view .column-header .label {
     -fx-text-fill: white;
     -fx-font-weight: 600;
-    -fx-font-size: 14px;
+    -fx-font-size: 14px; /* Dimensione responsiva */
     -fx-alignment: CENTER_LEFT;
     -fx-padding: 10px 5px;
 }
 
 .table-view .cell {
-    -fx-cell-size: 40;
+    -fx-cell-size: 38; /* Altezza celle adattiva */
     -fx-alignment: center-left;
     -fx-background-color: #ffffff;
     -fx-border-color: #f0f0f0;
@@ -124,34 +132,43 @@
     -fx-font-weight: bold;
 }
 
-/* Scrollbar moderno e minimale */
+/* Scrollbar moderno e minimale - AGGIORNATO */
 .table-view .scroll-bar:horizontal,
-.table-view .scroll-bar:vertical {
+.table-view .scroll-bar:vertical,
+.scroll-bar:horizontal,
+.scroll-bar:vertical {
     -fx-background-color: transparent;
+    -fx-padding: 0;
 }
 
 .table-view .increment-button,
-.table-view .decrement-button {
+.table-view .decrement-button,
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
     -fx-background-color: transparent;
     -fx-background-radius: 2em;
-    -fx-padding: 5px;
+    -fx-padding: 2px;
 }
 
 .table-view .scroll-bar:horizontal .track,
-.table-view .scroll-bar:vertical .track {
+.table-view .scroll-bar:vertical .track,
+.scroll-bar .track {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-background-radius: 0;
 }
 
 .table-view .scroll-bar:horizontal .thumb,
-.table-view .scroll-bar:vertical .thumb {
+.table-view .scroll-bar:vertical .thumb,
+.scroll-bar .thumb {
     -fx-background-color: #d0d0d0;
-    -fx-background-radius: 10px;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
 }
 
 .table-view .scroll-bar:horizontal .thumb:hover,
-.table-view .scroll-bar:vertical .thumb:hover {
+.table-view .scroll-bar:vertical .thumb:hover,
+.scroll-bar .thumb:hover {
     -fx-background-color: #b0b0b0;
 }
 
@@ -171,46 +188,93 @@
     -fx-border-width: 0px;
 }
 
-/* Stili per i campi di testo (unificati) */
+/* Stili per i campi di testo (unificati e migliorati) */
 .text-field, .search-field {
     -fx-border-color: grey;
     -fx-border-width: 1px;
     -fx-border-radius: 15px;
     -fx-background-radius: 15px;
-    -fx-padding: 5px 10px;
+    -fx-padding: 8px 15px; /* Padding migliorato */
+    -fx-font-size: 14px;
+    -fx-min-height: 35px;
+    -fx-pref-height: 40px;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #333333;
 }
 
-/* Stile per l'intestazione e le etichette principali */
+/* Focus migliorato per campi di ricerca */
+.search-field:focused {
+    -fx-border-color: #da3743;
+    -fx-border-width: 2px;
+    -fx-effect: dropshadow(three-pass-box, rgba(218, 55, 67, 0.15), 4, 0, 0, 0);
+}
+
+/* Stile per l'intestazione e le etichette principali - MIGLIORATO */
 .header-label, #customlabel {
     -fx-background-color: rgba(200, 193, 197, 0.8);
     -fx-border-color: grey;
-    -fx-border-width: 3px;
+    -fx-border-width: 2px; /* Ridotto per look più pulito */
     -fx-border-style: solid;
-    -fx-font-family: "Microsoft Tai Le Bold";
-    -fx-font-size: 18px;
+    -fx-font-family: "Microsoft Tai Le Bold", "Montserrat", sans-serif;
+    -fx-font-size: 16px; /* Dimensione responsiva */
     -fx-font-weight: bold;
+    -fx-padding: 10px 15px; /* Padding migliorato */
+    -fx-alignment: center;
+    -fx-background-radius: 5px;
+    -fx-border-radius: 5px;
 }
 
-/* Stile per il pulsante di menu e filtri */
+/* Stile per il pulsante di menu e filtri - MIGLIORATO */
 .filter-menu, .menu-button {
     -fx-background-color: rgba(188, 181, 184, 0.8);
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
-    -fx-font-family: "Microsoft Tai Le Bold";
-    -fx-font-size: 18px;
+    -fx-border-radius: 8px; /* Più arrotondato */
+    -fx-background-radius: 8px;
+    -fx-font-family: "Microsoft Tai Le Bold", "Montserrat", sans-serif;
+    -fx-font-size: 14px; /* Dimensione responsiva */
     -fx-font-weight: bold;
+    -fx-padding: 10px 15px; /* Padding migliorato */
+    -fx-min-height: 38px;
+    -fx-cursor: hand;
+}
+
+.filter-menu:hover, .menu-button:hover {
+    -fx-background-color: rgba(168, 161, 164, 0.9);
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
 }
 
 .filter-menu .arrow, .menu-button .arrow {
     -fx-background-color: black;
 }
 
-/* Stile per la lista dei risultati */
+/* Stile per la lista dei risultati - MIGLIORATO */
 .result-list, .list-view {
     -fx-background-color: white;
-    -fx-background-radius: 5px;
+    -fx-background-radius: 8px; /* Più arrotondato */
     -fx-border-color: #e0e0e0;
-    -fx-border-radius: 5px;
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 10, 0, 0, 3);
+}
+
+/* Celle della lista - NUOVO */
+.list-cell {
+    -fx-padding: 12px 15px;
+    -fx-font-size: 13px;
+    -fx-text-fill: #333333;
+    -fx-background-color: transparent;
+}
+
+.list-cell:selected {
+    -fx-background-color: #da3743;
+    -fx-text-fill: white;
+}
+
+.list-cell:hover {
+    -fx-background-color: #f5f5f5;
+}
+
+.list-cell:selected:hover {
+    -fx-background-color: #c1272d;
 }
 
 /* Colori per grafici */
@@ -220,62 +284,190 @@
 .default-color3.chart-pie { -fx-pie-color: #ff9e00; } /* Arancione */
 .default-color4.chart-pie { -fx-pie-color: #7c43bd; } /* Viola */
 
-/* Regole aggiuntive per la pagina Recensioni con id univoci */
+/* ============
+   Tema Chiaro - MIGLIORATO
+   ============*/
 
-/* Contenitore principale */
+/* Contenitore principale (AnchorPane) */
 #appRoot {
-    /* Colore di sfondo neutro e luminoso per un look minimal */
-    -fx-background-color: #f0f2f5;
-    -fx-padding: 20px;
+    -fx-background-color: #f9f9f9;
+    -fx-padding: 10;
 }
 
 /* HBox principale */
 #mainHBox {
-    /* Centratura e spazio tra gli elementi per un layout pulito */
-    -fx-alignment: center;
-    -fx-spacing: 15px;
+    -fx-spacing: 15; /* Spacing aumentato */
 }
 
-/* TableView specifica per le recensioni */
+/* TableView: Sfondo bianco senza contorni marcati */
 #reviewTable {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 10, 0, 0, 3);
+}
+
+/* Header delle colonne della TableView: Ora con sfondo bianco neutro */
+.table-view .column-header-background {
+    -fx-background-color: white;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-text-fill: black;
+    -fx-font-weight: bold;
+    -fx-alignment: center;
+}
+
+/* VBox laterale: Sfondo bianco e padding */
+#sideVBox {
+    -fx-background-color: white;
+    -fx-padding: 15; /* Padding aumentato */
+    -fx-border-color: transparent;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.05), 8, 0, 0, 2);
+}
+
+/* ComboBox: Sfondo bianco e bordo leggero in grigio chiaro */
+#reviewComboBox {
+    -fx-background-color: white;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-padding: 8px 12px; /* Padding migliorato */
+    -fx-prompt-text-fill: #888;
+    -fx-font-size: 13px;
+    -fx-min-height: 35px;
+}
+
+#reviewComboBox:hover {
+    -fx-border-color: #da3743;
+}
+
+#reviewComboBox:focused {
+    -fx-border-color: #da3743;
+    -fx-border-width: 2px;
+}
+
+/* PieChart: Sfondo trasparente senza contorni */
+#reviewPieChart {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-table-cell-border-color: transparent; /* Rimuove i bordi interni */
 }
 
-/* Colonne della TableView */
-#reviewColumnStelle,
-#reviewColumnRecensione {
-    /* Testo moderno e leggero con padding adeguato per la leggibilità */
-    -fx-font-size: 14px;
-    -fx-padding: 8px;
-    -fx-alignment: CENTER_LEFT;
+/* ============================================
+   NUOVE FUNZIONALITÀ RESPONSIVE
+   ============================================ */
+
+/* Contenitori responsive */
+.responsive-container {
+    -fx-padding: 10;
+    -fx-spacing: 10;
 }
 
-/* VBox laterale a destra (contenente ComboBox e PieChart) */
-#sideVBox {
-    /* Stile "card" minimal con angoli arrotondati, padding generoso e un'ombra leggera */
-    -fx-background-color: #ffffff;
-    -fx-background-radius: 10px;
-    -fx-padding: 15px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+/* Immagini responsive */
+.responsive-image {
+    -fx-preserve-ratio: true;
+    -fx-smooth: true;
+    -fx-cache: true;
 }
 
-/* ComboBox delle recensioni */
+/* Animazioni fluide per tutti gli elementi interattivi */
+.primary-button,
+.secondary-button,
+.search-field,
+.filter-menu,
+.menu-button,
+.login-textfield,
 #reviewComboBox {
-    /* Aspetto pulito e moderno con bordi sottili e angoli arrotondati */
-    -fx-font-size: 14px;
-    -fx-background-radius: 5px;
-    -fx-border-radius: 5px;
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 1px;
-    -fx-padding: 5px 8px;
-    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+    -fx-transition: all 0.2s ease-in-out;
 }
 
-/* PieChart delle recensioni */
-#reviewPieChart {
-    /* Assicurare trasparenza di fondo e aggiungere un po' di padding per "respirare" */
-    -fx-background-color: transparent;
-    -fx-padding: 10px;
+/* Miglioramenti per l'accessibilità */
+.focusable:focused,
+*:focused {
+    -fx-effect: dropshadow(three-pass-box, rgba(218, 55, 67, 0.3), 6, 0, 0, 0);
 }
+
+/* Media queries simulate per schermi più piccoli */
+.compact .root {
+    -fx-font-size: 12px;
+}
+
+.compact .header-label,
+.compact #customlabel {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 12px;
+}
+
+.compact .search-field {
+    -fx-font-size: 12px;
+    -fx-min-height: 30px;
+    -fx-pref-height: 35px;
+}
+
+.compact .primary-button {
+    -fx-font-size: 14px;
+    -fx-padding: 8px 16px;
+    -fx-min-height: 35px;
+}
+
+.compact .secondary-button {
+    -fx-font-size: 13px;
+    -fx-padding: 7px 14px;
+    -fx-min-height: 33px;
+}
+
+/* Supporto per tema scuro - PREPARAZIONE FUTURA */
+.root.dark-theme {
+    -fx-background-color: #2d2d2d;
+}
+
+.dark-theme .search-field,
+.dark-theme .text-field {
+    -fx-background-color: #3d3d3d;
+    -fx-text-fill: white;
+    -fx-border-color: #555555;
+}
+
+.dark-theme .result-list,
+.dark-theme .list-view {
+    -fx-background-color: #3d3d3d;
+    -fx-border-color: #555555;
+}
+
+.dark-theme .list-cell {
+    -fx-text-fill: white;
+}
+
+.dark-theme .header-label,
+.dark-theme #customlabel {
+    -fx-background-color: rgba(100, 100, 100, 0.8);
+    -fx-text-fill: white;
+    -fx-border-color: #666666;
+}
+
+/* Stili per dispositivi touch - PREPARAZIONE FUTURA */
+.touch .primary-button,
+.touch .secondary-button,
+.touch .filter-menu,
+.touch .menu-button {
+    -fx-min-height: 44px; /* Dimensione minima per touch */
+    -fx-padding: 12px 20px;
+}
+
+.touch .search-field {
+    -fx-min-height: 44px;
+    -fx-pref-height: 48px;
+}
+
+/* Margini e spaziature ottimizzate */
+.layout-spacing-small { -fx-spacing: 5; }
+.layout-spacing-medium { -fx-spacing: 10; }
+.layout-spacing-large { -fx-spacing: 15; }
+
+.layout-padding-small { -fx-padding: 5; }
+.layout-padding-medium { -fx-padding: 10; }
+.layout-padding-large { -fx-padding: 15; }
