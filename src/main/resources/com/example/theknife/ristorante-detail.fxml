@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<ScrollPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.controller.RistoranteDetailController">
+<ScrollPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.RistoranteDetailController">
     <content>
         <VBox spacing="0.0" styleClass="main-container">
             <!-- Header con immagine -->
@@ -122,17 +122,19 @@
                         </HBox>
 
                         <!-- Stella Verde -->
-                        <HBox id="stellaVerdeContainer" alignment="CENTER_LEFT" spacing="10.0" styleClass="award-item">
-                            <ImageView fx:id="stellaVerdeIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
-                            <VBox>
-                                <Label styleClass="award-title" text="Sostenibilità">
-                                    <font>
-                                        <Font name="System Bold" size="14.0" />
-                                    </font>
-                                </Label>
-                                <Label fx:id="stellaVerdeLabel" styleClass="green-star-text" text="Stella Verde" />
-                            </VBox>
-                        </HBox>
+                        <VBox fx:id="stellaVerdeContainer" alignment="CENTER_LEFT" spacing="10.0" styleClass="award-item">
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <ImageView fx:id="stellaVerdeIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                                <VBox>
+                                    <Label styleClass="award-title" text="Sostenibilità">
+                                        <font>
+                                            <Font name="System Bold" size="14.0" />
+                                        </font>
+                                    </Label>
+                                    <Label fx:id="stellaVerdeLabel" styleClass="green-star-text" text="Stella Verde" />
+                                </VBox>
+                            </HBox>
+                        </VBox>
                     </VBox>
                 </VBox>
 
@@ -162,6 +164,4 @@
             </HBox>
         </VBox>
     </content>
-    <styleClass>
-    </styleClass>
 </ScrollPane>

@@ -24,13 +24,13 @@ import java.util.*;
 /**
  * Controller per la visualizzazione dettagliata di un ristorante.
  * Gestisce l'interfaccia grafica per mostrare tutte le informazioni di un singolo ristorante
- * caricato da file CSV in stile "The Fork" con un design moderno e accattivante.
+ * caricato da file CSV con un design moderno e accattivante.
  *
  * @author Samuele Secchi, 761031, Sede CO
  * @author Flavio Marin, 759910, Sede CO
  * @author Matilde Lecchi, 759875, Sede CO
  * @author Davide Caccia, 760742, Sede CO
- * @version 2.0
+ * @version 2.1
  * @since 2025-05-27
  */
 public class RistoranteDetailController implements Initializable {
@@ -164,7 +164,7 @@ public class RistoranteDetailController implements Initializable {
 
             if (c == '"') {
                 if (inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
-                    // Doppia virgoletta escaped
+                    // Doppia virgolette escaped
                     currentField.append('"');
                     i++; // Skip prossima virgoletta
                 } else {
@@ -417,7 +417,7 @@ public class RistoranteDetailController implements Initializable {
                 premioContainer.setVisible(false);
             }
 
-            // Stella Verde
+            // Stella Verde - Correzione per l'elemento FXML
             updateStellaVerdeDisplay();
 
             // Servizi
@@ -484,7 +484,12 @@ public class RistoranteDetailController implements Initializable {
         if (stellaVerde != null && !stellaVerde.trim().isEmpty() &&
                 !"No".equalsIgnoreCase(stellaVerde.trim())) {
             stellaVerdeLabel.setText("Stella Verde");
-            stellaVerdeContainer.setVisible(true);
+
+            // Trova il container della stella verde usando il lookup nell'FXML
+            VBox container = (VBox) stellaVerdeLabel.getParent().getParent();
+            if (container != null) {
+                container.setVisible(true);
+            }
 
             // Carica icona stella verde se disponibile
             try {
@@ -499,7 +504,13 @@ public class RistoranteDetailController implements Initializable {
                 }
             }
         } else {
-            stellaVerdeContainer.setVisible(false);
+            // Trova il container della stella verde e nascondilo
+            if (stellaVerdeLabel != null && stellaVerdeLabel.getParent() != null) {
+                VBox container = (VBox) stellaVerdeLabel.getParent().getParent();
+                if (container != null) {
+                    container.setVisible(false);
+                }
+            }
         }
     }
 
@@ -553,13 +564,14 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Gestisce il click sul numero di telefono (per chiamate future)
-     * @param event evento del click
+     * Gestisce il click sul numero di telefono (evento del mouse anziché Action)
      */
     @FXML
-    private void handleTelefonoClick(ActionEvent event) {
+    private void handleTelefonoClick() {
         // Implementazione futura per chiamate dirette
-        System.out.println("Chiamata a: " + ristorante.getNumeroTelefono());
+        if (ristorante != null && ristorante.getNumeroTelefono() != null) {
+            System.out.println("Chiamata a: " + ristorante.getNumeroTelefono());
+        }
     }
 
     /**
