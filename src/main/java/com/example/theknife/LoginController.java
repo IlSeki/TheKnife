@@ -6,77 +6,291 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * La classe {@code LoginController} gestisce le interazioni dell'interfaccia di login.
- * In particolare, implementa il metodo per l'accesso diretto all'applicazione senza effettuare il login.
+ * Implementa l'autenticazione degli utenti tramite lettura del file CSV "utenti.csv"
+ * e la navigazione verso diverse interfacce in base al ruolo dell'utente.
  *
  * <p>
- * Quando viene premuto il pulsante "Accedi senza login", il metodo {@link #handleSkipLogin(ActionEvent)}
- * carica il file FXML "lista.fxml", che rappresenta la schermata dei ristoranti. Per garantire che anche
- * questa schermata si adatti alle dimensioni del monitor, il controller calcola l'80% della larghezza ed
- * dell'altezza disponibili del monitor primario e crea la scena con queste dimensioni. Questa tecnica
- * è identica a quella utilizzata nel metodo {@link com.example.theknife.Main#start(Stage)}.
- * </p>
- *
- * <p>
- * Se la schermata dei ristoranti non viene caricata correttamente, è probabile che il problema derivi
- * dal fatto che in assenza di una specifica impostazione delle dimensioni dinamiche, la scena predefinita
- * venga creata con dimensioni minime o non ottimali. Con l'aggiornamento mostrato, la scena viene creata
- * specificando larghezza e altezza basate sullo schermo, garantendo così un'esperienza utente migliore.
+ * Il controller supporta due modalità di accesso:
+ * <ul>
+ *   <li>Accesso con credenziali: verifica username e password cifrata tramite SHA-256</li>
+ *   <li>Accesso diretto senza login: accesso come utente non registrato</li>
+ * </ul>
  * </p>
  *
  * @author Samuele Secchi, 761031, Sede CO
- * @version 1.0
- * @since 2025-05-20
+ * @version 2.0
+ * @since 2025-05-27
  */
 public class LoginController {
 
+    @FXML
+    private TextField campoUsername;
+
+    @FXML
+    private PasswordField campoPassword;
+
     /**
-     * Metodo invocato alla pressione del pulsante "Accedi senza login".
-     * <p>
-     * Questo metodo esegue le seguenti operazioni:
-     * <ul>
-     *   <li>Carica il file FXML "lista.fxml", che definisce l'interfaccia della schermata dei ristoranti;</li>
-     *   <li>Calcola le dimensioni dinamiche della scena, ottenendo l'80% della larghezza e dell'altezza
-     *       del monitor primario tramite {@link Screen} e {@link Rectangle2D};</li>
-     *   <li>Crea la scena con le dimensioni calcolate e applica il foglio di stile CSS presente in
-     *       "/data/stile.css";</li>
-     *   <li>Imposta la nuova scena nello stage corrente e la visualizza.</li>
-     * </ul>
-     * </p>
+     * Metodo invocato alla pressione del pulsante "Accedi".
+     * Verifica le credenziali inserite dall'utente confrontandole con il file CSV.
+     * In caso di successo, reindirizza l'utente all'interfaccia appropriata in base al ruolo.
      *
-     * @param event L'evento generato dal clic sul pulsante.
+     * @param evento L'evento generato dal clic sul pulsante di login.
      */
     @FXML
-    private void handleSkipLogin(ActionEvent event) {
+    private void gestisciAccesso(ActionEvent evento) {
+        String username = campoUsername.getText().trim();
+        String password = campoPassword.getText();
+
+        // Validazione input
+        if (username.isEmpty() || password.isEmpty()) {
+            mostraAvviso("Errore", "Inserisci username e password!", Alert.AlertType.WARNING);
+            return;
+        }
+
         try {
-            // Carica il file FXML "lista.fxml" che rappresenta la schermata dei ristoranti
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("lista.fxml"));
-            Parent root = loader.load();
+            // Carica gli utenti dal file CSV
+            List<Utente> utenti = caricaUtentiDaCSV();
 
-            // Calcola le dimensioni disponibili del monitor primario
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            double width = screenBounds.getWidth() * 0.8;   // utilizza l'80% della larghezza disponibile
-            double height = screenBounds.getHeight() * 0.8; // utilizza l'80% dell'altezza disponibile
+            System.out.println("DEBUG: Utenti caricati: " + utenti.size());
 
-            // Crea la scena con le dimensioni dinamiche
-            Scene scene = new Scene(root, width, height);
+            // Cifra la password inserita per il confronto
+            String passwordCifrata = cifraPassword(password);
+            System.out.println("DEBUG: Password cifrata: " + passwordCifrata);
 
-            // Applica il foglio di stile CSS (stile.css) dalla cartella resources/data
-            scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
+            // Cerca l'utente con username e password corrispondenti
+            Utente utenteAutenticato = null;
+            for (Utente utente : utenti) {
+                System.out.println("DEBUG: Confronto con utente: " + utente.getUsername() +
+                        " - Password nel file: " + utente.getPasswordHash());
 
-            // Ottieni lo stage corrente dall'evento sul bottone
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                if (utente.getUsername().equals(username) && utente.getPasswordHash().equals(passwordCifrata)) {
+                    utenteAutenticato = utente;
+                    break;
+                }
+            }
 
-            // Imposta la nuova scena nello stage e la mostra
-            stage.setScene(scene);
-            stage.show();
+            if (utenteAutenticato != null) {
+                // Autenticazione riuscita - salva i dati utente e reindirizza
+                SessioneUtente.impostaUtenteCorrente(
+                        utenteAutenticato.getNome(),
+                        utenteAutenticato.getCognome(),
+                        utenteAutenticato.getUsername(),
+                        utenteAutenticato.getRuolo()
+                );
+
+                System.out.println("DEBUG: Utente autenticato: " + utenteAutenticato.toString());
+                reindirizzaAllInterfacciaPrincipale(evento, utenteAutenticato.getRuolo());
+            } else {
+                // Credenziali errate
+                mostraAvviso("Errore di Autenticazione", "Username o password non corretti!", Alert.AlertType.ERROR);
+                campoPassword.clear(); // Pulisce il campo password per sicurezza
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
+            mostraAvviso("Errore", "Errore durante l'autenticazione: " + e.getMessage(), Alert.AlertType.ERROR);
         }
+    }
+
+    /**
+     * Metodo invocato alla pressione del pulsante "Accedi senza login".
+     * Permette l'accesso come utente non registrato con funzionalità limitate.
+     *
+     * @param evento L'evento generato dal clic sul pulsante.
+     */
+    @FXML
+    private void gestisciAccessoSenzaLogin(ActionEvent evento) {
+        try {
+            // Imposta la sessione come utente non registrato
+            SessioneUtente.impostaUtenteCorrente("Ospite", "", "", "ospite");
+            reindirizzaAllInterfacciaPrincipale(evento, "ospite");
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostraAvviso("Errore", "Errore durante l'accesso: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    /**
+     * Carica la lista degli utenti dal file CSV "utenti.csv".
+     *
+     * @return Lista degli utenti caricati dal file CSV.
+     * @throws IOException Se si verifica un errore durante la lettura del file.
+     */
+    private List<Utente> caricaUtentiDaCSV() throws IOException {
+        List<Utente> utenti = new ArrayList<>();
+
+        try (InputStream inputStream = getClass().getResourceAsStream("/data/utenti.csv");
+             BufferedReader lettore = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+
+            if (inputStream == null) {
+                throw new IOException("File utenti.csv non trovato in /data/");
+            }
+
+            String riga = lettore.readLine(); // Salta l'header
+            System.out.println("DEBUG: Header CSV: " + riga);
+
+            while ((riga = lettore.readLine()) != null) {
+                if (!riga.trim().isEmpty()) {
+                    String[] parti = riga.split(",");
+                    System.out.println("DEBUG: Parsing riga: " + riga);
+                    System.out.println("DEBUG: Parti trovate: " + parti.length);
+
+                    if (parti.length >= 7) {
+                        // Costruttore: nome, cognome, username, passwordHash, dataNascita, luogoDomicilio, ruolo
+                        Utente utente = new Utente(
+                                parti[0].trim(),  // Nome
+                                parti[1].trim(),  // Cognome
+                                parti[2].trim(),  // Username
+                                parti[3].trim(),  // Password (già cifrata nel CSV)
+                                parti[4].trim(),  // DataNascita
+                                parti[5].trim(),  // LuogoDomicilio
+                                parti[6].trim()   // Ruolo
+                        );
+                        utenti.add(utente);
+                        System.out.println("DEBUG: Utente aggiunto: " + utente.toString());
+                    } else {
+                        System.out.println("DEBUG: Riga ignorata (parti insufficienti): " + riga);
+                    }
+                }
+            }
+        }
+
+        System.out.println("DEBUG: Totale utenti caricati: " + utenti.size());
+        return utenti;
+    }
+
+    /**
+     * Calcola l'hash SHA-256 di una password.
+     *
+     * @param password La password in chiaro da cifrare.
+     * @return L'hash SHA-256 della password in formato esadecimale.
+     * @throws NoSuchAlgorithmException Se l'algoritmo SHA-256 non è disponibile.
+     */
+    private String cifraPassword(String password) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
+
+        StringBuilder stringaEsadecimale = new StringBuilder();
+        for (byte b : hash) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) {
+                stringaEsadecimale.append('0');
+            }
+            stringaEsadecimale.append(hex);
+        }
+
+        return stringaEsadecimale.toString();
+    }
+
+    /**
+     * Reindirizza l'utente all'interfaccia principale appropriata in base al ruolo.
+     *
+     * @param evento L'evento ActionEvent per ottenere lo stage corrente.
+     * @param ruolo Il ruolo dell'utente ("cliente", "ristoratore", "ospite").
+     * @throws IOException Se si verifica un errore durante il caricamento dell'interfaccia.
+     */
+    private void reindirizzaAllInterfacciaPrincipale(ActionEvent evento, String ruolo) throws IOException {
+        String fileFxml;
+        String titoloFinestra;
+
+        // Determina quale interfaccia caricare in base al ruolo
+        switch (ruolo.toLowerCase()) {
+            case "cliente":
+                fileFxml = "lista.fxml"; // Interfaccia per i clienti
+                titoloFinestra = "TheKnife - Area Cliente";
+                break;
+            case "ristoratore":
+                fileFxml = "ristoratore.fxml"; // Interfaccia per i ristoratori
+                titoloFinestra = "TheKnife - Area Ristoratore";
+                break;
+            case "ospite":
+            default:
+                fileFxml = "lista.fxml"; // Interfaccia per utenti non registrati
+                titoloFinestra = "TheKnife - Ospite";
+                break;
+        }
+
+        try {
+            // Debug: verifica se il file esiste
+            System.out.println("DEBUG: Tentativo di caricare: " + fileFxml);
+            if (getClass().getResource(fileFxml) == null) {
+                System.out.println("ERROR: File " + fileFxml + " non trovato nel classpath");
+                mostraAvviso("Errore", "File interfaccia non trovato: " + fileFxml +
+                        "\nVerifica che il file sia presente nella directory src/main/resources/", Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Carica il file FXML appropriato
+            FXMLLoader caricatore = new FXMLLoader(getClass().getResource(fileFxml));
+            Parent radice = caricatore.load();
+
+            // Calcola le dimensioni dinamiche dello schermo
+            Rectangle2D limitiSchermo = Screen.getPrimary().getVisualBounds();
+            double larghezza = limitiSchermo.getWidth() * 0.8;
+            double altezza = limitiSchermo.getHeight() * 0.8;
+
+            // Crea la scena con le dimensioni calcolate
+            Scene scena = new Scene(radice, larghezza, altezza);
+
+            // Applica il CSS se disponibile
+            try {
+                String cssPath = "/data/stile.css";
+                if (getClass().getResource(cssPath) != null) {
+                    scena.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
+                } else {
+                    System.out.println("WARNING: File CSS non trovato: " + cssPath);
+                }
+            } catch (Exception e) {
+                System.out.println("WARNING: Errore nel caricamento CSS: " + e.getMessage());
+            }
+
+            // Ottieni lo stage corrente e imposta la nuova scena
+            Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+            palcoscenico.setTitle(titoloFinestra);
+            palcoscenico.setScene(scena);
+            palcoscenico.show();
+
+            System.out.println("DEBUG: Interfaccia caricata con successo: " + fileFxml);
+
+        } catch (IOException e) {
+            System.out.println("ERROR: Impossibile caricare " + fileFxml + " - " + e.getMessage());
+            e.printStackTrace();
+            mostraAvviso("Errore", "Impossibile caricare l'interfaccia: " + fileFxml +
+                    "\nDettagli: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+    /**
+     * Mostra un dialog di avviso all'utente.
+     *
+     * @param titolo Il titolo del dialog.
+     * @param messaggio Il messaggio da visualizzare.
+     * @param tipoAvviso Il tipo di alert (INFO, WARNING, ERROR).
+     */
+    private void mostraAvviso(String titolo, String messaggio, Alert.AlertType tipoAvviso) {
+        Alert avviso = new Alert(tipoAvviso);
+        avviso.setTitle(titolo);
+        avviso.setHeaderText(null);
+        avviso.setContentText(messaggio);
+        avviso.showAndWait();
     }
 }
