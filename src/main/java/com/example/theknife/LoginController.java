@@ -215,7 +215,7 @@ public class LoginController {
         // Determina quale interfaccia caricare in base al ruolo
         switch (ruolo.toLowerCase()) {
             case "cliente":
-                fileFxml = "lista.fxml"; // Interfaccia per i clienti
+                fileFxml = "menu.fxml"; // Interfaccia per i clienti
                 titoloFinestra = "TheKnife - Area Cliente";
                 break;
             case "ristoratore":
@@ -224,7 +224,7 @@ public class LoginController {
                 break;
             case "ospite":
             default:
-                fileFxml = "lista.fxml"; // Interfaccia per utenti non registrati
+                fileFxml = "menu.fxml"; // Interfaccia per utenti non registrati
                 titoloFinestra = "TheKnife - Ospite";
                 break;
         }

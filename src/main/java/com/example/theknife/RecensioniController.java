@@ -11,6 +11,12 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,39 +45,30 @@ public class RecensioniController {
     @FXML
     private TableColumn<Recensione, String> colRecensione;
 
-    // Mappa che tiene traccia del numero di recensioni per ogni punteggio di stelle (per il PieChart)
+    // Mappa per aggiornare il PieChart
     private final Map<Integer, Integer> recensioniMap = new HashMap<>();
 
-    // Lista master di tutte le recensioni per popolazione della TableView
+    // Lista master per la TableView
     private ObservableList<Recensione> masterRecensioniList;
+
+    // Percorso del file CSV
+    private static final String CSV_FILE_PATH = "src/main/resources/data/recensioni.csv";
 
     @FXML
     public void initialize() {
-        // Popola la ComboBox per permettere la selezione del numero di stelle.
-        // Selezionando un valore la TableView mostrerà solo le recensioni aventi quel punteggio.
+
+        // Configura la ComboBox per il filtro per stelle
         comboBox.getItems().addAll(1, 2, 3, 4, 5);
         comboBox.setPromptText("Seleziona numero stelle");
 
-        // SIMULAZIONE: dati per il PieChart - andranno sostituiti con dati reali
-        recensioniMap.put(1, 2); // 2 recensioni con 1 stella
-        recensioniMap.put(2, 5); // 5 recensioni con 2 stelle
-        recensioniMap.put(3, 3); // 3 recensioni con 3 stelle
-        recensioniMap.put(4, 4); // 4 recensioni con 4 stelle
-        recensioniMap.put(5, 3); // 3 recensioni con 5 stelle
+        // Inizializza la mappa dei conteggi
+        recensioniMap.clear();
 
-        // Aggiorna il PieChart con i dati
-        aggiornaPieChart();
+        // Inizializza la lista master e carica le recensioni dal CSV
+        masterRecensioniList = FXCollections.observableArrayList();
+        caricaRecensioniDaCSV(CSV_FILE_PATH);
 
-        // Crea alcuni esempi di recensioni per la TableView
-        masterRecensioniList = FXCollections.observableArrayList(
-                new Recensione(5, "Ottimo prodotto, consigliato!"),
-                new Recensione(4, "Buono, ma con qualche piccolo difetto."),
-                new Recensione(3, "Prodotto nella media, niente di eccezionale."),
-                new Recensione(2, "Non ha soddisfatto le aspettative."),
-                new Recensione(1, "Pessimo, molto deludente.")
-        );
-
-        // Avvolgiamo la lista master in una FilteredList per permettere il filtraggio
+        // Avvolgi la lista master in una FilteredList per il filtraggio della TableView
         FilteredList<Recensione> filteredList = new FilteredList<>(masterRecensioniList, recensione -> true);
         tableView.setItems(filteredList);
 
@@ -79,26 +76,98 @@ public class RecensioniController {
         colStelle.setCellValueFactory(new PropertyValueFactory<>("stelle"));
         colRecensione.setCellValueFactory(new PropertyValueFactory<>("recensione"));
 
-        // Imposta un listener sulla ComboBox per aggiornare il filtro della TableView
+        // Listener sulla ComboBox per filtrare le recensioni per numero di stelle
         comboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
-                // Filtra le recensioni in base al numero di stelle selezionato
                 filteredList.setPredicate(recensione -> recensione.getStelle() == newVal);
             } else {
-                // Se non c'è selezione, non applica alcun filtro
                 filteredList.setPredicate(recensione -> true);
             }
         });
     }
 
     /**
-     * Aggiorna il PieChart in base alla distribuzione delle recensioni
+     * Legge le recensioni da un file CSV e aggiorna sia la lista master che la mappa per il PieChart.
+     *
+     * @param filePath il percorso del file CSV
+     */
+    private void caricaRecensioniDaCSV(String filePath) {
+        File file = new File(filePath);
+        // Se il file non esiste, crealo con l'header
+        if (!file.exists()) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+                writer.write("stelle,recensione");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;  // Non ci sono recensioni da caricare
+        }
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            String line;
+            boolean firstLine = true;
+            while ((line = br.readLine()) != null) {
+                // Salta l'intestazione
+                if (firstLine) {
+                    firstLine = false;
+                    continue;
+                }
+                // Supponiamo un formato semplice: valore separati da virgola (limit=2 per gestire eventuali virgole nel testo)
+                String[] tokens = line.split(",", 2);
+                if (tokens.length == 2) {
+                    int stelle = Integer.parseInt(tokens[0].trim());
+                    String recensione = tokens[1].trim();
+                    // Rimuove eventuali virgolette iniziali e finali
+                    if (recensione.startsWith("\"") && recensione.endsWith("\"")) {
+                        recensione = recensione.substring(1, recensione.length() - 1);
+                    }
+                    Recensione r = new Recensione(stelle, recensione);
+                    masterRecensioniList.add(r);
+
+                    // Aggiorna il conteggio nella mappa per il PieChart
+                    recensioniMap.put(stelle, recensioniMap.getOrDefault(stelle, 0) + 1);
+                }
+            }
+            // Aggiorna il PieChart con i dati letti
+            aggiornaPieChart();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Aggiorna il PieChart in base alla distribuzione delle recensioni.
      */
     private void aggiornaPieChart() {
-        pieChart.getData().clear(); // Pulisce i dati precedenti
+        pieChart.getData().clear();
         recensioniMap.forEach((stelle, numeroRecensioni) -> {
             pieChart.getData().add(new PieChart.Data(stelle + " ⭐", numeroRecensioni));
         });
+    }
+
+    /**
+     * Aggiunge una recensione sia alla lista della TableView che al file CSV.
+     *
+     * @param stelle     punteggio (1-5)
+     * @param recensione testo recensione
+     */
+    public void aggiungiRecensione(int stelle, String recensione) {
+        // Crea l'oggetto Recensione e aggiornalo nella lista
+        Recensione r = new Recensione(stelle, recensione);
+        masterRecensioniList.add(r);
+
+        // Aggiorna la mappa (e conseguentemente il PieChart)
+        recensioniMap.put(stelle, recensioniMap.getOrDefault(stelle, 0) + 1);
+        aggiornaPieChart();
+
+        // Append all'archivio CSV
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CSV_FILE_PATH, true))) {
+            String record = stelle + ",\"" + recensione.replace("\"", "\"\"") + "\"";
+            writer.newLine();
+            writer.write(record);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -116,26 +185,20 @@ public class RecensioniController {
         public int getStelle() {
             return stelle.get();
         }
-
         public void setStelle(int stelle) {
             this.stelle.set(stelle);
         }
-
         public SimpleIntegerProperty stelleProperty() {
             return stelle;
         }
-
         public String getRecensione() {
             return recensione.get();
         }
-
         public void setRecensione(String recensione) {
             this.recensione.set(recensione);
         }
-
         public SimpleStringProperty recensioneProperty() {
             return recensione;
         }
     }
 }
-
