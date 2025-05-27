@@ -70,7 +70,7 @@ public class App extends Application {
         System.out.println("Dimensioni finestra: " + windowWidth + "x" + windowHeight);
 
         // Carica il file FXML per la schermata di login
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("ristorante-detail.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
 
         // Applica il foglio di stile CSS dal classpath

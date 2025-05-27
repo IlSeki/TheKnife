@@ -58,7 +58,7 @@ public class RistoranteDetailController implements Initializable {
 
     private Ristorante ristorante;
     private HostServices hostServices;
-    private static final String CSV_FILE_PATH = "mychelin_my_maps.csv";
+    private static final String CSV_FILE_PATH = "/data/michelin_my_maps.csv";
     private static List<Map<String, String>> csvData = new ArrayList<>();
     private static boolean csvLoaded = false;
 
@@ -93,7 +93,7 @@ public class RistoranteDetailController implements Initializable {
                     csvData.clear();
 
                     // Prova prima a caricare dalle risorse
-                    InputStream inputStream = getClass().getClassLoader().getResourceAsStream(CSV_FILE_PATH);
+                    InputStream inputStream = getClass().getResourceAsStream(CSV_FILE_PATH);
 
                     // Se non trovato nelle risorse, prova nel percorso del progetto
                     if (inputStream == null) {
