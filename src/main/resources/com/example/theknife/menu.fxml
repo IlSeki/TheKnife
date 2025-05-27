@@ -5,33 +5,27 @@
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.MenuRicerca">
+
     <children>
-        <Label id="customlabel" layoutX="-9.0" layoutY="-4.0" prefHeight="58.0" prefWidth="794.0" styleClass="header-label" stylesheets="@../../../data/stile.css" text="                    Ricerca" />
+        <!-- Header: etichetta che si estende per tutta la larghezza -->
+        <Label fx:id="headerLabel" prefHeight="60.0" styleClass="header-label" stylesheets="@../../../data/stile.css" text="Ricerca" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
-        <!-- TextField collegato al controller con fx:id -->
-        <TextField fx:id="searchField" layoutX="161.0" layoutY="11.0" prefHeight="33.0" prefWidth="230.0" promptText="Cerca ristorante..." styleClass="search-field" stylesheets="@../../../data/stile.css" />
+        <!-- Campo di ricerca, ancorato a sinistra (dopo il logo) e a destra (prima del menu) -->
+        <TextField fx:id="searchField" prefHeight="40.0" promptText="Cerca ristorante..." styleClass="search-field" stylesheets="@../../../data/stile.css" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="10.0" />
 
-        <!-- ListView collegata al controller con fx:id -->
-        <ListView fx:id="resultList" layoutX="-1.0" layoutY="54.0" prefHeight="442.0" prefWidth="786.0" styleClass="result-list" stylesheets="@../../../data/stile.css" />
-
-        <!-- Immagine che si sovrappone alla ListView - potresti volerla rimuovere o riposizionare -->
-        <ImageView fitHeight="58.0" fitWidth="50.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" visible="true">
-            <image>
-                <Image url="@../../../loghi/Astolfo.png" />
-            </image>
-        </ImageView>
-
-        <MenuButton layoutX="668.0" layoutY="6.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="107.0" styleClass="filter-menu" stylesheets="@../../../data/stile.css" text="Filtri">
+        <!-- MenuButton per i filtri, ancorato nell'angolo superiore destro -->
+        <MenuButton fx:id="filterMenu" prefHeight="40.0" prefWidth="100.0" styleClass="filter-menu" stylesheets="@../../../data/stile.css" text="Filtri" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
             <items>
-                <MenuItem mnemonicParsing="false" text="Per Nome" />
-                <MenuItem mnemonicParsing="false" text="Per Città" />
-                <MenuItem mnemonicParsing="false" text="Per Tipo Cucina" />
+                <MenuItem text="Per Nome" />
+                <MenuItem text="Per Città" />
+                <MenuItem text="Per Tipo Cucina" />
             </items>
         </MenuButton>
+
+        <!-- ListView che occupa lo spazio rimanente sotto l'header -->
+        <ListView fx:id="resultList" styleClass="result-list" stylesheets="@../../../data/stile.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
     </children>
 </AnchorPane>

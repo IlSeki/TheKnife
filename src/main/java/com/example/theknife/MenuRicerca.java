@@ -3,10 +3,17 @@ package com.example.theknife;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
@@ -22,12 +29,12 @@ import java.util.ResourceBundle;
 /**
  * Controller per la gestione della ricerca dei ristoranti.
  * Permette di cercare ristoranti dal file CSV michelin_my_maps.csv
- * tramite un TextField che filtra dinamicamente i risultati.
+ * tramite un TextField che filtra dinamicamente i risultati e un MenuButton per ordinare.
  *
- * @author Samuele Secchi, 761031, Sede CO
- * @author Flavio Marin, 759910, Sede CO
- * @author Matilde Lecchi, 759875, Sede CO
- * @author Davide Caccia, 760742, Sede CO
+ * Inoltre, per ogni ristorante viene aggiunto un pulsante [info] che, una volta cliccato, ti porterà alla pagina
+ * con le informazioni sul ristorante (pagina già esistente, che potrai collegare).
+ *
+ * @author Samuele
  * @version 1.0
  */
 public class MenuRicerca implements Initializable {
@@ -38,26 +45,62 @@ public class MenuRicerca implements Initializable {
     @FXML
     private ListView<Ristorante> resultList;
 
+    @FXML
+    private MenuButton filterMenu;  // Assicurati che l'FXML contenga questo componente
+
     // Lista principale di tutti i ristoranti
     private ObservableList<Ristorante> tuttiRistoranti;
 
     // Lista filtrata per la ricerca
     private FilteredList<Ristorante> ristorantiFiltrati;
 
+    // Lista ordinata che incapsula la lista filtrata
+    private SortedList<Ristorante> sortedData;
+
     /**
-     * Inizializza il controller caricando i dati dal CSV
-     * e impostando i listener per la ricerca dinamica.
+     * Inizializza il controller caricando i dati dal CSV, impostando il filtro di ricerca ed
+     * configurando gli eventi per il MenuButton che gestisce l'ordinamento.
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Carica i ristoranti dal file CSV
         caricaRistorantiDaCSV();
 
-        // Configura la ListView con la lista filtrata
+        // Crea la FilteredList utilizzando la lista principale
         ristorantiFiltrati = new FilteredList<>(tuttiRistoranti, ristorante -> true);
-        resultList.setItems(ristorantiFiltrati);
 
-        // Aggiunge il listener per la ricerca in tempo reale
+        // Crea la SortedList incapsulando la FilteredList
+        sortedData = new SortedList<>(ristorantiFiltrati);
+
+        // Imposta la ListView per mostrare la SortedList
+        resultList.setItems(sortedData);
+
+        // Imposta un CellFactory personalizzato per aggiungere il pulsante [info] in ogni cella
+        resultList.setCellFactory(lv -> new ListCell<>() {
+            @Override
+            protected void updateItem(Ristorante item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    // Crea una label con le informazioni del ristorante (usa il toString() o personalizza come preferisci)
+                    Label infoLabel = new Label(item.toString());
+
+                    // Crea il pulsante [info] e definisci l'azione da eseguire al click
+                    Button infoButton = new Button("[info]");
+                    infoButton.setOnAction(e -> openRestaurantInfo(item));
+
+                    // Inserisci label e pulsante in un contenitore orizzontale
+                    HBox container = new HBox(infoLabel, infoButton);
+                    container.setSpacing(10);
+
+                    setGraphic(container);
+                }
+            }
+        });
+
+        // Aggiunge il listener per la ricerca in tempo reale: modifica il predicato della FilteredList
         searchField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable,
@@ -65,6 +108,49 @@ public class MenuRicerca implements Initializable {
                 filtraRistoranti(newValue);
             }
         });
+
+        // Imposta gli handler per i MenuItem del MenuButton per l'ordinamento
+        for (MenuItem item : filterMenu.getItems()) {
+            item.setOnAction(event -> {
+                String filterText = item.getText();
+                switch (filterText) {
+                    case "Per Nome":
+                        sortedData.setComparator((r1, r2) -> r1.getNome().compareToIgnoreCase(r2.getNome()));
+                        break;
+                    case "Per Città":
+                        sortedData.setComparator((r1, r2) -> r1.getCitta().compareToIgnoreCase(r2.getCitta()));
+                        break;
+                    case "Per Tipo Cucina":
+                        sortedData.setComparator((r1, r2) -> r1.getTipo().compareToIgnoreCase(r2.getTipo()));
+                        break;
+                    default:
+                        sortedData.setComparator(null);
+                        break;
+                }
+                // Aggiorna il testo del MenuButton per indicare il criterio di ordinamento selezionato
+                filterMenu.setText(filterText);
+            });
+        }
+    }
+
+    /**
+     * Metodo di supporto per aprire la pagina di informazioni sul ristorante.
+     * Qui puoi implementare la logica per il passaggio alla pagina info, ad esempio caricando l'FXML corrispondente.
+     *
+     * @param ristorante il ristorante di cui visualizzare le informazioni.
+     */
+    private void openRestaurantInfo(Ristorante ristorante) {
+        // Qui inserisci il codice per aprire la pagina delle informazioni.
+        // Ad esempio, potresti usare FXMLLoader per caricare la scena e passarle i dati del ristorante.
+        System.out.println("Apertura info per: " + ristorante.getNome());
+        // Esempio di stub:
+        // FXMLLoader loader = new FXMLLoader(getClass().getResource("restaurantInfo.fxml"));
+        // Parent root = loader.load();
+        // RestaurantInfoController controller = loader.getController();
+        // controller.setRistorante(ristorante);
+        // Stage stage = new Stage();
+        // stage.setScene(new Scene(root));
+        // stage.show();
     }
 
     /**
@@ -89,14 +175,12 @@ public class MenuRicerca implements Initializable {
                 // Salta l'header se presente
                 if (isFirstLine) {
                     isFirstLine = false;
-                    // Controlla se la prima riga contiene header
                     if (line.toLowerCase().contains("name") ||
                             line.toLowerCase().contains("nome") ||
                             line.toLowerCase().contains("ristorante")) {
                         continue;
                     }
                 }
-
                 // Parsing della riga CSV
                 Ristorante ristorante = parseRigaCSV(line);
                 if (ristorante != null) {
@@ -110,15 +194,13 @@ public class MenuRicerca implements Initializable {
         } catch (IOException e) {
             System.err.println("Errore nel caricamento del file CSV: " + e.getMessage());
             e.printStackTrace();
-
-            // Aggiungi alcuni ristoranti di esempio se il file non viene trovato
             aggiungiRistorantiEsempio();
         }
     }
 
     /**
-     * Parsing di una riga del CSV per creare un oggetto Ristorante
-     * Adatta questo metodo in base alla struttura del tuo CSV
+     * Parsing di una riga del CSV per creare un oggetto Ristorante.
+     * Adatta questo metodo in base alla struttura del tuo CSV.
      */
     private Ristorante parseRigaCSV(String line) {
         try {
@@ -126,8 +208,6 @@ public class MenuRicerca implements Initializable {
             String[] parts = parseCSVLine(line);
 
             if (parts.length >= 2) {
-                // Assumi che le prime colonne siano: nome, indirizzo, città, etc.
-                // Adatta questi indici in base alla struttura del tuo CSV
                 String nome = parts[0].trim().replaceAll("\"", "");
                 String indirizzo = parts.length > 1 ? parts[1].trim().replaceAll("\"", "") : "";
                 String citta = parts.length > 2 ? parts[2].trim().replaceAll("\"", "") : "";
@@ -142,7 +222,7 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Parsing più robusto per gestire CSV con virgolette
+     * Parsing più robusto per gestire CSV con virgolette.
      */
     private String[] parseCSVLine(String line) {
         List<String> result = new ArrayList<>();
@@ -160,19 +240,16 @@ public class MenuRicerca implements Initializable {
             }
         }
         result.add(currentField.toString());
-
         return result.toArray(new String[0]);
     }
 
     /**
-     * Filtra i ristoranti in base al testo inserito nel campo di ricerca
+     * Filtra i ristoranti in base al testo inserito nel campo di ricerca.
      */
     private void filtraRistoranti(String filtro) {
         if (filtro == null || filtro.trim().isEmpty()) {
-            // Se il campo è vuoto, mostra tutti i ristoranti
             ristorantiFiltrati.setPredicate(ristorante -> true);
         } else {
-            // Filtra per nome, città o tipo di cucina (case insensitive)
             String filtroLower = filtro.toLowerCase().trim();
             ristorantiFiltrati.setPredicate(ristorante ->
                     ristorante.getNome().toLowerCase().contains(filtroLower) ||
@@ -184,7 +261,7 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Aggiunge alcuni ristoranti di esempio se il CSV non viene trovato
+     * Aggiunge alcuni ristoranti di esempio se il CSV non viene trovato.
      */
     private void aggiungiRistorantiEsempio() {
         tuttiRistoranti.addAll(
@@ -197,7 +274,7 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Classe che rappresenta un ristorante
+     * Classe interna che rappresenta un ristorante.
      */
     public static class Ristorante {
         private String nome;
