@@ -160,7 +160,7 @@ public class MenuRicerca implements Initializable {
     private void openRestaurantInfo(Ristorante ristorante) {
         try {
             // Carica l'FXML della pagina dettagli
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ristorante-detail.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ristorante-detail.fxml"));
             Parent root = loader.load();
 
             // Ottieni il controller della pagina dettagli
