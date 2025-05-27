@@ -22,23 +22,30 @@
                 <VBox spacing="20" alignment="CENTER" styleClass="login-card">
                     <children>
                         <!-- Titolo -->
-                        <Label text="Benvenuto" styleClass="login-title"/>
+                        <Label text="Benvenuto in TheKnife" styleClass="login-title"/>
 
-                        <!-- Input per il nome utente -->
-                        <TextField fx:id="usernameField" promptText="Nome Utente"
+                        <!-- Input per il nome utente - AGGIORNATO -->
+                        <TextField fx:id="campoUsername" promptText="Nome Utente"
                                    maxWidth="280" styleClass="login-textfield"/>
 
-                        <!-- Input per la password (nascosta) -->
-                        <PasswordField fx:id="passwordField" promptText="Password"
+                        <!-- Input per la password (nascosta) - AGGIORNATO -->
+                        <PasswordField fx:id="campoPassword" promptText="Password"
                                        maxWidth="280" styleClass="login-textfield"/>
 
-                        <!-- Bottone principale per il login -->
-                        <Button fx:id="loginButton" text="Accedi"
-                                maxWidth="280" styleClass="primary-button"/>
+                        <!-- Bottone principale per il login - AGGIORNATO -->
+                        <Button fx:id="pulsanteAccesso" text="Accedi"
+                                maxWidth="280" styleClass="primary-button"
+                                onAction="#gestisciAccesso"/>
 
-                        <Button fx:id="skipButton" text="Accedi senza login"
+                        <!-- Bottone per accesso senza login - AGGIORNATO -->
+                        <Button fx:id="pulsanteSenzaLogin" text="Accedi senza login"
                                 maxWidth="280" styleClass="secondary-button"
-                                onAction="#handleSkipLogin"/>
+                                onAction="#gestisciAccessoSenzaLogin"/>
+
+                        <!-- Informazioni di debug aggiornate con password corrette -->
+                        <Label text="Test utenti: mario.rossi/hello, giulia.bianchi/secret, luca.verdi/password"
+                               style="-fx-font-size: 10px; -fx-text-fill: #666666; -fx-wrap-text: true;"
+                               maxWidth="280"/>
 
                     </children>
                 </VBox>

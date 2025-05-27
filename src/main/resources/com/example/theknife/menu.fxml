@@ -12,17 +12,25 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.MenuRicerca">
     <children>
         <Label id="customlabel" layoutX="-9.0" layoutY="-4.0" prefHeight="58.0" prefWidth="794.0" styleClass="header-label" stylesheets="@../../../data/stile.css" text="                    Ricerca" />
-        <TextField layoutX="161.0" layoutY="11.0" prefHeight="33.0" prefWidth="230.0" styleClass="search-field" stylesheets="@../../../data/stile.css" />
-        <ListView layoutX="-1.0" layoutY="54.0" prefHeight="442.0" prefWidth="786.0" styleClass="result-list" stylesheets="@../../../data/stile.css" />
-        <ImageView fitHeight="255.0" fitWidth="531.0" layoutX="20.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
+
+        <!-- TextField collegato al controller con fx:id -->
+        <TextField fx:id="searchField" layoutX="161.0" layoutY="11.0" prefHeight="33.0" prefWidth="230.0" promptText="Cerca ristorante..." styleClass="search-field" stylesheets="@../../../data/stile.css" />
+
+        <!-- ListView collegata al controller con fx:id -->
+        <ListView fx:id="resultList" layoutX="-1.0" layoutY="54.0" prefHeight="442.0" prefWidth="786.0" styleClass="result-list" stylesheets="@../../../data/stile.css" />
+
+        <!-- Immagine che si sovrappone alla ListView - potresti volerla rimuovere o riposizionare -->
+        <ImageView fitHeight="58.0" fitWidth="50.0" layoutY="-1.0" pickOnBounds="true" preserveRatio="true" visible="true">
             <image>
                 <Image url="@../../../loghi/Astolfo.png" />
             </image>
         </ImageView>
+
         <MenuButton layoutX="668.0" layoutY="6.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="107.0" styleClass="filter-menu" stylesheets="@../../../data/stile.css" text="Filtri">
             <items>
-                <MenuItem mnemonicParsing="false" text="Action 1" />
-                <MenuItem mnemonicParsing="false" text="Action 2" />
+                <MenuItem mnemonicParsing="false" text="Per Nome" />
+                <MenuItem mnemonicParsing="false" text="Per Città" />
+                <MenuItem mnemonicParsing="false" text="Per Tipo Cucina" />
             </items>
         </MenuButton>
     </children>
