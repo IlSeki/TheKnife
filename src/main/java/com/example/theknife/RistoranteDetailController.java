@@ -20,6 +20,8 @@ import javafx.scene.control.Alert;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
+import java.awt.Desktop;
+import java.net.URI;
 
 /**
  * Controller per la visualizzazione dettagliata di un ristorante.
@@ -30,7 +32,7 @@ import java.util.*;
  * @author Flavio Marin, 759910, Sede CO
  * @author Matilde Lecchi, 759875, Sede CO
  * @author Davide Caccia, 760742, Sede CO
- * @version 2.1
+ * @version 2.2
  * @since 2025-05-27
  */
 public class RistoranteDetailController implements Initializable {
@@ -58,9 +60,6 @@ public class RistoranteDetailController implements Initializable {
 
     private Ristorante ristorante;
     private HostServices hostServices;
-    private static final String CSV_FILE_PATH = "/data/michelin_my_maps.csv";
-    private static List<Map<String, String>> csvData = new ArrayList<>();
-    private static boolean csvLoaded = false;
 
     /**
      * Imposta i servizi host per aprire link esterni
@@ -76,266 +75,22 @@ public class RistoranteDetailController implements Initializable {
         setupTextAreas();
         setupPriceCircles();
 
-        // Carica i dati CSV se non già caricati
-        if (!csvLoaded) {
-            loadCSVData();
-        }
+        // Inizializza i componenti con valori di default
+        initializeDefaultValues();
     }
 
     /**
-     * Carica i dati dal file CSV
+     * Inizializza i componenti con valori di default
      */
-    private void loadCSVData() {
-        Task<Void> loadTask = new Task<Void>() {
-            @Override
-            protected Void call() throws Exception {
-                try {
-                    csvData.clear();
-
-                    // Prova prima a caricare dalle risorse
-                    InputStream inputStream = getClass().getResourceAsStream(CSV_FILE_PATH);
-
-                    // Se non trovato nelle risorse, prova nel percorso del progetto
-                    if (inputStream == null) {
-                        File csvFile = new File(CSV_FILE_PATH);
-                        if (csvFile.exists()) {
-                            inputStream = new FileInputStream(csvFile);
-                        } else {
-                            throw new FileNotFoundException("File CSV non trovato: " + CSV_FILE_PATH);
-                        }
-                    }
-
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                        String line;
-                        String[] headers = null;
-                        boolean isFirstLine = true;
-
-                        while ((line = reader.readLine()) != null) {
-                            if (isFirstLine) {
-                                headers = parseCSVLine(line);
-                                isFirstLine = false;
-                                continue;
-                            }
-
-                            String[] values = parseCSVLine(line);
-                            if (values.length >= headers.length) {
-                                Map<String, String> record = new HashMap<>();
-                                for (int i = 0; i < headers.length && i < values.length; i++) {
-                                    record.put(headers[i].trim(), values[i].trim());
-                                }
-                                csvData.add(record);
-                            }
-                        }
-                    }
-
-                    csvLoaded = true;
-                    Platform.runLater(() -> {
-                        System.out.println("CSV caricato con successo. Numero di ristoranti: " + csvData.size());
-                    });
-
-                } catch (Exception e) {
-                    Platform.runLater(() -> {
-                        showError("Errore nel caricamento del CSV",
-                                "Impossibile caricare il file " + CSV_FILE_PATH + ": " + e.getMessage());
-                    });
-                    throw e;
-                }
-                return null;
-            }
-        };
-
-        Thread loadThread = new Thread(loadTask);
-        loadThread.setDaemon(true);
-        loadThread.start();
-    }
-
-    /**
-     * Parsa una linea CSV gestendo le virgole all'interno delle virgolette
-     * @param line linea da parsare
-     * @return array di valori
-     */
-    private String[] parseCSVLine(String line) {
-        List<String> result = new ArrayList<>();
-        boolean inQuotes = false;
-        StringBuilder currentField = new StringBuilder();
-
-        for (int i = 0; i < line.length(); i++) {
-            char c = line.charAt(i);
-
-            if (c == '"') {
-                if (inQuotes && i + 1 < line.length() && line.charAt(i + 1) == '"') {
-                    // Doppia virgolette escaped
-                    currentField.append('"');
-                    i++; // Skip prossima virgoletta
-                } else {
-                    inQuotes = !inQuotes;
-                }
-            } else if (c == ',' && !inQuotes) {
-                result.add(currentField.toString());
-                currentField.setLength(0);
-            } else {
-                currentField.append(c);
-            }
-        }
-
-        result.add(currentField.toString());
-        return result.toArray(new String[0]);
-    }
-
-    /**
-     * Carica un ristorante specifico dal CSV usando il nome
-     * @param nomeRistorante nome del ristorante da cercare
-     */
-    public void loadRistoranteByName(String nomeRistorante) {
-        if (!csvLoaded) {
-            showError("CSV non caricato", "I dati CSV non sono ancora stati caricati. Riprovare.");
-            return;
-        }
-
-        Optional<Map<String, String>> recordOpt = csvData.stream()
-                .filter(record -> record.get("Name") != null &&
-                        record.get("Name").equalsIgnoreCase(nomeRistorante))
-                .findFirst();
-
-        if (recordOpt.isPresent()) {
-            Ristorante ristorante = createRistoranteFromRecord(recordOpt.get());
-            setRistorante(ristorante);
-        } else {
-            showError("Ristorante non trovato", "Nessun ristorante trovato con il nome: " + nomeRistorante);
-        }
-    }
-
-    /**
-     * Carica un ristorante specifico dal CSV usando l'indice
-     * @param index indice del ristorante nella lista
-     */
-    public void loadRistoranteByIndex(int index) {
-        if (!csvLoaded) {
-            showError("CSV non caricato", "I dati CSV non sono ancora stati caricati. Riprovare.");
-            return;
-        }
-
-        if (index >= 0 && index < csvData.size()) {
-            Ristorante ristorante = createRistoranteFromRecord(csvData.get(index));
-            setRistorante(ristorante);
-        } else {
-            showError("Indice non valido", "Indice ristorante non valido: " + index);
-        }
-    }
-
-    /**
-     * Carica un ristorante casuale dal CSV
-     */
-    public void loadRandomRistorante() {
-        if (!csvLoaded || csvData.isEmpty()) {
-            showError("CSV non disponibile", "I dati CSV non sono disponibili o vuoti.");
-            return;
-        }
-
-        Random random = new Random();
-        int randomIndex = random.nextInt(csvData.size());
-        loadRistoranteByIndex(randomIndex);
-    }
-
-    /**
-     * Restituisce la lista di tutti i nomi dei ristoranti
-     * @return lista dei nomi
-     */
-    public List<String> getAllRistoranteNames() {
-        if (!csvLoaded) return new ArrayList<>();
-
-        return csvData.stream()
-                .map(record -> record.get("Name"))
-                .filter(Objects::nonNull)
-                .collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
-    }
-
-    /**
-     * Crea un oggetto Ristorante da un record CSV
-     * @param record mappa con i dati del ristorante
-     * @return oggetto Ristorante
-     */
-    private Ristorante createRistoranteFromRecord(Map<String, String> record) {
-        // Estrai tutti i valori necessari per il costruttore
-        String nome = getValueOrDefault(record, "Name", "Nome non disponibile");
-        String indirizzo = getValueOrDefault(record, "Address", "Indirizzo non disponibile");
-        String localita = getValueOrDefault(record, "Location", "Località non disponibile");
-        String prezzo = getValueOrDefault(record, "Price", "€");
-        String cucina = getValueOrDefault(record, "Cuisine", "Non specificata");
-        String numeroTelefono = getValueOrDefault(record, "PhoneNumber", "");
-        String url = getValueOrDefault(record, "Url", ""); // Campo Url dal CSV
-        String sitoWeb = getValueOrDefault(record, "WebsiteUrl", "");
-        String premio = getValueOrDefault(record, "Award", "");
-        String stellaVerde = getValueOrDefault(record, "GreenStar", "No");
-        String servizi = getValueOrDefault(record, "FacilitiesAndServices", "");
-        String descrizione = getValueOrDefault(record, "Description", "");
-
-        // Gestione coordinate con valori di default
-        double longitudine = 0.0;
-        double latitudine = 0.0;
-
-        try {
-            String longitudeStr = record.get("Longitude");
-            if (longitudeStr != null && !longitudeStr.trim().isEmpty()) {
-                longitudine = Double.parseDouble(longitudeStr);
-            }
-        } catch (NumberFormatException e) {
-            longitudine = 0.0; // Valore di default
-        }
-
-        try {
-            String latitudeStr = record.get("Latitude");
-            if (latitudeStr != null && !latitudeStr.trim().isEmpty()) {
-                latitudine = Double.parseDouble(latitudeStr);
-            }
-        } catch (NumberFormatException e) {
-            latitudine = 0.0; // Valore di default
-        }
-
-        // Crea l'oggetto Ristorante usando il costruttore parametrizzato
-        return new Ristorante(
-                nome,
-                indirizzo,
-                localita,
-                prezzo,
-                cucina,
-                longitudine,
-                latitudine,
-                numeroTelefono,
-                url,
-                sitoWeb,
-                premio,
-                stellaVerde,
-                servizi,
-                descrizione
-        );
-    }
-
-    /**
-     * Restituisce il valore dal record o un valore di default
-     * @param record mappa con i dati
-     * @param key chiave da cercare
-     * @param defaultValue valore di default
-     * @return valore trovato o default
-     */
-    private String getValueOrDefault(Map<String, String> record, String key, String defaultValue) {
-        String value = record.get(key);
-        return (value != null && !value.trim().isEmpty()) ? value : defaultValue;
-    }
-
-    /**
-     * Mostra un messaggio di errore
-     * @param title titolo dell'errore
-     * @param message messaggio di errore
-     */
-    private void showError(String title, String message) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle(title);
-            alert.setHeaderText(null);
-            alert.setContentText(message);
-            alert.showAndWait();
-        });
+    private void initializeDefaultValues() {
+        if (nomeLabel != null) nomeLabel.setText("Caricamento...");
+        if (indirizzoLabel != null) indirizzoLabel.setText("Caricamento...");
+        if (localitaLabel != null) localitaLabel.setText("Caricamento...");
+        if (cucinaLabel != null) cucinaLabel.setText("Caricamento...");
+        if (telefonoLabel != null) telefonoLabel.setText("Caricamento...");
+        if (prezzoLabel != null) prezzoLabel.setText("€");
+        if (serviziTextArea != null) serviziTextArea.setText("Caricamento servizi...");
+        if (descrizioneTextArea != null) descrizioneTextArea.setText("Caricamento descrizione...");
     }
 
     /**
@@ -372,6 +127,24 @@ public class RistoranteDetailController implements Initializable {
      */
     public void setRistorante(Ristorante ristorante) {
         this.ristorante = ristorante;
+
+        // Debug per verificare i dati ricevuti
+        if (ristorante != null) {
+            System.out.println("=== DEBUG RISTORANTE ===");
+            System.out.println("Nome: " + ristorante.getNome());
+            System.out.println("Indirizzo: " + ristorante.getIndirizzo());
+            System.out.println("Localita: " + ristorante.getLocalita());
+            System.out.println("Cucina: " + ristorante.getCucina());
+            System.out.println("Prezzo: " + ristorante.getPrezzo());
+            System.out.println("Telefono: " + ristorante.getNumeroTelefono());
+            System.out.println("Sito Web: " + ristorante.getSitoWeb());
+            System.out.println("Premio: " + ristorante.getPremio());
+            System.out.println("Stella Verde: " + ristorante.getStellaVerde());
+            System.out.println("Servizi: " + ristorante.getServizi());
+            System.out.println("Descrizione: " + ristorante.getDescrizione());
+            System.out.println("========================");
+        }
+
         updateUI();
     }
 
@@ -379,65 +152,100 @@ public class RistoranteDetailController implements Initializable {
      * Aggiorna tutti i componenti dell'interfaccia con i dati del ristorante
      */
     private void updateUI() {
-        if (ristorante == null) return;
+        if (ristorante == null) {
+            System.out.println("ERRORE: Ristorante è null!");
+            return;
+        }
 
         Platform.runLater(() -> {
-            // Informazioni base
-            nomeLabel.setText(ristorante.getNome());
-            indirizzoLabel.setText(ristorante.getIndirizzo());
-            localitaLabel.setText(ristorante.getLocalita());
-            cucinaLabel.setText("Cucina " + ristorante.getCucina());
+            try {
+                // Informazioni base
+                if (nomeLabel != null) {
+                    nomeLabel.setText(ristorante.getNome() != null ? ristorante.getNome() : "Nome non disponibile");
+                }
 
-            // Telefono
-            String telefono = ristorante.getNumeroTelefono();
-            if (telefono != null && !telefono.trim().isEmpty()) {
-                telefonoLabel.setText(telefono);
-            } else {
-                telefonoLabel.setText("Non disponibile");
+                if (indirizzoLabel != null) {
+                    indirizzoLabel.setText(ristorante.getIndirizzo() != null ? ristorante.getIndirizzo() : "Indirizzo non disponibile");
+                }
+
+                if (localitaLabel != null) {
+                    localitaLabel.setText(ristorante.getLocalita() != null ? ristorante.getLocalita() : "Località non disponibile");
+                }
+
+                if (cucinaLabel != null) {
+                    String cucina = ristorante.getCucina() != null ? ristorante.getCucina() : "Non specificata";
+                    cucinaLabel.setText("Cucina " + cucina);
+                }
+
+                // Telefono
+                if (telefonoLabel != null) {
+                    String telefono = ristorante.getNumeroTelefono();
+                    if (telefono != null && !telefono.trim().isEmpty()) {
+                        telefonoLabel.setText(telefono);
+                    } else {
+                        telefonoLabel.setText("Non disponibile");
+                    }
+                }
+
+                // Sito web
+                if (sitoWebLink != null) {
+                    String sitoWeb = ristorante.getSitoWeb();
+                    if (sitoWeb != null && !sitoWeb.trim().isEmpty()) {
+                        sitoWebLink.setText("Visita il sito web");
+                        sitoWebLink.setVisible(true);
+                    } else {
+                        sitoWebLink.setVisible(false);
+                    }
+                }
+
+                // Prezzo
+                updatePrezzoDisplay();
+
+                // Premio
+                if (premioLabel != null && premioContainer != null) {
+                    String premio = ristorante.getPremio();
+                    if (premio != null && !premio.trim().isEmpty()) {
+                        premioLabel.setText(premio);
+                        premioContainer.setVisible(true);
+                    } else {
+                        premioContainer.setVisible(false);
+                    }
+                }
+
+                // Stella Verde
+                updateStellaVerdeDisplay();
+
+                // Servizi - CORREZIONE IMPORTANTE
+                if (serviziTextArea != null) {
+                    String servizi = ristorante.getServizi();
+                    System.out.println("Servizi dal ristorante: '" + servizi + "'"); // Debug
+                    if (servizi != null && !servizi.trim().isEmpty()) {
+                        serviziTextArea.setText(formatServizi(servizi));
+                    } else {
+                        serviziTextArea.setText("Nessun servizio specificato");
+                    }
+                }
+
+                // Descrizione - CORREZIONE IMPORTANTE
+                if (descrizioneTextArea != null) {
+                    String descrizione = ristorante.getDescrizione();
+                    System.out.println("Descrizione dal ristorante: '" + descrizione + "'"); // Debug
+                    if (descrizione != null && !descrizione.trim().isEmpty()) {
+                        descrizioneTextArea.setText(descrizione);
+                    } else {
+                        descrizioneTextArea.setText("Nessuna descrizione disponibile");
+                    }
+                }
+
+                // Immagine placeholder
+                setPlaceholderImage();
+
+                System.out.println("UI aggiornata con successo!");
+
+            } catch (Exception e) {
+                System.err.println("Errore durante l'aggiornamento dell'UI: " + e.getMessage());
+                e.printStackTrace();
             }
-
-            // Sito web
-            String sitoWeb = ristorante.getSitoWeb();
-            if (sitoWeb != null && !sitoWeb.trim().isEmpty()) {
-                sitoWebLink.setText("Visita il sito web");
-                sitoWebLink.setVisible(true);
-            } else {
-                sitoWebLink.setVisible(false);
-            }
-
-            // Prezzo
-            updatePrezzoDisplay();
-
-            // Premio
-            String premio = ristorante.getPremio();
-            if (premio != null && !premio.trim().isEmpty()) {
-                premioLabel.setText(premio);
-                premioContainer.setVisible(true);
-            } else {
-                premioContainer.setVisible(false);
-            }
-
-            // Stella Verde - Correzione per l'elemento FXML
-            updateStellaVerdeDisplay();
-
-            // Servizi
-            String servizi = ristorante.getServizi();
-            if (servizi != null && !servizi.trim().isEmpty()) {
-                serviziTextArea.setText(formatServizi(servizi));
-            } else {
-                serviziTextArea.setText("Nessun servizio specificato");
-            }
-
-            // Descrizione
-            String descrizione = ristorante.getDescrizione();
-            if (descrizione != null && !descrizione.trim().isEmpty()) {
-                descrizioneTextArea.setText(descrizione);
-            } else {
-                descrizioneTextArea.setText("Nessuna descrizione disponibile");
-            }
-
-            // Immagine placeholder
-            setPlaceholderImage();
         });
     }
 
@@ -445,6 +253,8 @@ public class RistoranteDetailController implements Initializable {
      * Aggiorna la visualizzazione del prezzo con indicatori circolari
      */
     private void updatePrezzoDisplay() {
+        if (prezzoLabel == null) return;
+
         String prezzo = ristorante.getPrezzo();
         prezzoLabel.setText(prezzo != null ? prezzo : "€");
 
@@ -465,51 +275,126 @@ public class RistoranteDetailController implements Initializable {
 
     /**
      * Calcola il livello di prezzo basandosi sulla stringa del prezzo
+     * Supporta diversi formati: €€€, $$$, £££, ecc.
      * @param prezzo stringa del prezzo
      * @return numero da 1 a 4 rappresentante il livello di prezzo
      */
     private int calcolaLivelloPrezzo(String prezzo) {
         if (prezzo == null || prezzo.trim().isEmpty()) return 1;
 
-        // Conta il numero di simboli € nella stringa
-        long count = prezzo.chars().filter(ch -> ch == '€').count();
-        return Math.max(1, Math.min(4, (int) count));
+        String prezzoTrimmed = prezzo.trim();
+
+        // Metodo 1: Conta i simboli di valuta comuni
+        long euroCount = prezzoTrimmed.chars().filter(ch -> ch == '€').count();
+        long dollarCount = prezzoTrimmed.chars().filter(ch -> ch == '$').count();
+        long poundCount = prezzoTrimmed.chars().filter(ch -> ch == '£').count();
+        long yenCount = prezzoTrimmed.chars().filter(ch -> ch == '¥').count();
+
+        // Trova il massimo tra i simboli di valuta
+        long maxCurrencyCount = Math.max(Math.max(euroCount, dollarCount),
+                Math.max(poundCount, yenCount));
+
+        if (maxCurrencyCount > 0) {
+            return Math.max(1, Math.min(4, (int) maxCurrencyCount));
+        }
+
+        // Metodo 2: Se non ci sono simboli di valuta, cerca pattern ripetitivi
+        // Esempi: "Alto", "Medio-Alto", "Basso", ecc.
+        String prezzoLower = prezzoTrimmed.toLowerCase();
+
+        // Pattern per prezzi testuali italiani
+        if (prezzoLower.contains("molto alto") || prezzoLower.contains("lusso") ||
+                prezzoLower.contains("premium") || prezzoLower.contains("esclusivo")) {
+            return 4;
+        } else if (prezzoLower.contains("alto") || prezzoLower.contains("caro") ||
+                prezzoLower.contains("costoso")) {
+            return 3;
+        } else if (prezzoLower.contains("medio") || prezzoLower.contains("moderato") ||
+                prezzoLower.contains("ragionevole")) {
+            return 2;
+        } else if (prezzoLower.contains("basso") || prezzoLower.contains("economico") ||
+                prezzoLower.contains("conveniente")) {
+            return 1;
+        }
+
+        // Metodo 3: Pattern per prezzi testuali inglesi
+        if (prezzoLower.contains("very expensive") || prezzoLower.contains("luxury") ||
+                prezzoLower.contains("fine dining")) {
+            return 4;
+        } else if (prezzoLower.contains("expensive") || prezzoLower.contains("upscale") ||
+                prezzoLower.contains("high-end")) {
+            return 3;
+        } else if (prezzoLower.contains("moderate") || prezzoLower.contains("mid-range") ||
+                prezzoLower.contains("average")) {
+            return 2;
+        } else if (prezzoLower.contains("cheap") || prezzoLower.contains("budget") ||
+                prezzoLower.contains("inexpensive")) {
+            return 1;
+        }
+
+        // Metodo 4: Conta caratteri ripetitivi (per pattern come "****" o "####")
+        if (prezzoTrimmed.length() > 0) {
+            char firstChar = prezzoTrimmed.charAt(0);
+            long charCount = prezzoTrimmed.chars().filter(ch -> ch == firstChar).count();
+
+            // Se tutti i caratteri sono uguali e sono simboli non alfabetici
+            if (charCount == prezzoTrimmed.length() && !Character.isLetter(firstChar)) {
+                return Math.max(1, Math.min(4, (int) charCount));
+            }
+        }
+
+        // Metodo 5: Analisi numerica per range di prezzi
+        // Cerca numeri nella stringa per determinare il range
+        String numbersOnly = prezzoTrimmed.replaceAll("[^0-9.]", "");
+        if (!numbersOnly.isEmpty()) {
+            try {
+                double prezzoNumerico = Double.parseDouble(numbersOnly);
+
+                // Range approssimativi per Euro (adatta in base alle tue esigenze)
+                if (prezzoNumerico >= 80) return 4;      // Molto costoso
+                else if (prezzoNumerico >= 50) return 3; // Costoso
+                else if (prezzoNumerico >= 25) return 2; // Medio
+                else return 1;                           // Economico
+
+            } catch (NumberFormatException e) {
+                // Se non riesce a parsare il numero, continua con il default
+            }
+        }
+
+        // Default: livello 1 se non riesce a determinare il prezzo
+        return 1;
     }
 
     /**
      * Aggiorna la visualizzazione della stella verde
      */
     private void updateStellaVerdeDisplay() {
+        if (stellaVerdeLabel == null) return;
+
         String stellaVerde = ristorante.getStellaVerde();
         if (stellaVerde != null && !stellaVerde.trim().isEmpty() &&
                 !"No".equalsIgnoreCase(stellaVerde.trim())) {
             stellaVerdeLabel.setText("Stella Verde");
 
-            // Trova il container della stella verde usando il lookup nell'FXML
-            VBox container = (VBox) stellaVerdeLabel.getParent().getParent();
-            if (container != null) {
-                container.setVisible(true);
+            // Mostra il container della stella verde se disponibile
+            if (stellaVerdeContainer != null) {
+                stellaVerdeContainer.setVisible(true);
             }
 
             // Carica icona stella verde se disponibile
-            try {
-                Image starImage = new Image(getClass().getResourceAsStream("/icons/green_star.png"));
-                if (stellaVerdeIcon != null) {
+            if (stellaVerdeIcon != null) {
+                try {
+                    Image starImage = new Image(getClass().getResourceAsStream("/icons/green_star.png"));
                     stellaVerdeIcon.setImage(starImage);
-                }
-            } catch (Exception e) {
-                // Se l'immagine non è disponibile, nascondi l'icona
-                if (stellaVerdeIcon != null) {
+                } catch (Exception e) {
+                    // Se l'immagine non è disponibile, nascondi l'icona
                     stellaVerdeIcon.setVisible(false);
                 }
             }
         } else {
-            // Trova il container della stella verde e nascondilo
-            if (stellaVerdeLabel != null && stellaVerdeLabel.getParent() != null) {
-                VBox container = (VBox) stellaVerdeLabel.getParent().getParent();
-                if (container != null) {
-                    container.setVisible(false);
-                }
+            // Nascondi il container della stella verde
+            if (stellaVerdeContainer != null) {
+                stellaVerdeContainer.setVisible(false);
             }
         }
     }
@@ -525,13 +410,22 @@ public class RistoranteDetailController implements Initializable {
         }
 
         // Sostituisce virgole e punti e virgola con a capo per migliore leggibilità
-        return servizi.replaceAll("[,;]", "\n• ").trim();
+        String formatted = servizi.replaceAll("[,;]", "\n• ").trim();
+
+        // Aggiungi un bullet point all'inizio se non presente
+        if (!formatted.startsWith("•")) {
+            formatted = "• " + formatted;
+        }
+
+        return formatted;
     }
 
     /**
      * Imposta un'immagine placeholder per il ristorante
      */
     private void setPlaceholderImage() {
+        if (ristoranteImage == null) return;
+
         try {
             Image placeholder = new Image(getClass().getResourceAsStream("/images/restaurant_placeholder.jpg"));
             ristoranteImage.setImage(placeholder);
@@ -542,36 +436,115 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Gestisce il click sul link del sito web
+     * Gestisce il click sul link del sito web - VERSIONE MIGLIORATA
+     * Utilizza sia HostServices che Desktop come fallback
      * @param event evento del click
      */
     @FXML
     private void handleSitoWebClick(ActionEvent event) {
-        if (ristorante != null && ristorante.getSitoWeb() != null &&
-                !ristorante.getSitoWeb().trim().isEmpty() && hostServices != null) {
+        if (ristorante == null || ristorante.getSitoWeb() == null ||
+                ristorante.getSitoWeb().trim().isEmpty()) {
+            System.out.println("Nessun sito web disponibile");
+            showAlert("Attenzione", "Nessun sito web disponibile per questo ristorante.");
+            return;
+        }
 
-            String url = ristorante.getSitoWeb().trim();
-            if (!url.startsWith("http://") && !url.startsWith("https://")) {
-                url = "https://" + url;
-            }
+        String url = ristorante.getSitoWeb().trim();
 
+        // Assicurati che l'URL abbia il protocollo
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "https://" + url;
+        }
+
+        System.out.println("Tentativo di apertura URL: " + url);
+
+        // Metodo 1: Prova con HostServices (JavaFX)
+        if (hostServices != null) {
             try {
                 hostServices.showDocument(url);
+                System.out.println("URL aperto con HostServices");
+                return;
             } catch (Exception e) {
-                System.err.println("Errore nell'apertura del sito web: " + e.getMessage());
+                System.err.println("Errore con HostServices: " + e.getMessage());
+            }
+        }
+
+        // Metodo 2: Fallback con Desktop (AWT) se HostServices non funziona o non è disponibile
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(new URI(url));
+                    System.out.println("URL aperto con Desktop");
+                    return;
+                }
+            } catch (Exception e) {
+                System.err.println("Errore con Desktop: " + e.getMessage());
+            }
+        }
+
+        // Metodo 3: Tentativo con Runtime (comando del sistema operativo)
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+            Runtime runtime = Runtime.getRuntime();
+
+            if (os.contains("win")) {
+                // Windows
+                runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
+            } else if (os.contains("mac")) {
+                // macOS
+                runtime.exec("open " + url);
+            } else if (os.contains("nix") || os.contains("nux")) {
+                // Linux/Unix
+                runtime.exec("xdg-open " + url);
+            } else {
+                throw new UnsupportedOperationException("Sistema operativo non supportato: " + os);
+            }
+            System.out.println("URL aperto con comando del sistema operativo");
+        } catch (Exception e) {
+            System.err.println("Errore nell'apertura del sito web: " + e.getMessage());
+            showAlert("Errore", "Impossibile aprire il sito web. URL: " + url);
+        }
+    }
+
+    /**
+     * Gestisce il click sul numero di telefono
+     */
+    @FXML
+    private void handleTelefonoClick() {
+        if (ristorante != null && ristorante.getNumeroTelefono() != null) {
+            String telefono = ristorante.getNumeroTelefono();
+            System.out.println("Numero di telefono: " + telefono);
+
+            // Copia il numero negli appunti
+            try {
+                java.awt.datatransfer.StringSelection stringSelection =
+                        new java.awt.datatransfer.StringSelection(telefono);
+                java.awt.datatransfer.Clipboard clipboard =
+                        java.awt.Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(stringSelection, null);
+
+                showAlert("Info", "Numero di telefono copiato negli appunti: " + telefono);
+            } catch (Exception e) {
+                System.err.println("Errore nella copia del telefono: " + e.getMessage());
+                showAlert("Info", "Numero di telefono: " + telefono);
             }
         }
     }
 
     /**
-     * Gestisce il click sul numero di telefono (evento del mouse anziché Action)
+     * Mostra un alert informativo
+     * @param titolo titolo dell'alert
+     * @param messaggio messaggio dell'alert
      */
-    @FXML
-    private void handleTelefonoClick() {
-        // Implementazione futura per chiamate dirette
-        if (ristorante != null && ristorante.getNumeroTelefono() != null) {
-            System.out.println("Chiamata a: " + ristorante.getNumeroTelefono());
-        }
+    private void showAlert(String titolo, String messaggio) {
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle(titolo);
+            alert.setHeaderText(null);
+            alert.setContentText(messaggio);
+            alert.showAndWait();
+        });
     }
 
     /**
@@ -580,21 +553,5 @@ public class RistoranteDetailController implements Initializable {
      */
     public Ristorante getRistorante() {
         return ristorante;
-    }
-
-    /**
-     * Verifica se i dati CSV sono stati caricati
-     * @return true se i dati sono caricati
-     */
-    public boolean isCSVLoaded() {
-        return csvLoaded;
-    }
-
-    /**
-     * Restituisce il numero totale di ristoranti nel CSV
-     * @return numero di ristoranti
-     */
-    public int getTotalRistoranti() {
-        return csvLoaded ? csvData.size() : 0;
     }
 }

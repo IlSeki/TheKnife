@@ -200,7 +200,6 @@ public class MenuRicerca implements Initializable {
             InputStream inputStream = getClass().getResourceAsStream("/data/michelin_my_maps.csv");
             if (inputStream == null) {
                 System.err.println("File michelin_my_maps.csv non trovato in /data/");
-                aggiungiRistorantiEsempio();
                 return;
             }
 
@@ -229,7 +228,6 @@ public class MenuRicerca implements Initializable {
         } catch (IOException e) {
             System.err.println("Errore nel caricamento del file CSV: " + e.getMessage());
             e.printStackTrace();
-            aggiungiRistorantiEsempio();
         }
     }
 
@@ -357,28 +355,5 @@ public class MenuRicerca implements Initializable {
                             ristorante.getIndirizzo().toLowerCase().contains(filtroLower)
             );
         }
-    }
-
-    /**
-     * Aggiunge alcuni ristoranti di esempio se il CSV non viene trovato.
-     */
-    private void aggiungiRistorantiEsempio() {
-        tuttiRistoranti.addAll(
-                new Ristorante("Osteria Francescana", "Via Stella 22", "Modena", "€€€€", "Italiana",
-                        10.9258, 44.6478, "+39 059 210118", "", "https://osteriafrancescana.it",
-                        "3 Stelle Michelin", "No", "WiFi, Parcheggio", "Ristorante stellato di Massimo Bottura"),
-                new Ristorante("Le Bernardin", "155 West 51st Street", "New York", "€€€€", "Francese",
-                        -73.9826, 40.7614, "+1 212-554-1515", "", "https://le-bernardin.com",
-                        "3 Stelle Michelin", "No", "WiFi, Aria Condizionata", "Rinomato ristorante di pesce"),
-                new Ristorante("Noma", "Refshalevej 96", "Copenhagen", "€€€€", "Nordica",
-                        12.5989, 55.7005, "+45 32 96 32 97", "", "https://noma.dk",
-                        "2 Stelle Michelin", "Sì", "WiFi, Vista mare", "Cucina nordica innovativa"),
-                new Ristorante("El Celler de Can Roca", "Can Sunyer 48", "Girona", "€€€€", "Spagnola",
-                        2.8237, 41.9794, "+34 972 22 21 57", "", "https://cellercanroca.com",
-                        "3 Stelle Michelin", "No", "WiFi, Giardino", "Cucina catalana d'avanguardia"),
-                new Ristorante("Eleven Madison Park", "11 Madison Avenue", "New York", "€€€€", "Americana",
-                        -73.9876, 40.7420, "+1 212-889-0905", "", "https://elevenmadisonpark.com",
-                        "3 Stelle Michelin", "Sì", "WiFi, Vista parco", "Cucina americana contemporanea")
-        );
     }
 }
