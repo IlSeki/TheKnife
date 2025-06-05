@@ -1,129 +1,153 @@
-/* Impostazioni generali: background più raffinato e font eleganti */
+/* Impostazioni generali: background con palette del logo e font eleganti */
 .root {
-    -fx-background-color: #f8f9fa; /* Sfondo leggermente più chiaro e neutro */
+    -fx-background-color: #dddede; /* Grigio chiaro principale del logo */
     -fx-font-family: "Montserrat", "Segoe UI", "Roboto", sans-serif;
+    -fx-font-size: 1em; /* Base font size per scalabilità */
 }
 
-/* Card di login: container centrale pulito con proporzioni migliorate e ombra più raffinata */
+/* Card di login: container centrale pulito con colori e proporzioni del logo, ombra più raffinata */
 .login-card {
     -fx-background-color: #ffffff;
-    -fx-padding: 45px 35px;
-    -fx-spacing: 22px;
-    -fx-background-radius: 10px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 20, 0, 0, 5);
-    -fx-max-width: 340px;
+    -fx-padding: 2.8em 2.2em; /* Proporzioni migliorate */
+    -fx-spacing: 1.4em;
+    -fx-background-radius: 0.6em;
+    -fx-effect: dropshadow(three-pass-box, rgba(9, 16, 15, 0.15), 1.2em, 0, 0, 0.3em); /* Ombra più raffinata */
+    -fx-max-width: 21em;
+    -fx-border-color: #88a4a4; /* Colore del logo */
+    -fx-border-width: 0.06em;
 }
 
-/* Titolo del login: più elegante e moderno con spaziatura migliorata */
+/* Titolo del login: più elegante e moderno, utilizzando il verde scuro del logo */
 .login-title {
-    -fx-font-size: 30px;
+    -fx-font-size: 2em;
     -fx-font-weight: 700;
-    -fx-text-fill: #1a1a1a;
+    -fx-text-fill: #0c4b3d; /* Verde scuro del logo */
     -fx-alignment: center;
-    -fx-padding: 0 0 10px 0;
+    -fx-padding: 0 0 0.6em 0;
 }
 
-/* Stile per i campi di input: più raffinato con transizioni più fluide */
+/* Stile per i campi di input: più raffinato con transizioni e bordi con colori del logo */
 .login-textfield {
-    -fx-pref-height: 48px;
-    -fx-font-size: 15px;
-    -fx-text-fill: #333333;
+    -fx-pref-height: 3em;
+    -fx-font-size: 0.94em;
+    -fx-text-fill: #09100f; /* Nero verdastro */
     -fx-background-color: #ffffff;
-    -fx-border-color: #e0e0e0;
-    -fx-border-width: 1;
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
-    -fx-padding: 0 15px;
+    -fx-border-color: #88a4a4; /* Grigio-verde del logo */
+    -fx-border-width: 0.06em;
+    -fx-border-radius: 0.38em;
+    -fx-background-radius: 0.38em;
+    -fx-padding: 0 0.94em;
 }
 
-/* Bottone principale (Accedi): colore più raffinato e stile moderno */
+/* Bottone principale (Accedi): verde vivace del logo e stile moderno */
 .primary-button {
-    -fx-background-color: #da3743; /* Rosso distintivo di The Fork */
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 16px;
+    -fx-background-color: #24de3b; /* Verde vivace del logo */
+    -fx-text-fill: #09100f; /* Testo scuro per contrasto */
+    -fx-font-size: 1em;
     -fx-font-weight: bold;
-    -fx-background-radius: 6px;
-    -fx-padding: 12px 24px;
+    -fx-background-radius: 0.38em;
+    -fx-padding: 0.75em 1.5em;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.12), 5, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(9, 16, 15, 0.2), 0.31em, 0, 0, 0.13em);
 }
 .primary-button:hover {
-    -fx-background-color: #c1272d; /* Versione più scura per hover */
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.18), 6, 0, 0, 3);
+    -fx-background-color: #04450e; /* Verde scuro per hover */
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(9, 16, 15, 0.3), 0.38em, 0, 0, 0.19em);
 }
 
-/* Bottone secondario (Accedi senza login): stile outline più elegante */
+/* Bottone secondario (Registrati): stile outline più elegante utilizzando il verde medio */
 .secondary-button {
-    -fx-text-fill: #87ae73;
-    -fx-font-size: 15px;
+    -fx-background-color: transparent;
+    -fx-text-fill: #40856c; /* Verde medio del logo */
+    -fx-font-size: 0.94em;
     -fx-font-weight: bold;
-    -fx-border-color: #87ae73;
-    -fx-border-width: 1.5;
-    -fx-border-radius: 6px;
-    -fx-background-radius: 6px;
-    -fx-padding: 11px 22px;
+    -fx-border-color: #40856c;
+    -fx-border-width: 0.09em;
+    -fx-border-radius: 0.38em;
+    -fx-background-radius: 0.38em;
+    -fx-padding: 0.69em 1.38em;
     -fx-cursor: hand;
 }
 .secondary-button:hover {
-    -fx-background-color: #87ae73;
+    -fx-background-color: #40856c;
     -fx-text-fill: #ffffff;
-    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
+    -fx-effect: dropshadow(gaussian, rgba(9, 16, 15, 0.15), 0.25em, 0, 0, 0.13em);
+}
+
+/* Bottone ospite: toni neutri del logo */
+.guest-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #677374; /* Grigio medio */
+    -fx-font-size: 0.88em;
+    -fx-font-weight: bold;
+    -fx-border-color: #535f58; /* Grigio scuro */
+    -fx-border-width: 0.09em;
+    -fx-border-radius: 0.38em;
+    -fx-background-radius: 0.38em;
+    -fx-padding: 0.63em 1.25em;
+    -fx-cursor: hand;
+}
+.guest-button:hover {
+    -fx-background-color: #535f58;
+    -fx-text-fill: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(9, 16, 15, 0.1), 0.25em, 0, 0, 0.13em);
 }
 
 /* Effetto focus per i TextField e PasswordField (stile più raffinato) */
 .login-textfield:focused {
-    -fx-border-color: #da3743; /* Usa il colore principale di The Fork */
-    -fx-border-width: 1.5;
-    -fx-effect: dropshadow(three-pass-box, rgba(218, 55, 67, 0.15), 4, 0, 0, 0);
+    -fx-border-color: #24de3b; /* Verde vivace per focus */
+    -fx-border-width: 0.09em;
+    -fx-effect: dropshadow(three-pass-box, rgba(36, 222, 59, 0.2), 0.25em, 0, 0, 0);
 }
 
-/* Stile tabella migliorato per un look moderno */
+/* Stile tabella migliorato per un look moderno con colori del logo */
 .table-view {
     -fx-background-color: #ffffff;
-    -fx-background-radius: 8px;
+    -fx-background-radius: 0.5em;
     -fx-padding: 0;
-    -fx-border-color: #eeeeee;
-    -fx-border-radius: 8px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.08), 10, 0, 0, 3);
+    -fx-border-color: #88a4a4;
+    -fx-border-radius: 0.5em;
+    -fx-effect: dropshadow(three-pass-box, rgba(9, 16, 15, 0.1), 0.63em, 0, 0, 0.19em);
 }
 
 .table-view .column-header,
 .table-view .column-header-background .filler {
-    -fx-background-color: #da3743; /* Colore The Fork */
-    -fx-background-radius: 8px 8px 0 0;
-    -fx-padding: 5px;
+    -fx-background-color: #0c4b3d; /* Verde scuro del logo */
+    -fx-background-radius: 0.5em 0.5em 0 0;
+    -fx-padding: 0.31em;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: white;
+    -fx-text-fill: #ffffff;
     -fx-font-weight: 600;
-    -fx-font-size: 14px;
+    -fx-font-size: 0.88em;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 10px 5px;
+    -fx-padding: 0.63em 0.31em;
 }
 
 .table-view .cell {
-    -fx-cell-size: 40;
+    -fx-cell-size: 2.5em;
     -fx-alignment: center-left;
     -fx-background-color: #ffffff;
-    -fx-border-color: #f0f0f0;
-    -fx-text-fill: #333333;
-    -fx-font-size: 13px;
+    -fx-border-color: #dddede;
+    -fx-text-fill: #09100f;
+    -fx-font-size: 0.81em;
     -fx-alignment: CENTER_LEFT;
-    -fx-padding: 5px 10px;
+    -fx-padding: 0.31em 0.63em;
 }
 
 .table-row-cell:odd {
-    -fx-background-color: #f9f9f9;
+    -fx-background-color: #dddede; /* Grigio chiaro alternato */
 }
 
 .table-row-cell:selected {
-    -fx-background-color: #f1f1fc;
-    -fx-text-background-color: #da3743;
+    -fx-background-color: rgba(36, 222, 59, 0.1); /* Verde chiaro per selezione */
+    -fx-text-background-color: #0c4b3d;
     -fx-font-weight: bold;
 }
 
-/* Scrollbar moderno e minimale */
+/* Scrollbar moderno e minimale con colori del logo */
 .table-view .scroll-bar:horizontal,
 .table-view .scroll-bar:vertical {
     -fx-background-color: transparent;
@@ -133,7 +157,7 @@
 .table-view .decrement-button {
     -fx-background-color: transparent;
     -fx-background-radius: 2em;
-    -fx-padding: 5px;
+    -fx-padding: 0.31em;
 }
 
 .table-view .scroll-bar:horizontal .track,
@@ -145,18 +169,18 @@
 
 .table-view .scroll-bar:horizontal .thumb,
 .table-view .scroll-bar:vertical .thumb {
-    -fx-background-color: #d0d0d0;
-    -fx-background-radius: 10px;
+    -fx-background-color: #88a4a4;
+    -fx-background-radius: 0.63em;
 }
 
 .table-view .scroll-bar:horizontal .thumb:hover,
 .table-view .scroll-bar:vertical .thumb:hover {
-    -fx-background-color: #b0b0b0;
+    -fx-background-color: #677374;
 }
 
-/* Stile grafico moderno */
+/* Stile grafico moderno con colori del logo */
 .chart {
-    -fx-padding: 15px;
+    -fx-padding: 0.94em;
     -fx-background-color: transparent;
     -fx-legend-visible: false;
 }
@@ -167,142 +191,157 @@
 
 .chart-pie {
     -fx-border-color: transparent;
-    -fx-border-width: 0px;
+    -fx-border-width: 0;
 }
 
-/* Stili per i campi di testo (unificati) */
+/* Stili per i campi di testo (unificati) con colori del logo */
 .text-field, .search-field {
     -fx-background-color: #ffffff;
-    -fx-border-color: black;
-    -fx-border-width: 1px;
-    -fx-border-radius: 15px;
-    -fx-background-radius: 15px;
-    -fx-padding: 5px 10px;
-    -fx-text-fill: #333333;
+    -fx-border-color: #88a4a4;
+    -fx-border-width: 0.06em;
+    -fx-border-radius: 0.94em;
+    -fx-background-radius: 0.94em;
+    -fx-padding: 0.31em 0.63em;
+    -fx-text-fill: #09100f;
 }
 
-/* Stile per l'intestazione e le etichette principali */
+.text-field:focused, .search-field:focused {
+    -fx-border-color: #24de3b;
+    -fx-border-width: 0.13em;
+}
+
+/* Stile per l'intestazione e le etichette principali con colori del logo */
 .header-label, #customlabel {
-    -fx-background-color: #6cf860;
-    -fx-border-color: grey;
-    -fx-border-width: 3px;
+    -fx-background-color: rgba(136, 164, 164, 0.8); /* Grigio-verde traslucido */
+    -fx-border-color: #535f58;
+    -fx-border-width: 0.19em;
     -fx-border-style: solid;
     -fx-font-family: "Microsoft Tai Le Bold";
-    -fx-font-size: 18px;
+    -fx-font-size: 1.13em;
     -fx-font-weight: bold;
+    -fx-text-fill: #09100f;
 }
 
-/* Stile per il pulsante di menu e filtri */
+/* Stile per il pulsante di menu e filtri con colori del logo */
 .filter-menu, .menu-button {
-    -fx-background-color: #87ae73;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
+    -fx-background-color: rgba(64, 133, 108, 0.8); /* Verde medio traslucido */
+    -fx-border-radius: 0.63em;
+    -fx-background-radius: 0.63em;
     -fx-font-family: "Microsoft Tai Le Bold";
-    -fx-font-size: 18px;
+    -fx-font-size: 1.13em;
     -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
 }
 
 .filter-menu .arrow, .menu-button .arrow {
-    -fx-background-color: black;
+    -fx-background-color: #ffffff;
 }
 
-/* Stile per la lista dei risultati */
+/* Stile per la lista dei risultati con colori del logo */
 .result-list, .list-view {
-    -fx-background-color: white;
-    -fx-background-radius: 5px;
-    -fx-border-color: #e0e0e0;
-    -fx-border-radius: 5px;
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 0.31em;
+    -fx-border-color: #88a4a4;
+    -fx-border-radius: 0.31em;
 }
 
-/* Colori per grafici */
-.default-color0.chart-pie { -fx-pie-color: #da3743; } /* Colore principale The Fork */
-.default-color1.chart-pie { -fx-pie-color: #2b6da3; } /* Blu complementare */
-.default-color2.chart-pie { -fx-pie-color: #26a69a; } /* Verde acqua */
-.default-color3.chart-pie { -fx-pie-color: #ff9e00; } /* Arancione */
-.default-color4.chart-pie { -fx-pie-color: #7c43bd; } /* Viola */
+/* Colori per grafici utilizzando la palette del logo */
+.default-color0.chart-pie { -fx-pie-color: #24de3b; } /* Verde vivace */
+.default-color1.chart-pie { -fx-pie-color: #0c4b3d; } /* Verde scuro */
+.default-color2.chart-pie { -fx-pie-color: #40856c; } /* Verde medio */
+.default-color3.chart-pie { -fx-pie-color: #88a4a4; } /* Grigio-verde */
+.default-color4.chart-pie { -fx-pie-color: #677374; } /* Grigio medio */
+.default-color5.chart-pie { -fx-pie-color: #04450e; } /* Verde molto scuro */
+.default-color6.chart-pie { -fx-pie-color: #535f58; } /* Grigio scuro */
+.default-color7.chart-pie { -fx-pie-color: #948c94; } /* Grigio viola */
 
-/* Regole aggiuntive per la pagina Recensioni con id univoci */
+/* Regole aggiuntive per la pagina Recensioni con palette del logo */
 
 /* Contenitore principale */
 #appRoot {
-    /* Colore di sfondo neutro e luminoso per un look minimal */
-    -fx-background-color: #f0f2f5;
-    -fx-padding: 20px;
+    -fx-background-color: #dddede; /* Grigio chiaro principale */
+    -fx-padding: 1.25em;
 }
 
 /* HBox principale */
 #mainHBox {
-    /* Centratura e spazio tra gli elementi per un layout pulito */
     -fx-alignment: center;
-    -fx-spacing: 15px;
+    -fx-spacing: 0.94em;
 }
 
 /* TableView specifica per le recensioni */
 #reviewTable {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
-    -fx-table-cell-border-color: transparent; /* Rimuove i bordi interni */
+    -fx-table-cell-border-color: transparent;
 }
 
 /* Colonne della TableView */
 #reviewColumnStelle,
 #reviewColumnRecensione {
-    /* Testo moderno e leggero con padding adeguato per la leggibilità */
-    -fx-font-size: 14px;
-    -fx-padding: 8px;
+    -fx-font-size: 0.88em;
+    -fx-padding: 0.5em;
     -fx-alignment: CENTER_LEFT;
+    -fx-text-fill: #09100f;
 }
 
-/* VBox laterale a destra (contenente ComboBox e PieChart) */
+/* VBox laterale a destra */
 #sideVBox {
-    /* Stile "card" minimal con angoli arrotondati, padding generoso e un'ombra leggera */
     -fx-background-color: #ffffff;
-    -fx-background-radius: 10px;
-    -fx-padding: 15px;
-    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 10, 0, 0, 5);
+    -fx-background-radius: 0.63em;
+    -fx-padding: 0.94em;
+    -fx-effect: dropshadow(three-pass-box, rgba(9, 16, 15, 0.15), 0.63em, 0, 0, 0.31em);
+    -fx-border-color: #88a4a4;
+    -fx-border-width: 0.06em;
+    -fx-border-radius: 0.63em;
 }
 
 /* ComboBox delle recensioni */
 #reviewComboBox {
-    /* Aspetto pulito e moderno con bordi sottili e angoli arrotondati */
-    -fx-font-size: 14px;
-    -fx-background-radius: 5px;
-    -fx-border-radius: 5px;
-    -fx-border-color: #d0d0d0;
-    -fx-border-width: 1px;
-    -fx-padding: 5px 8px;
-    -fx-prompt-text-fill: derive(-fx-control-inner-background, -30%);
+    -fx-font-size: 0.88em;
+    -fx-background-radius: 0.31em;
+    -fx-border-radius: 0.31em;
+    -fx-border-color: #88a4a4;
+    -fx-border-width: 0.06em;
+    -fx-padding: 0.31em 0.5em;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #09100f;
+}
+
+#reviewComboBox:focused {
+    -fx-border-color: #24de3b;
+    -fx-border-width: 0.13em;
 }
 
 /* PieChart delle recensioni */
 #reviewPieChart {
-    /* Assicurare trasparenza di fondo e aggiungere un po' di padding per "respirare" */
     -fx-background-color: transparent;
-    -fx-padding: 10px;
+    -fx-padding: 0.63em;
 }
+
 /* Stile per il bottone Google Maps */
 .maps-button {
     -fx-background-color: #4285f4; /* Blu di Google */
     -fx-text-fill: white;
-    -fx-font-size: 12px;
+    -fx-font-size: 0.75em;
     -fx-font-weight: bold;
-    -fx-padding: 8 16 8 16;
-    -fx-background-radius: 20;
-    -fx-border-radius: 20;
+    -fx-padding: 0.5em 1em;
+    -fx-background-radius: 1.25em;
+    -fx-border-radius: 1.25em;
     -fx-cursor: hand;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 2, 0, 0, 1);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 0.125em, 0, 0, 0.0625em);
 }
 
 .maps-button:hover {
     -fx-background-color: #3367d6; /* Blu più scuro al hover */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 2);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 0.1875em, 0, 0, 0.125em);
     -fx-scale-y: 1.05;
     -fx-scale-x: 1.05;
 }
 
 .maps-button:pressed {
     -fx-background-color: #2851a3; /* Blu ancora più scuro quando premuto */
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 1, 0, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 0.0625em, 0, 0, 0);
     -fx-scale-y: 0.98;
     -fx-scale-x: 0.98;
 }
@@ -316,39 +355,139 @@
 
 /* Stili aggiuntivi per la sezione contatti */
 .contact-section {
-    -fx-background-color: #f8f9fa;
-    -fx-padding: 15;
-    -fx-background-radius: 10;
-    -fx-border-radius: 10;
+    -fx-background-color: #f8f9fa; /* Sfondo neutro */
+    -fx-padding: 0.94em;
+    -fx-background-radius: 0.63em;
+    -fx-border-radius: 0.63em;
 }
 
 .section-title {
-    -fx-font-size: 16px;
+    -fx-font-size: 0.88em;
     -fx-font-weight: bold;
-    -fx-text-fill: #333333;
+    -fx-text-fill: #0c4b3d; /* Verde scuro del logo */
 }
 
 .info-icon {
-    -fx-font-size: 16px;
-    -fx-min-width: 25px;
+    -fx-font-size: 1em;
+    -fx-min-width: 1.56em;
+    -fx-text-fill: #0c4b3d; /* Icone con colore del logo */
 }
 
 .info-text {
-    -fx-font-size: 14px;
-    -fx-text-fill: #333333;
+    -fx-font-size: 0.88em;
+    -fx-text-fill: #09100f; /* Testo scuro */
 }
 
 .info-subtext {
-    -fx-font-size: 12px;
-    -fx-text-fill: #666666;
+    -fx-font-size: 0.75em;
+    -fx-text-fill: #677374; /* Grigio medio */
 }
 
 .clickable-info {
-    -fx-text-fill: #007bff;
+    -fx-text-fill: #40856c; /* Verde medio del logo per link */
     -fx-cursor: hand;
 }
 
 .clickable-info:hover {
-    -fx-text-fill: #0056b3;
+    -fx-text-fill: #0c4b3d; /* Verde scuro per hover */
     -fx-underline: true;
+}
+
+/* Nuove classi per il login form */
+.login-subtitle {
+    -fx-font-size: 0.75em;
+    -fx-text-fill: #677374;
+}
+
+.field-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 0.75em;
+    -fx-text-fill: #09100f;
+}
+
+.separator-text {
+    -fx-font-size: 0.69em;
+    -fx-text-fill: #677374;
+}
+
+.description-text {
+    -fx-font-size: 0.75em;
+    -fx-text-fill: #677374;
+}
+
+.help-text {
+    -fx-font-size: 0.69em;
+    -fx-text-fill: #677374;
+    -fx-wrap-text: true;
+}
+
+.disclaimer-text {
+    -fx-font-size: 0.56em;
+    -fx-text-fill: #88a4a4;
+    -fx-wrap-text: true;
+}
+
+/* Separator con colore del logo */
+.separator .line {
+    -fx-background-color: #88a4a4;
+}
+
+/* Media queries simulate per diverse dimensioni di schermo (responsività mantenuta) */
+/* Per schermi piccoli (smartphone) */
+@media (max-width: 30em) {
+    .root {
+        -fx-font-size: 0.85em;
+    }
+
+    .login-card {
+        -fx-max-width: 18em;
+        -fx-padding: 2em 1.5em;
+        -fx-spacing: 1em;
+    }
+
+    .login-title {
+        -fx-font-size: 1.6em;
+    }
+
+    .login-textfield {
+        -fx-pref-height: 2.5em;
+        -fx-font-size: 0.85em;
+    }
+
+    .primary-button, .secondary-button, .guest-button {
+        -fx-padding: 0.6em 1.2em;
+        -fx-font-size: 0.9em;
+    }
+}
+
+/* Per schermi medi (tablet) */
+@media (min-width: 30.01em) and (max-width: 64em) {
+    .root {
+        -fx-font-size: 0.95em;
+    }
+
+    .login-card {
+        -fx-max-width: 20em;
+        -fx-padding: 2.5em 2em;
+    }
+
+    .login-title {
+        -fx-font-size: 1.8em;
+    }
+}
+
+/* Per schermi grandi (desktop) */
+@media (min-width: 64.01em) {
+    .root {
+        -fx-font-size: 1.1em;
+    }
+
+    .login-card {
+        -fx-max-width: 24em;
+        -fx-padding: 3.2em 2.5em;
+    }
+
+    .login-title {
+        -fx-font-size: 2.2em;
+    }
 }
