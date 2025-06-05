@@ -279,3 +279,75 @@
     -fx-background-color: transparent;
     -fx-padding: 10px;
 }
+/* Stile per il bottone Google Maps */
+.maps-button {
+    -fx-background-color: #4285f4; /* Blu di Google */
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 16 8 16;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 2, 0, 0, 1);
+}
+
+.maps-button:hover {
+    -fx-background-color: #3367d6; /* Blu più scuro al hover */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 2);
+    -fx-scale-y: 1.05;
+    -fx-scale-x: 1.05;
+}
+
+.maps-button:pressed {
+    -fx-background-color: #2851a3; /* Blu ancora più scuro quando premuto */
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 1, 0, 0, 0);
+    -fx-scale-y: 0.98;
+    -fx-scale-x: 0.98;
+}
+
+.maps-button:disabled {
+    -fx-background-color: #cccccc;
+    -fx-text-fill: #666666;
+    -fx-opacity: 0.6;
+    -fx-cursor: default;
+}
+
+/* Stili aggiuntivi per la sezione contatti */
+.contact-section {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 15;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+}
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.info-icon {
+    -fx-font-size: 16px;
+    -fx-min-width: 25px;
+}
+
+.info-text {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333333;
+}
+
+.info-subtext {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
+
+.clickable-info {
+    -fx-text-fill: #007bff;
+    -fx-cursor: hand;
+}
+
+.clickable-info:hover {
+    -fx-text-fill: #0056b3;
+    -fx-underline: true;
+}

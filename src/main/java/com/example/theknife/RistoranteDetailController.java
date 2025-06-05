@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -22,6 +23,8 @@ import java.net.URL;
 import java.util.*;
 import java.awt.Desktop;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Controller per la visualizzazione dettagliata di un ristorante.
@@ -32,7 +35,7 @@ import java.net.URI;
  * @author Flavio Marin, 759910, Sede CO
  * @author Matilde Lecchi, 759875, Sede CO
  * @author Davide Caccia, 760742, Sede CO
- * @version 2.2
+ * @version 2.3
  * @since 2025-05-27
  */
 public class RistoranteDetailController implements Initializable {
@@ -44,6 +47,7 @@ public class RistoranteDetailController implements Initializable {
     @FXML private Label cucinaLabel;
     @FXML private Label telefonoLabel;
     @FXML private Hyperlink sitoWebLink;
+    @FXML private Button posizioneButton; // Nuovo bottone per Google Maps
     @FXML private Label premioLabel;
     @FXML private ImageView stellaVerdeIcon;
     @FXML private Label stellaVerdeLabel;
@@ -74,9 +78,22 @@ public class RistoranteDetailController implements Initializable {
         // Inizializzazione dei componenti
         setupTextAreas();
         setupPriceCircles();
+        setupPosizioneButton();
 
         // Inizializza i componenti con valori di default
         initializeDefaultValues();
+    }
+
+    /**
+     * Configura il bottone posizione
+     */
+    private void setupPosizioneButton() {
+        if (posizioneButton != null) {
+            // Imposta lo stile del bottone (opzionale, dipende dal tuo CSS)
+            posizioneButton.getStyleClass().add("maps-button");
+            // Imposta il testo del bottone
+            posizioneButton.setText("📍 Vedi su Maps");
+        }
     }
 
     /**
@@ -198,6 +215,13 @@ public class RistoranteDetailController implements Initializable {
                     }
                 }
 
+                // Bottone posizione - aggiorna la visibilità
+                if (posizioneButton != null) {
+                    boolean hasLocation = hasValidLocation();
+                    posizioneButton.setVisible(hasLocation);
+                    posizioneButton.setDisable(!hasLocation);
+                }
+
                 // Prezzo
                 updatePrezzoDisplay();
 
@@ -247,6 +271,145 @@ public class RistoranteDetailController implements Initializable {
                 e.printStackTrace();
             }
         });
+    }
+
+    /**
+     * Verifica se il ristorante ha informazioni di posizione valide
+     * @return true se ha almeno indirizzo o località
+     */
+    private boolean hasValidLocation() {
+        if (ristorante == null) return false;
+
+        String indirizzo = ristorante.getIndirizzo();
+        String localita = ristorante.getLocalita();
+
+        return (indirizzo != null && !indirizzo.trim().isEmpty()) ||
+                (localita != null && !localita.trim().isEmpty());
+    }
+
+    /**
+     * Costruisce l'indirizzo completo per Google Maps
+     * @return stringa con l'indirizzo formattato per la ricerca
+     */
+    private String buildFullAddress() {
+        StringBuilder address = new StringBuilder();
+
+        // Aggiungi il nome del ristorante se disponibile
+        String nome = ristorante.getNome();
+        if (nome != null && !nome.trim().isEmpty()) {
+            address.append(nome.trim()).append(", ");
+        }
+
+        // Aggiungi l'indirizzo se disponibile
+        String indirizzo = ristorante.getIndirizzo();
+        if (indirizzo != null && !indirizzo.trim().isEmpty()) {
+            address.append(indirizzo.trim()).append(", ");
+        }
+
+        // Aggiungi la località se disponibile
+        String localita = ristorante.getLocalita();
+        if (localita != null && !localita.trim().isEmpty()) {
+            address.append(localita.trim());
+        }
+
+        // Rimuovi eventuali virgole finali
+        String result = address.toString().replaceAll(",\\s*$", "");
+
+        System.out.println("Indirizzo costruito per Maps: " + result);
+        return result;
+    }
+
+    /**
+     * Gestisce il click sul bottone posizione - apre Google Maps
+     * @param event evento del click
+     */
+    @FXML
+    private void handlePosizioneClick(ActionEvent event) {
+        if (ristorante == null || !hasValidLocation()) {
+            System.out.println("Nessuna posizione disponibile");
+            showAlert("Attenzione", "Nessuna informazione di posizione disponibile per questo ristorante.");
+            return;
+        }
+
+        try {
+            // Costruisci l'indirizzo completo
+            String fullAddress = buildFullAddress();
+
+            if (fullAddress.trim().isEmpty()) {
+                showAlert("Attenzione", "Impossibile determinare la posizione del ristorante.");
+                return;
+            }
+
+            // Codifica l'indirizzo per l'URL
+            String encodedAddress = URLEncoder.encode(fullAddress, StandardCharsets.UTF_8);
+
+            // Costruisci l'URL di Google Maps
+            String mapsUrl = "https://www.google.com/maps/search/?api=1&query=" + encodedAddress;
+
+            System.out.println("Tentativo di apertura Google Maps: " + mapsUrl);
+
+            // Apri l'URL usando gli stessi metodi del sito web
+            openExternalUrl(mapsUrl);
+
+        } catch (Exception e) {
+            System.err.println("Errore nell'apertura di Google Maps: " + e.getMessage());
+            e.printStackTrace();
+            showAlert("Errore", "Impossibile aprire Google Maps. Errore: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Apre un URL esterno usando diversi metodi come fallback
+     * @param url URL da aprire
+     */
+    private void openExternalUrl(String url) {
+        // Metodo 1: Prova con HostServices (JavaFX)
+        if (hostServices != null) {
+            try {
+                hostServices.showDocument(url);
+                System.out.println("URL aperto con HostServices");
+                return;
+            } catch (Exception e) {
+                System.err.println("Errore con HostServices: " + e.getMessage());
+            }
+        }
+
+        // Metodo 2: Fallback con Desktop (AWT) se HostServices non funziona o non è disponibile
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop desktop = Desktop.getDesktop();
+                if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                    desktop.browse(new URI(url));
+                    System.out.println("URL aperto con Desktop");
+                    return;
+                }
+            } catch (Exception e) {
+                System.err.println("Errore con Desktop: " + e.getMessage());
+            }
+        }
+
+        // Metodo 3: Tentativo con Runtime (comando del sistema operativo)
+        try {
+            String os = System.getProperty("os.name").toLowerCase();
+            Runtime runtime = Runtime.getRuntime();
+
+            if (os.contains("win")) {
+                // Windows
+                runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
+            } else if (os.contains("mac")) {
+                // macOS
+                runtime.exec("open " + url);
+            } else if (os.contains("nix") || os.contains("nux")) {
+                // Linux/Unix
+                runtime.exec("xdg-open " + url);
+            } else {
+                throw new UnsupportedOperationException("Sistema operativo non supportato: " + os);
+            }
+            System.out.println("URL aperto con comando del sistema operativo");
+        } catch (Exception e) {
+            System.err.println("Errore nell'apertura dell'URL: " + e.getMessage());
+            showAlert("Errore", "Impossibile aprire l'URL. URL: " + url);
+        }
     }
 
     /**
@@ -457,54 +620,7 @@ public class RistoranteDetailController implements Initializable {
         }
 
         System.out.println("Tentativo di apertura URL: " + url);
-
-        // Metodo 1: Prova con HostServices (JavaFX)
-        if (hostServices != null) {
-            try {
-                hostServices.showDocument(url);
-                System.out.println("URL aperto con HostServices");
-                return;
-            } catch (Exception e) {
-                System.err.println("Errore con HostServices: " + e.getMessage());
-            }
-        }
-
-        // Metodo 2: Fallback con Desktop (AWT) se HostServices non funziona o non è disponibile
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    desktop.browse(new URI(url));
-                    System.out.println("URL aperto con Desktop");
-                    return;
-                }
-            } catch (Exception e) {
-                System.err.println("Errore con Desktop: " + e.getMessage());
-            }
-        }
-
-        // Metodo 3: Tentativo con Runtime (comando del sistema operativo)
-        try {
-            String os = System.getProperty("os.name").toLowerCase();
-            Runtime runtime = Runtime.getRuntime();
-
-            if (os.contains("win")) {
-                // Windows
-                runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
-            } else if (os.contains("mac")) {
-                // macOS
-                runtime.exec("open " + url);
-            } else if (os.contains("nix") || os.contains("nux")) {
-                // Linux/Unix
-                runtime.exec("xdg-open " + url);
-            } else {
-                throw new UnsupportedOperationException("Sistema operativo non supportato: " + os);
-            }
-            System.out.println("URL aperto con comando del sistema operativo");
-        } catch (Exception e) {
-            System.err.println("Errore nell'apertura del sito web: " + e.getMessage());
-            showAlert("Errore", "Impossibile aprire il sito web. URL: " + url);
-        }
+        openExternalUrl(url);
     }
 
     /**

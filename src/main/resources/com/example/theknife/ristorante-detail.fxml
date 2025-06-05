@@ -11,7 +11,7 @@
 <ScrollPane xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.RistoranteDetailController">
     <content>
         <VBox spacing="0.0" styleClass="main-container">
-            <!-- Header con immagine -->
+            <!-- Header con immagine hero -->
             <VBox styleClass="header-section">
                 <ImageView fx:id="ristoranteImage" fitHeight="300.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="false" styleClass="restaurant-image" />
                 <VBox styleClass="header-overlay">
@@ -28,7 +28,7 @@
                 </VBox>
             </VBox>
 
-            <!-- Contenuto principale -->
+            <!-- Contenuto principale con layout a due colonne -->
             <HBox spacing="30.0" styleClass="content-section">
                 <VBox.margin>
                     <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
@@ -37,7 +37,7 @@
                 <!-- Colonna sinistra - Informazioni principali -->
                 <VBox spacing="25.0" styleClass="left-column" HBox.hgrow="ALWAYS">
 
-                    <!-- Indirizzo -->
+                    <!-- Sezione Indirizzo e Posizione -->
                     <VBox spacing="8.0" styleClass="info-section">
                         <Label styleClass="section-title" text="📍 Posizione">
                             <font>
@@ -47,10 +47,21 @@
                         <VBox spacing="5.0">
                             <Label fx:id="indirizzoLabel" styleClass="info-text" text="Via Roma, 123" wrapText="true" />
                             <Label fx:id="localitaLabel" styleClass="info-text-secondary" text="Milano, Italia" />
+                            <!-- Bottone Google Maps -->
+                            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Button fx:id="posizioneButton"
+                                        onAction="#handlePosizioneClick"
+                                        styleClass="maps-button"
+                                        text="📍 Vedi su Maps">
+                                    <HBox.margin>
+                                        <Insets top="5.0" />
+                                    </HBox.margin>
+                                </Button>
+                            </HBox>
                         </VBox>
                     </VBox>
 
-                    <!-- Prezzo -->
+                    <!-- Sezione Prezzo con indicatori visivi -->
                     <VBox spacing="8.0" styleClass="info-section">
                         <Label styleClass="section-title" text="💰 Fascia di Prezzo">
                             <font>
@@ -88,21 +99,28 @@
                         </HBox>
                     </VBox>
 
-                    <!-- Contatti -->
+                    <!-- Sezione Contatti -->
                     <VBox spacing="8.0" styleClass="info-section">
                         <Label styleClass="section-title" text="📞 Contatti">
                             <font>
                                 <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
-                        <VBox spacing="5.0">
-                            <Label fx:id="telefonoLabel" onMouseClicked="#handleTelefonoClick" styleClass="contact-link" text="+39 02 1234567" />
-                            <Hyperlink fx:id="sitoWebLink" onAction="#handleSitoWebClick" styleClass="website-link" text="Visita il sito web" />
+                        <VBox spacing="8.0">
+                            <Label fx:id="telefonoLabel" onMouseClicked="#handleTelefonoClick"
+                                   styleClass="contact-link" text="+39 02 1234567" />
+                            <Hyperlink fx:id="sitoWebLink" onAction="#handleSitoWebClick"
+                                       styleClass="website-link" text="Visita il sito web" />
                         </VBox>
                     </VBox>
 
-                    <!-- Riconoscimenti -->
+                    <!-- Sezione Riconoscimenti e Awards -->
                     <VBox spacing="15.0" styleClass="awards-section">
+                        <Label styleClass="section-title" text="🏆 Riconoscimenti">
+                            <font>
+                                <Font name="System Bold" size="16.0" />
+                            </font>
+                        </Label>
 
                         <!-- Premio -->
                         <HBox fx:id="premioContainer" alignment="CENTER_LEFT" spacing="10.0" styleClass="award-item">
@@ -124,7 +142,8 @@
                         <!-- Stella Verde -->
                         <VBox fx:id="stellaVerdeContainer" alignment="CENTER_LEFT" spacing="10.0" styleClass="award-item">
                             <HBox alignment="CENTER_LEFT" spacing="10.0">
-                                <ImageView fx:id="stellaVerdeIcon" fitHeight="20.0" fitWidth="20.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="stellaVerdeIcon" fitHeight="20.0" fitWidth="20.0"
+                                           pickOnBounds="true" preserveRatio="true" />
                                 <VBox>
                                     <Label styleClass="award-title" text="Sostenibilità">
                                         <font>
@@ -141,25 +160,36 @@
                 <!-- Colonna destra - Descrizione e servizi -->
                 <VBox spacing="25.0" styleClass="right-column" HBox.hgrow="ALWAYS">
 
-                    <!-- Descrizione -->
+                    <!-- Sezione Descrizione -->
                     <VBox spacing="10.0" styleClass="description-section">
                         <Label styleClass="section-title" text="📖 Descrizione">
                             <font>
                                 <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
-                        <TextArea fx:id="descrizioneTextArea" prefRowCount="6" styleClass="description-text" text="Descrizione del ristorante..." wrapText="true" />
+                        <TextArea fx:id="descrizioneTextArea" prefRowCount="6" styleClass="description-text"
+                                  text="Descrizione del ristorante..." wrapText="true" />
                     </VBox>
 
-                    <!-- Servizi e Strutture -->
+                    <!-- Sezione Servizi e Strutture -->
                     <VBox spacing="10.0" styleClass="services-section">
                         <Label styleClass="section-title" text="🍽️ Servizi e Strutture">
                             <font>
                                 <Font name="System Bold" size="16.0" />
                             </font>
                         </Label>
-                        <TextArea fx:id="serviziTextArea" prefRowCount="4" styleClass="services-text" text="Servizi disponibili..." wrapText="true" />
+                        <TextArea fx:id="serviziTextArea" prefRowCount="4" styleClass="services-text"
+                                  text="Servizi disponibili..." wrapText="true" />
                     </VBox>
+
+                    <!-- Separatore visivo opzionale -->
+                    <Separator styleClass="section-separator" />
+
+                    <!-- Spazio per eventuali sezioni aggiuntive -->
+                    <VBox spacing="10.0" styleClass="additional-info">
+                        <!-- Qui puoi aggiungere altre sezioni se necessario -->
+                    </VBox>
+
                 </VBox>
             </HBox>
         </VBox>

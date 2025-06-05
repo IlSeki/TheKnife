@@ -30,7 +30,7 @@ import java.io.IOException;
  * @version 1.0
  * @since 2025-05-20
  */
-public class App extends Application {
+public class  App extends Application {
 
     private static final double MIN_WIDTH = 800;
     private static final double MIN_HEIGHT = 600;
