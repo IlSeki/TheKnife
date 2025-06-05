@@ -54,11 +54,10 @@
 
 /* Bottone secondario (Accedi senza login): stile outline più elegante */
 .secondary-button {
-    -fx-background-color: transparent;
-    -fx-text-fill: #2b6da3; /* Blu più sofisticato */
+    -fx-text-fill: #87ae73;
     -fx-font-size: 15px;
     -fx-font-weight: bold;
-    -fx-border-color: #2b6da3;
+    -fx-border-color: #87ae73;
     -fx-border-width: 1.5;
     -fx-border-radius: 6px;
     -fx-background-radius: 6px;
@@ -66,7 +65,7 @@
     -fx-cursor: hand;
 }
 .secondary-button:hover {
-    -fx-background-color: #2b6da3;
+    -fx-background-color: #87ae73;
     -fx-text-fill: #ffffff;
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.1), 4, 0, 0, 2);
 }
@@ -195,7 +194,7 @@
 
 /* Stile per il pulsante di menu e filtri */
 .filter-menu, .menu-button {
-    -fx-background-color: rgba(188, 181, 184, 0.8);
+    -fx-background-color: #87ae73;
     -fx-border-radius: 10px;
     -fx-background-radius: 10px;
     -fx-font-family: "Microsoft Tai Le Bold";
