@@ -1,121 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Separator?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.theknife.LoginController"
-            prefWidth="600" prefHeight="500"
-            stylesheets="/data/stile.css">
+<AnchorPane prefHeight="500" prefWidth="600" stylesheets="@../../../data/stile.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.LoginController">
     <children>
         <!-- VBox principale centrata con la form di login -->
-        <VBox alignment="CENTER" spacing="20.0"
-              AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
                 <!-- Card di login principale -->
-                <VBox spacing="25" alignment="CENTER" styleClass="login-card" maxWidth="400">
+                <VBox alignment="CENTER" maxWidth="400" spacing="25" styleClass="login-card">
                     <children>
                         <!-- Titolo -->
-                        <VBox spacing="5" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="5">
                             <children>
-                                <Label text="Benvenuto in TheKnife" styleClass="login-title"/>
-                                <Label text="Accedi al tuo account o registrati per iniziare"
-                                       style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
+                                <Label styleClass="login-title" text="Benvenuto in TheKnife" />
+                                <Label text="Accedi al tuo account o registrati per iniziare" />
                             </children>
                         </VBox>
 
                         <!-- Sezione Login -->
-                        <VBox spacing="15" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="15">
                             <children>
-                                <Label text="LOGIN"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                                <Label text="LOGIN" />
 
                                 <!-- Campo Username -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Username" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <TextField fx:id="campoUsername" promptText="Inserisci il tuo username"
-                                                   maxWidth="300" styleClass="login-textfield"/>
+                                        <Label text="Username" />
+                                        <TextField fx:id="campoUsername" maxWidth="300" promptText="Inserisci il tuo username" styleClass="login-textfield" />
                                     </children>
                                 </VBox>
 
                                 <!-- Campo Password -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Password" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <PasswordField fx:id="campoPassword" promptText="Inserisci la tua password"
-                                                       maxWidth="300" styleClass="login-textfield"/>
+                                        <Label text="Password" />
+                                        <PasswordField fx:id="campoPassword" maxWidth="300" promptText="Inserisci la tua password" styleClass="login-textfield" />
                                     </children>
                                 </VBox>
 
                                 <!-- Bottone Accedi -->
-                                <Button text="Accedi" maxWidth="300" styleClass="primary-button"
-                                        onAction="#gestisciAccesso"/>
+                                <Button maxWidth="300" onAction="#gestisciAccesso" styleClass="primary-button" text="Accedi" />
                             </children>
                         </VBox>
 
                         <!-- Separatore -->
-                        <VBox spacing="10" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="10">
                             <children>
-                                <Separator maxWidth="250"/>
-                                <Label text="OPPURE"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888888;"/>
-                                <Separator maxWidth="250"/>
+                                <Separator maxWidth="250" />
+                                <Label text="OPPURE" />
+                                <Separator maxWidth="250" />
                             </children>
                         </VBox>
 
                         <!-- Sezione Registrazione -->
-                        <VBox spacing="15" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="15">
                             <children>
-                                <Label text="NUOVO UTENTE"
-                                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #333333;"/>
+                                <Label text="NUOVO UTENTE" />
 
-                                <VBox spacing="8" alignment="CENTER">
+                                <VBox alignment="CENTER" spacing="8">
                                     <children>
-                                        <Label text="Non sei ancora registrato?"
-                                               style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
-                                        <Label text="Crea un account per accedere a tutte le funzionalità"
-                                               style="-fx-font-size: 11px; -fx-text-fill: #888888; -fx-wrap-text: true;"
-                                               maxWidth="280"/>
+                                        <Label text="Non sei ancora registrato?" />
+                                        <Label maxWidth="280" text="Crea un account per accedere a tutte le funzionalità" />
                                     </children>
                                 </VBox>
 
                                 <!-- Bottone Registrati -->
-                                <Button text="Registrati Ora" maxWidth="300" styleClass="secondary-button"
-                                        onAction="#gestisciRegistrazione"/>
+                                <Button maxWidth="300" onAction="#gestisciRegistrazione" styleClass="secondary-button" text="Registrati Ora" />
                             </children>
                         </VBox>
 
                         <!-- Separatore -->
-                        <VBox spacing="10" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="10">
                             <children>
-                                <Separator maxWidth="250"/>
-                                <Label text="ACCESSO LIMITATO"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #888888;"/>
+                                <Separator maxWidth="250" />
+                                <Label text="ACCESSO LIMITATO" />
                             </children>
                         </VBox>
 
                         <!-- Sezione Accesso Ospite -->
-                        <VBox spacing="10" alignment="CENTER">
+                        <VBox alignment="CENTER" spacing="10">
                             <children>
-                                <Label text="Vuoi solo dare un'occhiata?"
-                                       style="-fx-font-size: 11px; -fx-text-fill: #666666;"/>
+                                <Label text="Vuoi solo dare un'occhiata?" />
 
                                 <!-- Bottone Accesso Ospite -->
-                                <Button text="Continua come Ospite" maxWidth="300" styleClass="guest-button"
-                                        onAction="#gestisciAccessoSenzaLogin"/>
+                                <Button maxWidth="300" onAction="#gestisciAccessoSenzaLogin" styleClass="guest-button" text="Continua come Ospite" />
 
-                                <Label text="* Funzionalità limitate per utenti non registrati"
-                                       style="-fx-font-size: 9px; -fx-text-fill: #999999; -fx-wrap-text: true;"
-                                       maxWidth="280"/>
+                                <Label maxWidth="280" text="* Funzionalità limitate per utenti non registrati" />
                             </children>
                         </VBox>
 
