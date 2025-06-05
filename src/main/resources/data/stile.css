@@ -173,16 +173,18 @@
 
 /* Stili per i campi di testo (unificati) */
 .text-field, .search-field {
-    -fx-border-color: grey;
+    -fx-background-color: #ffffff;
+    -fx-border-color: black;
     -fx-border-width: 1px;
     -fx-border-radius: 15px;
     -fx-background-radius: 15px;
     -fx-padding: 5px 10px;
+    -fx-text-fill: #333333;
 }
 
 /* Stile per l'intestazione e le etichette principali */
 .header-label, #customlabel {
-    -fx-background-color: rgba(200, 193, 197, 0.8);
+    -fx-background-color: #6cf860;
     -fx-border-color: grey;
     -fx-border-width: 3px;
     -fx-border-style: solid;

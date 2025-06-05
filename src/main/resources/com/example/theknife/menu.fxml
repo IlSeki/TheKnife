@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.MenuButton?>
@@ -13,17 +14,20 @@
         <!-- Header: etichetta che si estende per tutta la larghezza -->
         <Label fx:id="headerLabel" prefHeight="60.0" styleClass="header-label" stylesheets="@../../../data/stile.css" text="Ricerca" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
 
-        <!-- Campo di ricerca, ancorato a sinistra (dopo il logo) e a destra (prima del menu) -->
-        <TextField fx:id="searchField" prefHeight="40.0" promptText="Cerca ristorante..." styleClass="search-field" stylesheets="@../../../data/stile.css" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="130.0" AnchorPane.topAnchor="10.0" />
+        <!-- Campo di ricerca, più corto -->
+        <TextField fx:id="searchField" prefHeight="40.0" promptText="Cerca ristorante..." styleClass="search-field" stylesheets="@../../../data/stile.css" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="220.0" AnchorPane.topAnchor="10.0" />
 
-        <!-- MenuButton per i filtri, ancorato nell'angolo superiore destro -->
-        <MenuButton fx:id="filterMenu" prefHeight="40.0" prefWidth="100.0" styleClass="filter-menu" stylesheets="@../../../data/stile.css" text="Filtri" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <!-- MenuButton per i filtri, spostato più a sinistra -->
+        <MenuButton fx:id="filterMenu" prefHeight="40.0" prefWidth="80.0" styleClass="filter-menu" stylesheets="@../../../data/stile.css" text="Filtri" AnchorPane.rightAnchor="110.0" AnchorPane.topAnchor="10.0">
             <items>
                 <MenuItem text="Per Nome" />
                 <MenuItem text="Per Città" />
                 <MenuItem text="Per Tipo Cucina" />
             </items>
         </MenuButton>
+
+        <!-- Nuovo pulsante Menu Utente -->
+        <Button fx:id="userMenuButton" prefHeight="40.0" prefWidth="90.0" styleClass="user-menu-button" stylesheets="@../../../data/stile.css" text="Menu" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
 
         <!-- ListView che occupa lo spazio rimanente sotto l'header -->
         <ListView fx:id="resultList" styleClass="result-list" stylesheets="@../../../data/stile.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
