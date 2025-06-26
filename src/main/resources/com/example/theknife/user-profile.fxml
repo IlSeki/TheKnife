@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="20" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" 
+      fx:controller="com.example.theknife.UserProfileController"
+      stylesheets="@../../../data/stile.css">
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header con info utente -->
+    <VBox styleClass="profile-header">
+        <HBox alignment="CENTER_LEFT" spacing="10">
+            <VBox HBox.hgrow="ALWAYS">
+                <Label fx:id="nomeLabel" styleClass="profile-name"/>
+                <Label fx:id="ruoloLabel" styleClass="profile-role"/>
+            </VBox>
+            <Button fx:id="tornaalMenuButton" text="Torna al Menu" styleClass="primary-button"/>
+            <Button fx:id="dashboardButton" text="Dashboard Ristoratore" styleClass="primary-button"/>
+            <Button fx:id="logoutButton" text="Logout" styleClass="danger-button"/>
+        </HBox>
+    </VBox>
+
+    <!-- Sezione Recensioni -->
+    <VBox spacing="10">
+        <Label text="Le Mie Recensioni" styleClass="section-title"/>
+        <TableView fx:id="recensioniTable" VBox.vgrow="ALWAYS">
+            <columns>
+                <TableColumn fx:id="ristoranteColumn" text="Ristorante" prefWidth="200"/>
+                <TableColumn fx:id="stelleColumn" text="Stelle" prefWidth="60"/>
+                <TableColumn fx:id="testoColumn" text="Testo" prefWidth="300"/>
+                <TableColumn fx:id="dataColumn" text="Data" prefWidth="100"/>
+            </columns>
+        </TableView>
+    </VBox>
+
+    <!-- Sezione Preferiti (visibile solo per clienti) -->
+    <VBox fx:id="preferitiBox" spacing="10">
+        <Label text="I Miei Preferiti" styleClass="section-title"/>
+        <ListView fx:id="preferitiList" VBox.vgrow="ALWAYS"/>
+    </VBox>
+</VBox>

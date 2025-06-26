@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="TOP_CENTER" spacing="20.0" styleClass="main-container" stylesheets="@/data/stile.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.RistoranteInputController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+    <Label fx:id="formTitle" text="Dettagli Ristorante">
+        <font>
+            <Font name="Segoe UI Bold" size="24.0" />
+        </font>
+        <styleClass>
+            <String fx:value="section-title" />
+            <String fx:value="restaurant-name" />
+        </styleClass>
+    </Label>
+    <GridPane hgap="15.0" vgap="10.0">
+        <children>
+            <Label text="Nome:" GridPane.rowIndex="0" />
+            <TextField fx:id="nomeField" promptText="Nome del Ristorante" GridPane.columnIndex="1" />
+
+            <Label text="Indirizzo:" GridPane.rowIndex="1" />
+            <TextField fx:id="indirizzoField" promptText="Via, Numero Civico" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label text="Località:" GridPane.rowIndex="2" />
+            <TextField fx:id="localitaField" promptText="Città, Stato" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <Label text="Cucina:" GridPane.rowIndex="3" />
+            <TextField fx:id="cucinaField" promptText="Es: Italiana, Giapponese" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+            <Label text="Prezzo:" GridPane.rowIndex="4" />
+            <ComboBox fx:id="prezzoComboBox" promptText="Seleziona Livello Prezzo" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+
+            <Label text="Telefono:" GridPane.rowIndex="5" />
+            <TextField fx:id="telefonoField" promptText="+39 123 4567890" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+
+            <Label text="Sito Web:" GridPane.rowIndex="6" />
+            <TextField fx:id="sitoWebField" promptText="https://www.ristorante.it" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+
+            <Label text="Premio:" GridPane.rowIndex="7" />
+            <TextField fx:id="premioField" promptText="Es: 1 Stella Michelin" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+
+            <Label text="Stella Verde:" GridPane.rowIndex="8" />
+            <CheckBox fx:id="stellaVerdeCheckBox" text="Sì" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+
+            <Label text="Servizi:" GridPane.rowIndex="9" />
+            <TextArea fx:id="serviziTextArea" prefHeight="80.0" promptText="Elenca i servizi offerti (separati da virgola)" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+
+            <Label text="Descrizione:" GridPane.rowIndex="10" />
+            <TextArea fx:id="descrizioneTextArea" prefHeight="120.0" promptText="Breve descrizione del ristorante" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+
+            <Label text="Longitudine:" GridPane.rowIndex="11" />
+            <TextField fx:id="longitudineField" promptText="Es: 9.19" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+
+            <Label text="Latitudine:" GridPane.rowIndex="12" />
+            <TextField fx:id="latitudineField" promptText="Es: 45.46" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+        </children>
+        <columnConstraints>
+            <javafx.scene.layout.ColumnConstraints hgrow="SOMETIMES" maxWidth="150.0" minWidth="100.0" prefWidth="120.0" />
+            <javafx.scene.layout.ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="300.0" />
+        </columnConstraints>
+    </GridPane>
+    <HBox alignment="CENTER" spacing="20.0">
+        <Button fx:id="saveButton" onAction="#handleSave" text="Salva Ristorante" styleClass="primary-button" />
+        <Button fx:id="cancelButton" onAction="#handleCancel" text="Annulla" styleClass="secondary-button" />
+    </HBox>
+</VBox>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.MenuRicerca">
+
+    <children>
+        <!-- Header: etichetta che si estende per tutta la larghezza -->
+        <Label fx:id="headerLabel" prefHeight="60.0" styleClass="header-label" stylesheets="@../../../data/stile.css" text="Ricerca" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+
+        <!-- Campo di ricerca, dimensione ridotta per lasciare spazio ai pulsanti -->
+        <TextField fx:id="searchField" prefHeight="40.0" promptText="Cerca ristorante..." styleClass="search-field" stylesheets="@../../../data/stile.css" AnchorPane.leftAnchor="70.0" AnchorPane.rightAnchor="280.0" AnchorPane.topAnchor="10.0" />
+
+        <!-- MenuButton per i filtri, dimensione aumentata -->
+        <MenuButton fx:id="filterMenu" prefHeight="40.0" prefWidth="120.0" styleClass="filter-menu" stylesheets="@../../../data/stile.css" text="Filtri" AnchorPane.rightAnchor="140.0" AnchorPane.topAnchor="10.0">
+            <items>
+                <MenuItem text="Per Nome" />
+                <MenuItem text="Per Città" />
+                <MenuItem text="Per Tipo Cucina" />
+            </items>
+        </MenuButton>
+
+        <!-- Pulsante Menu Utente, dimensione aumentata -->
+        <Button fx:id="userMenuButton" onAction="#handleUserMenu" prefHeight="40.0" prefWidth="120.0" styleClass="user-menu-button" stylesheets="@../../../data/stile.css" text="Menu Utente" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0" />
+
+        <!-- Pulsante per accedere ai preferiti -->
+        <Button fx:id="preferitiButton" text="I Miei Preferiti" onAction="#handlePreferiti" prefWidth="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="70.0" />
+
+        <!-- Pulsante per accedere alla dashboard del ristoratore -->
+        <Button fx:id="dashboardButton" text="Dashboard Ristoratore" onAction="#handleRistoratoreDashboard" prefWidth="200.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="110.0" />
+
+        <!-- ListView che occupa lo spazio rimanente sotto l'header -->
+        <ListView fx:id="resultList" styleClass="result-list" stylesheets="@../../../data/stile.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
+    </children>
+</AnchorPane>

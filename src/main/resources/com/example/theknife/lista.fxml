@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.theknife.RistorantiController"
+      stylesheets="/data/stile.css"
+      spacing="10">
+    
+    <!-- Barra di navigazione -->
+    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="header-bar">
+        <padding>
+            <Insets top="10" right="20" bottom="10" left="20"/>
+        </padding>
+        
+        <Label text="TheKnife" styleClass="app-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        
+        <Button fx:id="profiloButton" text="Il Mio Profilo" onAction="#onProfiloClick" styleClass="nav-button"/>
+        <Button fx:id="dashboardButton" text="Dashboard Ristoratore" onAction="#onDashboardClick" 
+                styleClass="nav-button" visible="false" managed="false"/>
+    </HBox>
+
+    <!-- Barra di ricerca -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <padding>
+            <Insets left="20" right="20"/>
+        </padding>
+        <TextField fx:id="campoRicerca" promptText="Cerca ristoranti..." HBox.hgrow="ALWAYS"/>
+        <Button text="Cerca" onAction="#onCercaClick" styleClass="primary-button"/>
+    </HBox>
+
+    <!-- Tabella ristoranti -->
+    <TableView fx:id="tabellaRistoranti" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colonnaNome" text="Nome"/>
+            <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo"/>
+            <TableColumn fx:id="colonnaLocalita" text="Località"/>
+            <TableColumn fx:id="colonnaPrezzo" text="Prezzo"/>
+            <TableColumn fx:id="colonnaCucina" text="Cucina"/>
+        </columns>
+    </TableView>
+</VBox>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox spacing="10" xmlns:fx="http://javafx.com/fxml" fx:controller="com.example.theknife.RecensioniController">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+
+    <HBox spacing="20" alignment="CENTER_LEFT">
+        <Label text="Filtra per stelle:"/>
+        <ComboBox fx:id="comboBox" promptText="Tutte le stelle"/>
+    </HBox>
+
+    <SplitPane dividerPositions="0.6" VBox.vgrow="ALWAYS">
+        <VBox spacing="10">
+            <TableView fx:id="tableView" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colStelle" text="Stelle" prefWidth="60"/>
+                    <TableColumn fx:id="colTesto" text="Recensione" prefWidth="200"/>
+                    <TableColumn fx:id="colUtente" text="Utente" prefWidth="100"/>
+                    <TableColumn fx:id="colData" text="Data" prefWidth="100"/>
+                    <TableColumn fx:id="colRisposta" text="Risposta" prefWidth="150"/>
+                </columns>
+            </TableView>
+
+            <VBox spacing="5">
+                <Label text="La tua recensione:"/>
+                <TextArea fx:id="recensioneTextArea" prefRowCount="3" wrapText="true"/>
+                
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Stelle:"/>
+                    <Slider fx:id="stelleSlider" min="1" max="5" value="3" showTickLabels="true" 
+                            showTickMarks="true" snapToTicks="true" blockIncrement="1" 
+                            majorTickUnit="1" minorTickCount="0"/>
+                </HBox>
+
+                <HBox spacing="10">
+                    <Button fx:id="inviaButton" text="Invia Recensione" onAction="#handleInvia"/>
+                    <Button fx:id="modificaButton" text="Modifica" onAction="#handleModifica"/>
+                    <Button fx:id="eliminaButton" text="Elimina" onAction="#handleElimina"/>
+                </HBox>
+            </VBox>
+
+            <VBox fx:id="rispostaBox" spacing="5">
+                <Label text="Risposta del ristoratore:"/>
+                <TextArea fx:id="rispostaTextArea" prefRowCount="2" wrapText="true"/>
+                <Button fx:id="rispondiButton" text="Invia Risposta" onAction="#handleRispondi"/>
+            </VBox>
+        </VBox>
+
+        <PieChart fx:id="pieChart" title="Distribuzione Stelle"/>
+    </SplitPane>
+</VBox>
