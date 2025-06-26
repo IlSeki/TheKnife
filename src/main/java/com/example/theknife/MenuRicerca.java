@@ -501,4 +501,45 @@ public class MenuRicerca implements Initializable {
             });
         }
     }
+
+    private void openRistoranteDetail(Ristorante ristorante) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/ristorante-detail.fxml"));
+            Parent root = loader.load();
+            RistoranteDetailController controller = loader.getController();
+            controller.setRistorante(ristorante);
+            // Passa la callback di refresh per aggiornare la ricerca al ritorno
+            Parent rootToRestore = resultList.getScene().getRoot();
+            controller.setTornaAlMenuPrincipaleCallback(() -> {
+                Scene scene = root.getScene();
+                scene.setRoot(rootToRestore);
+                this.refreshData();
+            });
+            Stage currentStage = (Stage) resultList.getScene().getWindow();
+            Scene scene = new Scene(root);
+            currentStage.setScene(scene);
+            currentStage.show();
+        } catch (IOException e) {
+            showError("Errore", "Impossibile aprire i dettagli del ristorante: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Aggiorna dinamicamente la lista dei ristoranti filtrati.
+     */
+    public void refreshData() {
+        // Ricarica i ristoranti dal servizio e aggiorna la lista
+        tuttiRistoranti.setAll(RistoranteService.getInstance().getTuttiRistoranti());
+        ristorantiFiltrati = new FilteredList<>(tuttiRistoranti, p -> true);
+        sortedData = new SortedList<>(ristorantiFiltrati);
+        resultList.setItems(sortedData);
+    }
+    
+    private void showError(String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Errore");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
 }

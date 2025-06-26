@@ -191,7 +191,6 @@ public class UserProfileController implements Initializable {
             alert.showAndWait();
             return;
         }
-
         try {
             URL resourceUrl = getClass().getResource("/com/example/theknife/ristorante-detail.fxml");
             if (resourceUrl == null) {
@@ -201,7 +200,13 @@ public class UserProfileController implements Initializable {
             Parent root = loader.load();
             RistoranteDetailController controller = loader.getController();
             controller.setRistorante(ristorante);
-            
+            // Passa la callback di refresh per aggiornare il profilo al ritorno
+            Parent rootToRestore = nomeLabel.getScene().getRoot();
+            controller.setTornaAlMenuPrincipaleCallback(() -> {
+                Scene scene = root.getScene();
+                scene.setRoot(rootToRestore);
+                this.refreshData();
+            });
             Stage currentStage = (Stage) nomeLabel.getScene().getWindow();
             Scene scene = new Scene(root);
             addStylesheet(scene);
@@ -211,6 +216,17 @@ public class UserProfileController implements Initializable {
             System.err.println("Error loading restaurant details: " + e.getMessage());
             showError("Errore", "Impossibile aprire i dettagli del ristorante: " + e.getMessage());
         }
+    }
+
+    /**
+     * Aggiorna dinamicamente la lista delle recensioni e dei preferiti utente.
+     */
+    public void refreshData() {
+        // Aggiorna recensioni
+        List<Recensione> recensioniUtente = recensioneService.getRecensioniUtente(SessioneUtente.getUsernameUtente());
+        recensioniTable.setItems(FXCollections.observableArrayList(recensioniUtente));
+        // Aggiorna preferiti
+        aggiornaListaPreferiti();
     }
 
     private void showError(String header, String content) {

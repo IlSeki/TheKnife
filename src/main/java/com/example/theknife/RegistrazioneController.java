@@ -1,17 +1,9 @@
 package com.example.theknife;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.scene.Node;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -20,9 +12,23 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 
 /**
  * La classe {@code RegistrazioneController} gestisce la registrazione di nuovi utenti.
@@ -58,6 +64,8 @@ public class RegistrazioneController {
 
     @FXML
     private ComboBox<String> comboRuolo;
+
+    private Runnable onUserRegistered;
 
     /**
      * Inizializza il controller impostando i valori della ComboBox per il ruolo.
@@ -112,7 +120,7 @@ public class RegistrazioneController {
             if (salvaUtenteNelCSV(nuovoUtente)) {
                 mostraAvviso("Successo", "Registrazione completata con successo!\nPuoi ora effettuare il login.",
                         Alert.AlertType.INFORMATION);
-
+                if (onUserRegistered != null) onUserRegistered.run();
                 // Torna al login
                 tornaAlLogin(evento);
             } else {
@@ -343,5 +351,9 @@ public class RegistrazioneController {
         avviso.setHeaderText(null);
         avviso.setContentText(messaggio);
         avviso.showAndWait();
+    }
+
+    public void setOnUserRegistered(Runnable callback) {
+        this.onUserRegistered = callback;
     }
 }

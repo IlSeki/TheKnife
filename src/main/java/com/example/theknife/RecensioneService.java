@@ -71,6 +71,8 @@ public class RecensioneService {
      * </ul>
      */
     private void caricaRecensioni() {
+        recensioniMap.clear();
+        allRecensioni.clear();
         try (InputStream is = getClass().getResourceAsStream("/data/recensioni.csv")) {
             if (is == null) {
                 System.err.println("File recensioni.csv non trovato");
@@ -205,22 +207,18 @@ public class RecensioneService {
     }
 
     /**
-     * Recupera tutte le recensioni per un dato ristorante.
-     *
-     * @param nomeRistorante Il nome del ristorante
-     * @return Lista delle recensioni del ristorante
+     * Recupera tutte le recensioni per un dato ristorante (sempre aggiornate dal CSV)
      */
     public List<Recensione> getRecensioniRistorante(String nomeRistorante) {
+        caricaRecensioni();
         return recensioniMap.getOrDefault(nomeRistorante, new ArrayList<>());
     }
 
     /**
-     * Recupera tutte le recensioni fatte da un utente.
-     *
-     * @param username L'username dell'utente
-     * @return Lista delle recensioni fatte dall'utente
+     * Recupera tutte le recensioni fatte da un utente (sempre aggiornate dal CSV)
      */
     public List<Recensione> getRecensioniUtente(String username) {
+        caricaRecensioni();
         return recensioniMap.values().stream()
             .flatMap(List::stream)
             .filter(r -> r.getUsername().equals(username))
@@ -228,9 +226,10 @@ public class RecensioneService {
     }
 
     /**
-     * Calcola la media delle stelle per un ristorante
+     * Calcola la media delle stelle per un ristorante (sempre aggiornata dal CSV)
      */
     public double getMediaStelleRistorante(String ristoranteId) {
+        caricaRecensioni();
         List<Recensione> recensioni = recensioniMap.get(ristoranteId);
         if (recensioni == null || recensioni.isEmpty()) {
             return 0.0;

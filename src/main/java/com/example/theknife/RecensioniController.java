@@ -62,6 +62,7 @@ public class RecensioniController {
     private RistoratoreDashboardController parentController;
     private Parent rootToRestore;
     private Runnable tornaAlMenuPrincipaleCallback;
+    private Runnable refreshParentCallback;
 
     /**
      * Imposta il controller della dashboard del ristoratore come parent.
@@ -88,6 +89,9 @@ public class RecensioniController {
     }
     public void setTornaAlMenuPrincipaleCallback(Runnable callback) {
         this.tornaAlMenuPrincipaleCallback = callback;
+    }
+    public void setRefreshParentCallback(Runnable callback) {
+        this.refreshParentCallback = callback;
     }
 
     @FXML
@@ -121,12 +125,15 @@ public class RecensioniController {
         });
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
-                recensioneTextArea.setText(newVal.getTesto());
-                stelleSlider.setValue(newVal.getStelle());
-                
                 boolean isAutore = newVal.getUsername().equals(SessioneUtente.getUsernameUtente());
                 boolean isRistoratore = SessioneUtente.isRistoratore();
-                
+                if (isAutore) {
+                    recensioneTextArea.setText(newVal.getTesto());
+                    stelleSlider.setValue(newVal.getStelle());
+                } else {
+                    recensioneTextArea.clear();
+                    stelleSlider.setValue(1);
+                }
                 modificaButton.setVisible(isAutore);
                 eliminaButton.setVisible(isAutore);
                 rispondiButton.setVisible(isRistoratore && newVal.getRisposta().isEmpty());
@@ -196,28 +203,25 @@ public class RecensioniController {
             mostraErrore("Accesso richiesto", "Per scrivere una recensione devi effettuare l'accesso.");
             return;
         }
-
         if (recensioneTextArea.getText().trim().isEmpty()) {
             mostraErrore("Errore", "Il testo della recensione non può essere vuoto");
             return;
         }
-
         // Controlla se l'utente ha già recensito questo ristorante
         if (masterRecensioniList.stream()
                 .anyMatch(r -> r.getUsername().equals(SessioneUtente.getUsernameUtente()))) {
             mostraErrore("Errore", "Hai già recensito questo ristorante. Puoi modificare la tua recensione esistente.");
             return;
         }
-
         Recensione recensione = new Recensione(
             (int) stelleSlider.getValue(),
             recensioneTextArea.getText().trim(),
             ristoranteId,
             SessioneUtente.getUsernameUtente()
         );
-
         recensioneService.aggiungiRecensione(recensione);
-        caricaRecensioni();
+        refreshData();
+        if (refreshParentCallback != null) refreshParentCallback.run();
         pulisciCampi();
         notificaAggiornamentoRecensioni();
     }
@@ -238,8 +242,13 @@ public class RecensioniController {
             recensioneTextArea.getText(),
             (int) stelleSlider.getValue()
         );
-
-        caricaRecensioni();
+        String username = selected.getUsername();
+        refreshData();
+        if (refreshParentCallback != null) refreshParentCallback.run();
+        tableView.getItems().stream()
+            .filter(r -> r.getUsername().equals(username))
+            .findFirst()
+            .ifPresent(r -> tableView.getSelectionModel().select(r));
         pulisciCampi();
         notificaAggiornamentoRecensioni();
     }
@@ -255,7 +264,8 @@ public class RecensioniController {
         }
 
         recensioneService.eliminaRecensione(selected.getUsername(), ristoranteId);
-        caricaRecensioni();
+        refreshData();
+        if (refreshParentCallback != null) refreshParentCallback.run();
         pulisciCampi();
         notificaAggiornamentoRecensioni();
     }
@@ -272,7 +282,8 @@ public class RecensioniController {
 
         selected.setRisposta(rispostaTextArea.getText().trim());
         recensioneService.salvaRispostaRecensione(selected);
-        caricaRecensioni();
+        refreshData();
+        if (refreshParentCallback != null) refreshParentCallback.run();
         rispostaTextArea.clear();
         notificaAggiornamentoRecensioni();
     }

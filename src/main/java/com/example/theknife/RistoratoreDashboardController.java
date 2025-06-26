@@ -411,6 +411,7 @@ public class RistoratoreDashboardController implements Initializable {
             controller.setTornaAlMenuPrincipaleCallback(() -> {
                 Scene scene = recensioniRoot.getScene();
                 scene.setRoot(rootToRestore);
+                this.refreshData();
             });
             // Scene switch (finestra singola)
             Scene scene = ristorantiTable.getScene();

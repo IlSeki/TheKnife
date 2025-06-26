@@ -173,6 +173,7 @@ public class RistorantiController implements Initializable {
             controller.setTornaAlMenuPrincipaleCallback(() -> {
                 Scene scene = root.getScene();
                 scene.setRoot(rootToRestore);
+                this.refreshData();
             });
             // Scene switch (finestra singola)
             Scene scene = tabellaRistoranti.getScene();

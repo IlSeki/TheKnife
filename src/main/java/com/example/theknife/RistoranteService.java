@@ -155,23 +155,26 @@ public class RistoranteService {
     }
 
     /**
-     * Recupera un ristorante dal suo nome usando la cache
+     * Recupera un ristorante dal suo nome usando la cache aggiornata
      */
     public Ristorante getRistorante(String nome) {
+        caricaRistoranti();
         return ristoranti.get(nome);
     }
 
     /**
-     * Recupera tutti i ristoranti
+     * Recupera tutti i ristoranti (sempre aggiornati dal CSV)
      */
     public List<Ristorante> getTuttiRistoranti() {
+        caricaRistoranti();
         return new ArrayList<>(ristoranti.values());
     }
 
     /**
-     * Recupera una lista di ristoranti dai loro nomi
+     * Recupera una lista di ristoranti dai loro nomi (sempre aggiornati dal CSV)
      */
     public List<Ristorante> getRistorantiByNomi(Collection<String> nomi) {
+        caricaRistoranti();
         return nomi.stream()
             .map(this::getRistorante)
             .filter(Objects::nonNull)
@@ -179,9 +182,11 @@ public class RistoranteService {
     }
 
     /**
-     * Recupera i ristoranti di proprietà di un ristoratore
+     * Recupera i ristoranti di proprietà di un ristoratore (sempre aggiornati dal CSV)
      */
     public ObservableList<Ristorante> getRistorantiByRistoratore(String username) {
+        caricaRistoranti();
+        caricaProprietari();
         Set<String> ristorantiIds = proprietariRistoranti.getOrDefault(username, Collections.emptySet());
         return FXCollections.observableArrayList(
             ristorantiIds.stream()

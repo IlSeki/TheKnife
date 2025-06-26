@@ -169,7 +169,7 @@ public class RistoranteInputController implements Initializable {
                 
                 // Inizializza il controller per aggiornare la lista
                 RistoratoreDashboardController controller = loader.getController();
-                controller.refreshRistoranti();
+                controller.refreshData();
 
             } catch (IOException e) {
                 System.err.println("Errore nel ritorno alla dashboard: " + e.getMessage());

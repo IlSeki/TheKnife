@@ -120,17 +120,19 @@ public class PreferenceService {
     }
 
     /**
-     * Verifica se un ristorante è tra i preferiti di un utente
+     * Recupera tutti i ristoranti preferiti di un utente (sempre aggiornati dal CSV)
      */
-    public boolean isPreferito(String username, String ristoranteId) {
-        return preferitiPerUtente.containsKey(username) &&
-               preferitiPerUtente.get(username).contains(ristoranteId);
+    public Set<String> getPreferiti(String username) {
+        caricaPreferiti();
+        return preferitiPerUtente.getOrDefault(username, new HashSet<>());
     }
 
     /**
-     * Recupera tutti i ristoranti preferiti di un utente
+     * Verifica se un ristorante è tra i preferiti di un utente (sempre aggiornato dal CSV)
      */
-    public Set<String> getPreferiti(String username) {
-        return preferitiPerUtente.getOrDefault(username, new HashSet<>());
+    public boolean isPreferito(String username, String ristoranteId) {
+        caricaPreferiti();
+        return preferitiPerUtente.containsKey(username) &&
+               preferitiPerUtente.get(username).contains(ristoranteId);
     }
 }

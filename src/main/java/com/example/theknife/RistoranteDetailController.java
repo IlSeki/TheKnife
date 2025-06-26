@@ -753,9 +753,11 @@ public class RistoranteDetailController implements Initializable {
             // Passa il root di ritorno
             Parent rootToRestore = nomeLabel.getScene().getRoot();
             controller.setRootToRestore(rootToRestore);
+            // Callback: aggiorna le recensioni recenti quando si torna indietro
             controller.setTornaAlMenuPrincipaleCallback(() -> {
                 Scene scene = recensioniRoot.getScene();
                 scene.setRoot(rootToRestore);
+                this.refreshRecensioni();
             });
             // Scene switch (finestra singola)
             Scene scene = nomeLabel.getScene();
@@ -816,6 +818,13 @@ public class RistoranteDetailController implements Initializable {
      */
     public Ristorante getRistorante() {
         return ristorante;
+    }
+
+    /**
+     * Aggiorna la lista delle recensioni recenti (da chiamare dopo modifiche)
+     */
+    public void refreshRecensioni() {
+        loadRecensioni();
     }
 
     /**
