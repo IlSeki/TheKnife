@@ -8,10 +8,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -48,6 +51,7 @@ public class RecensioniController {
     @FXML private Button rispondiButton;
     @FXML private VBox rispostaBox;
     @FXML private TextArea rispostaTextArea;
+    @FXML private Label totaleRecensioniLabel;
 
     private final RecensioneService recensioneService = RecensioneService.getInstance();
     private final RistoranteOwnershipService ownershipService = RistoranteOwnershipService.getInstance();
@@ -56,6 +60,8 @@ public class RecensioniController {
     private ObservableList<Recensione> masterRecensioniList;
     private FilteredList<Recensione> filteredList;
     private RistoratoreDashboardController parentController;
+    private Parent rootToRestore;
+    private Runnable tornaAlMenuPrincipaleCallback;
 
     /**
      * Imposta il controller della dashboard del ristoratore come parent.
@@ -75,6 +81,13 @@ public class RecensioniController {
         if (parentController != null) {
             parentController.onRecensioneUpdated();
         }
+    }
+
+    public void setRootToRestore(Parent root) {
+        this.rootToRestore = root;
+    }
+    public void setTornaAlMenuPrincipaleCallback(Runnable callback) {
+        this.tornaAlMenuPrincipaleCallback = callback;
     }
 
     @FXML
@@ -133,13 +146,14 @@ public class RecensioniController {
             masterRecensioniList = FXCollections.observableArrayList(recensioni);
             filteredList = new javafx.collections.transformation.FilteredList<>(masterRecensioniList, p -> true);
             tableView.setItems(filteredList);
-            // Aggiorna anche grafici/statistiche se necessario
+            aggiornaPieChart();
         }
     }
 
     public void setRistoranteId(String id) {
         this.ristoranteId = id;
         refreshData();
+        aggiornaPieChart();
     }
 
     private void caricaRecensioni() {
@@ -148,19 +162,32 @@ public class RecensioniController {
         aggiornaPieChart();
     }
 
+    @FXML
+    private void handleTornaAlMenuPrincipale() {
+        // Torna sempre al dettaglio del ristorante
+        if (rootToRestore != null) {
+            Scene scene = pieChart.getScene();
+            scene.setRoot(rootToRestore);
+        }
+    }
+
     private void aggiornaPieChart() {
         pieChart.getData().clear();
         recensioniMap.clear();
-
+        int totale = 0;
         // Conta le recensioni per ogni numero di stelle
         for (Recensione r : masterRecensioniList) {
             recensioniMap.merge(r.getStelle(), 1, Integer::sum);
+            totale++;
         }
-
-        // Aggiorna il PieChart
-        recensioniMap.forEach((stelle, numero) -> 
-            pieChart.getData().add(new PieChart.Data(stelle + " ⭐", numero))
-        );
+        // Mostra sempre tutte le 5 quantità di stelle
+        for (int stelle = 1; stelle <= 5; stelle++) {
+            int count = recensioniMap.getOrDefault(stelle, 0);
+            pieChart.getData().add(new PieChart.Data(stelle + " ⭐", count));
+        }
+        if (totaleRecensioniLabel != null) {
+            totaleRecensioniLabel.setText("Totale recensioni: " + totale);
+        }
     }
 
     @FXML

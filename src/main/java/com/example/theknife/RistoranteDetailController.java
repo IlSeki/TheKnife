@@ -31,8 +31,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 /**
  * Controller per la visualizzazione dei dettagli di un ristorante.
@@ -749,24 +747,19 @@ public class RistoranteDetailController implements Initializable {
     private void handleMostraRecensioni() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/recensioni.fxml"));
-            if (loader.getLocation() == null) {
-                throw new IOException("File recensioni.fxml non trovato nel classpath");
-            }
-            Parent root = loader.load();
-
+            Parent recensioniRoot = loader.load();
             RecensioniController controller = loader.getController();
             controller.setRistoranteId(ristorante.getNome());
-
-            Stage stage = new Stage();
-            stage.setTitle("Recensioni - " + ristorante.getNome());
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(mostraRecensioniButton.getScene().getWindow());
-            stage.show();
-
-            // Aggiorna le recensioni quando si chiude la finestra
-            stage.setOnHiding(e -> loadRecensioni());
-
+            // Passa il root di ritorno
+            Parent rootToRestore = nomeLabel.getScene().getRoot();
+            controller.setRootToRestore(rootToRestore);
+            controller.setTornaAlMenuPrincipaleCallback(() -> {
+                Scene scene = recensioniRoot.getScene();
+                scene.setRoot(rootToRestore);
+            });
+            // Scene switch (finestra singola)
+            Scene scene = nomeLabel.getScene();
+            scene.setRoot(recensioniRoot);
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Errore", "Impossibile caricare le recensioni: " + e.getMessage());

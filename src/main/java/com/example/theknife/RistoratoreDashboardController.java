@@ -399,25 +399,22 @@ public class RistoratoreDashboardController implements Initializable {
             alert.showAndWait();
             return;
         }
-
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("recensioni.fxml"));
-            Parent root = loader.load();
-
+            Parent recensioniRoot = loader.load();
             RecensioniController controller = loader.getController();
             controller.setRistoranteId(selectedRistorante.getNome());
-            controller.setParentController(this); // Imposta il riferimento al controller padre
-
-            Stage stage = new Stage();
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.initOwner(((javafx.scene.Node) event.getSource()).getScene().getWindow());
-            stage.setTitle("Recensioni - " + selectedRistorante.getNome());
-            
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
-            stage.setScene(scene);
-
-            stage.show();
+            controller.setParentController(this);
+            // Passa il root di ritorno
+            Parent rootToRestore = ristorantiTable.getScene().getRoot();
+            controller.setRootToRestore(rootToRestore);
+            controller.setTornaAlMenuPrincipaleCallback(() -> {
+                Scene scene = recensioniRoot.getScene();
+                scene.setRoot(rootToRestore);
+            });
+            // Scene switch (finestra singola)
+            Scene scene = ristorantiTable.getScene();
+            scene.setRoot(recensioniRoot);
         } catch (IOException e) {
             showError("Errore nell'apertura della finestra delle recensioni", e);
         }

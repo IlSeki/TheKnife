@@ -10,6 +10,11 @@
         <Insets top="10" right="10" bottom="10" left="10"/>
     </padding>
 
+    <HBox alignment="CENTER_RIGHT" spacing="10">
+        <Button fx:id="tornaAlMenuButton" text="← Torna al ristorante" onAction="#handleTornaAlMenuPrincipale" styleClass="secondary-button" />
+        <Label fx:id="totaleRecensioniLabel" style="-fx-font-weight: bold; -fx-padding: 0 10 0 10;" />
+    </HBox>
+
     <HBox spacing="20" alignment="CENTER_LEFT">
         <Label text="Filtra per stelle:"/>
         <ComboBox fx:id="comboBox" promptText="Tutte le stelle"/>
