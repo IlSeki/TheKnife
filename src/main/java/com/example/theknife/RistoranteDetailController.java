@@ -836,9 +836,9 @@ public class RistoranteDetailController implements Initializable {
             Scene scene = nomeLabel.getScene();
             scene.setRoot(rootToRestore);
         } else {
-            // Fallback: torna al menu principale di default
+            // Fallback: torna alla lista ristoranti (menu principale moderno)
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("menu.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("lista.fxml"));
                 Parent root = loader.load();
                 Scene scene = nomeLabel.getScene();
                 scene.setRoot(root);

@@ -11,7 +11,6 @@
 <?import javafx.geometry.Insets?>
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.MenuRicerca">
-
     <children>
         <!-- Header: etichetta che si estende per tutta la larghezza -->
         <Label fx:id="headerLabel" prefHeight="60.0" styleClass="header-label" stylesheets="@../../../data/stile.css" text="Ricerca" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
