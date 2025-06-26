@@ -1,6 +1,7 @@
 package com.example.theknife;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.collections.FXCollections;
@@ -54,6 +55,27 @@ public class RecensioniController {
     private final Map<Integer, Integer> recensioniMap = new HashMap<>();
     private ObservableList<Recensione> masterRecensioniList;
     private FilteredList<Recensione> filteredList;
+    private RistoratoreDashboardController parentController;
+
+    /**
+     * Imposta il controller della dashboard del ristoratore come parent.
+     * Questo permette di aggiornare la dashboard quando vengono fatte modifiche alle recensioni.
+     *
+     * @param controller Il controller della dashboard del ristoratore
+     */
+    public void setParentController(RistoratoreDashboardController controller) {
+        this.parentController = controller;
+    }
+
+    /**
+     * Notifica il controller padre di eventuali aggiornamenti alle recensioni
+     * in modo che possa aggiornare le statistiche e la lista.
+     */
+    private void notificaAggiornamentoRecensioni() {
+        if (parentController != null) {
+            parentController.onRecensioneUpdated();
+        }
+    }
 
     @FXML
     public void initialize() {
@@ -105,9 +127,19 @@ public class RecensioniController {
         rispostaBox.setVisible(isRistoratore);
     }
 
+    public void refreshData() {
+        if (ristoranteId != null) {
+            List<Recensione> recensioni = recensioneService.getRecensioniRistorante(ristoranteId);
+            masterRecensioniList = FXCollections.observableArrayList(recensioni);
+            filteredList = new javafx.collections.transformation.FilteredList<>(masterRecensioniList, p -> true);
+            tableView.setItems(filteredList);
+            // Aggiorna anche grafici/statistiche se necessario
+        }
+    }
+
     public void setRistoranteId(String id) {
         this.ristoranteId = id;
-        caricaRecensioni();
+        refreshData();
     }
 
     private void caricaRecensioni() {
@@ -160,6 +192,7 @@ public class RecensioniController {
         recensioneService.aggiungiRecensione(recensione);
         caricaRecensioni();
         pulisciCampi();
+        notificaAggiornamentoRecensioni();
     }
 
     @FXML
@@ -181,6 +214,7 @@ public class RecensioniController {
 
         caricaRecensioni();
         pulisciCampi();
+        notificaAggiornamentoRecensioni();
     }
 
     @FXML
@@ -196,6 +230,7 @@ public class RecensioniController {
         recensioneService.eliminaRecensione(selected.getUsername(), ristoranteId);
         caricaRecensioni();
         pulisciCampi();
+        notificaAggiornamentoRecensioni();
     }
 
     @FXML
@@ -203,25 +238,16 @@ public class RecensioniController {
         Recensione selected = tableView.getSelectionModel().getSelectedItem();
         if (selected == null) return;
 
-        String currentUser = SessioneUtente.getUsernameUtente();
-        if (!ownershipService.isOwner(currentUser, selected.getRistoranteId())) {
-            mostraErrore("Errore", "Puoi rispondere solo alle recensioni dei tuoi ristoranti");
+        if (!SessioneUtente.isRistoratore() || rispostaTextArea.getText().trim().isEmpty()) {
+            mostraErrore("Errore", "Non puoi rispondere a questa recensione");
             return;
         }
 
-        if (rispostaTextArea.getText().trim().isEmpty()) {
-            mostraErrore("Errore", "La risposta non può essere vuota");
-            return;
-        }
-
-        recensioneService.aggiungiRisposta(
-            selected.getUsername(),
-            selected.getRistoranteId(),
-            rispostaTextArea.getText()
-        );
-
+        selected.setRisposta(rispostaTextArea.getText().trim());
+        recensioneService.salvaRispostaRecensione(selected);
         caricaRecensioni();
-        pulisciCampi();
+        rispostaTextArea.clear();
+        notificaAggiornamentoRecensioni();
     }
 
     private void pulisciCampi() {

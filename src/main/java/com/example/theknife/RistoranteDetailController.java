@@ -73,12 +73,14 @@ public class RistoranteDetailController implements Initializable {
     @FXML private Button preferitoButton;
     @FXML private ListView<Recensione> recensioniRecentList;
     @FXML private Button mostraRecensioniButton;
-    @FXML private Button scriviRecensioneButton;
 
     private Ristorante ristorante;
     private HostServices hostServices;
     private final PreferenceService preferenceService = PreferenceService.getInstance();
     private final RecensioneService recensioneService = RecensioneService.getInstance();
+    private Runnable returnToMenuCallback;
+    private Runnable tornaAlMenuPrincipaleCallback;
+    private Parent rootToRestore;
 
     /**
      * Imposta i servizi host per aprire link esterni
@@ -86,6 +88,22 @@ public class RistoranteDetailController implements Initializable {
      */
     public void setHostServices(HostServices hostServices) {
         this.hostServices = hostServices;
+    }
+
+    /**
+     * Imposta la callback per tornare al menu principale.
+     * @param cb callback da eseguire
+     */
+    public void setReturnToMenuCallback(Runnable cb) {
+        this.returnToMenuCallback = cb;
+    }
+
+    public void setRootToRestore(Parent root) {
+        this.rootToRestore = root;
+    }
+
+    public void setTornaAlMenuPrincipaleCallback(Runnable callback) {
+        this.tornaAlMenuPrincipaleCallback = callback;
     }
 
     @Override
@@ -141,7 +159,7 @@ public class RistoranteDetailController implements Initializable {
         });
 
         // Show/hide write review button based on user role
-        scriviRecensioneButton.setVisible(SessioneUtente.isCliente());
+        // scriviRecensioneButton.setVisible(SessioneUtente.isCliente()); // RIMOSSO: il bottone non esiste più
     }
 
     /**
@@ -755,41 +773,7 @@ public class RistoranteDetailController implements Initializable {
         }
     }
 
-    /**
-     * Gestisce il click per scrivere una recensione
-     */
-    @FXML
-    private void handleScriviRecensione() {
-        if (!SessioneUtente.isUtenteLoggato()) {
-            showAlert("Accesso richiesto", "Per scrivere una recensione devi effettuare l'accesso");
-            return;
-        }
 
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/recensioni.fxml"));
-            if (loader.getLocation() == null) {
-                throw new IOException("File recensioni.fxml non trovato nel classpath");
-            }
-            Parent root = loader.load();
-
-            RecensioniController controller = loader.getController();
-            controller.setRistoranteId(ristorante.getNome());
-
-            Stage stage = new Stage();
-            stage.setTitle("Scrivi Recensione - " + ristorante.getNome());
-            stage.setScene(new Scene(root));
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initOwner(scriviRecensioneButton.getScene().getWindow());
-            stage.show();
-
-            // Aggiorna le recensioni quando si chiude la finestra
-            stage.setOnHiding(e -> loadRecensioni());
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            showAlert("Errore", "Impossibile aprire il form per la recensione: " + e.getMessage());
-        }
-    }
 
     /**
      * Gestisce il click sul bottone preferito
@@ -839,6 +823,29 @@ public class RistoranteDetailController implements Initializable {
      */
     public Ristorante getRistorante() {
         return ristorante;
+    }
+
+    /**
+     * Gestisce il click sul pulsante "Torna al menu principale".
+     */
+    @FXML
+    private void handleTornaAlMenuPrincipale() {
+        if (tornaAlMenuPrincipaleCallback != null) {
+            tornaAlMenuPrincipaleCallback.run();
+        } else if (rootToRestore != null) {
+            Scene scene = nomeLabel.getScene();
+            scene.setRoot(rootToRestore);
+        } else {
+            // Fallback: torna al menu principale di default
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("menu.fxml"));
+                Parent root = loader.load();
+                Scene scene = nomeLabel.getScene();
+                scene.setRoot(root);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void showAlert(String title, String message) {

@@ -11,7 +11,7 @@
       stylesheets="@../../../data/stile.css">
     
     <padding>
-        <Insets top="20" right="20" bottom="20" left="20"/>
+        <Insets top="20" right="20" bottom="20" left="0"/> <!-- Rimosso padding sinistro -->
     </padding>
 
     <!-- Header -->
@@ -21,6 +21,7 @@
                 <Font size="24.0"/>
             </font>
         </Label>
+        <!-- Rimosso pulsante Aggiorna -->
         <Button fx:id="menuRicercaButton" text="Menu Ricerca" styleClass="primary-button" onAction="#onMenuRicercaClick"/>
         <Button fx:id="aggiungiRistoranteButton" text="➕ Nuovo Ristorante" styleClass="primary-button" onAction="#onAggiungiRistoranteClick"/>
     </HBox>

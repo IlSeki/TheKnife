@@ -20,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
-import javafx.stage.Stage;
 
 /**
  * Controller per la gestione dei ristoranti preferiti dell'utente.
@@ -129,18 +128,21 @@ public class PreferitiController implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ristorante-detail.fxml"));
             Parent root = loader.load();
-
             RistoranteDetailController controller = loader.getController();
             if (hostServices != null) {
                 controller.setHostServices(hostServices);
             }
             controller.setRistorante(ristorante);
-
-            Stage stage = new Stage();
-            stage.setTitle("Dettagli Ristorante - " + ristorante.getNome());
-            stage.setScene(new Scene(root));
-            stage.show();
-
+            // Salva il root originale e passalo al dettaglio
+            Parent rootToRestore = preferitiListView.getScene().getRoot();
+            controller.setRootToRestore(rootToRestore);
+            controller.setTornaAlMenuPrincipaleCallback(() -> {
+                Scene scene = root.getScene();
+                scene.setRoot(rootToRestore);
+            });
+            // Scene switch (finestra singola)
+            Scene scene = preferitiListView.getScene();
+            scene.setRoot(root);
         } catch (IOException e) {
             System.err.println("Errore nel caricamento della pagina dettagli: " + e.getMessage());
             e.printStackTrace();
@@ -160,6 +162,20 @@ public class PreferitiController implements Initializable {
 
         preferenceService.rimuoviPreferito(username, ristorante.getNome());
         caricaPreferiti();
+    }
+
+    /**
+     * Aggiorna dinamicamente la lista dei ristoranti preferiti.
+     * Recupera la lista aggiornata dei preferiti dal PreferenceService
+     * e aggiorna la ListView per riflettere le modifiche.
+     */
+    public void refreshData() {
+        String username = SessioneUtente.getUsernameUtente();
+        if (username == null) return;
+        Set<String> preferiti = preferenceService.getPreferiti(username);
+        List<Ristorante> ristoranti = ristoranteService.getRistorantiByNomi(preferiti);
+        ObservableList<Ristorante> items = FXCollections.observableArrayList(ristoranti);
+        preferitiListView.setItems(items);
     }
 
     private void mostraErrore(String titolo, String messaggio) {

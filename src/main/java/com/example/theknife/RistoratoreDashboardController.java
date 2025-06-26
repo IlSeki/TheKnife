@@ -71,10 +71,16 @@ public class RistoratoreDashboardController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        refreshData();
         setupRistorantiTable();
         loadRistoranti();
         setupRecensioniList();
         detailsContainer.setVisible(false);
+    }
+
+    public void refreshData() {
+        loadRistoranti();
+        // Aggiorna dettagli, grafici, ecc. se necessario
     }
 
     /**
@@ -135,6 +141,8 @@ public class RistoratoreDashboardController implements Initializable {
      * posseduti e RistoranteService per caricare i dettagli di ogni ristorante.
      */
     private void loadRistoranti() {
+        // Forza sempre il refresh dei dati
+        ownershipService.refreshOwnershipData();
         String currentUser = SessioneUtente.getUsernameUtente(); // Usa getUsernameUtente invece di getNomeUtente
         if (currentUser == null || currentUser.isEmpty()) {
             System.err.println("Nessun utente loggato");
@@ -355,6 +363,63 @@ public class RistoratoreDashboardController implements Initializable {
             
         } catch (IOException e) {
             showError("Errore durante l'apertura del form di inserimento", e);
+        }
+    }
+
+    /**
+     * Handler per il pulsante Aggiorna: forza il refresh dei dati dei ristoranti posseduti.
+     */
+    @FXML
+    private void onAggiornaClick(ActionEvent event) {
+        loadRistoranti();
+    }
+
+    /**
+     * Gestisce l'evento dopo che una recensione è stata aggiornata.
+     * Aggiorna le statistiche e ricarica le recensioni visualizzate.
+     */
+    public void onRecensioneUpdated() {
+        updateStatistiche();
+        loadRecensioni();
+    }
+
+    /**
+     * Gestisce il click sul pulsante "Apri Recensioni".
+     * Apre la finestra delle recensioni per il ristorante selezionato.
+     *
+     * @param event L'evento che ha scatenato l'azione
+     */
+    @FXML
+    private void onApriRecensioniClick(ActionEvent event) {
+        if (selectedRistorante == null) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Attenzione");
+            alert.setHeaderText(null);
+            alert.setContentText("Seleziona prima un ristorante.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("recensioni.fxml"));
+            Parent root = loader.load();
+
+            RecensioniController controller = loader.getController();
+            controller.setRistoranteId(selectedRistorante.getNome());
+            controller.setParentController(this); // Imposta il riferimento al controller padre
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(((javafx.scene.Node) event.getSource()).getScene().getWindow());
+            stage.setTitle("Recensioni - " + selectedRistorante.getNome());
+            
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
+            stage.setScene(scene);
+
+            stage.show();
+        } catch (IOException e) {
+            showError("Errore nell'apertura della finestra delle recensioni", e);
         }
     }
 

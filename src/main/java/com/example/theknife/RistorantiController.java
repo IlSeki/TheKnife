@@ -76,8 +76,7 @@ public class RistorantiController implements Initializable {
             }
         });
 
-        caricaDatiCSV();
-        tabellaRistoranti.setItems(listaRistoranti);
+        refreshData();
         String ruoloUtente = SessioneUtente.getRuoloUtente();
         dashboardButton.setVisible("ristoratore".equals(ruoloUtente));
         dashboardButton.setManaged("ristoratore".equals(ruoloUtente));
@@ -159,28 +158,44 @@ public class RistorantiController implements Initializable {
     }
 
     /**
-     * Apre la finestra dei dettagli per il ristorante selezionato.
-     *
+     * Apre la schermata dei dettagli del ristorante nella stessa finestra.
      * @param ristorante Il ristorante di cui visualizzare i dettagli
      */
     private void apriDettagliRistorante(Ristorante ristorante) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ristorante-detail.fxml"));
             Parent root = loader.load();
-
             RistoranteDetailController controller = loader.getController();
             controller.setRistorante(ristorante);
+            // Salva il root originale e passalo al dettaglio
+            Parent rootToRestore = tabellaRistoranti.getScene().getRoot();
+            controller.setRootToRestore(rootToRestore);
+            controller.setTornaAlMenuPrincipaleCallback(() -> {
+                Scene scene = root.getScene();
+                scene.setRoot(rootToRestore);
+            });
+            // Scene switch (finestra singola)
+            Scene scene = tabellaRistoranti.getScene();
+            scene.setRoot(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * Torna alla schermata principale/menu ricerca.
+     */
+    private void tornaAlMenuPrincipale() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("lista.fxml"));
+            Parent root = loader.load();
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
-
-            Stage stage = new Stage();
-            stage.setTitle("Dettagli Ristorante - " + ristorante.getNome());
+            Stage stage = (Stage) tabellaRistoranti.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
-
         } catch (IOException e) {
-            mostraErrore("Errore durante l'apertura dei dettagli del ristorante", e);
+            mostraErrore("Errore durante il ritorno al menu principale", e);
         }
     }
 
@@ -193,20 +208,17 @@ public class RistorantiController implements Initializable {
     @FXML
     private void onProfiloClick(ActionEvent event) {
         try {
-            // Il pulsante "Il Mio Profilo" porta sempre alla pagina del profilo utente
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("user-profile.fxml"));
+            String fxml = SessioneUtente.isUtenteLoggato() ? "user-profile.fxml" : "registrazione.fxml";
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(fxml));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
-
             Window window = tabellaRistoranti.getScene().getWindow();
             Stage stage = (Stage) window;
             stage.setScene(scene);
             stage.show();
-
         } catch (IOException e) {
-            mostraErrore("Errore durante l'apertura del profilo", e);
+            mostraErrore("Errore durante l'apertura del profilo/registrazione", e);
         }
     }
 
@@ -258,6 +270,12 @@ public class RistorantiController implements Initializable {
             )
         );
         tabellaRistoranti.setItems(risultati);
+    }
+
+    public void refreshData() {
+        listaRistoranti.clear();
+        caricaDatiCSV();
+        tabellaRistoranti.setItems(listaRistoranti);
     }
 
     private void mostraErrore(String messaggio, Exception e) {
