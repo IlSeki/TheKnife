@@ -1,42 +1,51 @@
 package com.example.theknife;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.ResourceBundle;
+
+import javafx.application.HostServices;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.application.HostServices;
-import javafx.event.ActionEvent;
-import javafx.scene.control.Hyperlink;
-import javafx.concurrent.Task;
-import javafx.application.Platform;
-import javafx.scene.control.Alert;
-
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.awt.Desktop;
-import java.net.URI;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
- * Controller per la visualizzazione dettagliata di un ristorante.
- * Gestisce l'interfaccia grafica per mostrare tutte le informazioni di un singolo ristorante
- * caricato da file CSV con un design moderno e accattivante.
+ * Controller per la visualizzazione dei dettagli di un ristorante.
+ * Gestisce l'interfaccia che mostra tutte le informazioni di un ristorante,
+ * incluse le recensioni, e permette di aggiungere il ristorante ai preferiti
+ * o di lasciare una recensione.
  *
  * @author Samuele Secchi, 761031, Sede CO
  * @author Flavio Marin, 759910, Sede CO
  * @author Matilde Lecchi, 759875, Sede CO
  * @author Davide Caccia, 760742, Sede CO
- * @version 2.3
- * @since 2025-05-27
+ * @version 1.0
+ * @since 2025-05-20
  */
 public class RistoranteDetailController implements Initializable {
 
@@ -61,9 +70,15 @@ public class RistoranteDetailController implements Initializable {
     @FXML private Circle prezzoCircle2;
     @FXML private Circle prezzoCircle3;
     @FXML private Circle prezzoCircle4;
+    @FXML private Button preferitoButton;
+    @FXML private ListView<Recensione> recensioniRecentList;
+    @FXML private Button mostraRecensioniButton;
+    @FXML private Button scriviRecensioneButton;
 
     private Ristorante ristorante;
     private HostServices hostServices;
+    private final PreferenceService preferenceService = PreferenceService.getInstance();
+    private final RecensioneService recensioneService = RecensioneService.getInstance();
 
     /**
      * Imposta i servizi host per aprire link esterni
@@ -79,9 +94,54 @@ public class RistoranteDetailController implements Initializable {
         setupTextAreas();
         setupPriceCircles();
         setupPosizioneButton();
+        setupPreferitoButton();
 
         // Inizializza i componenti con valori di default
         initializeDefaultValues();
+
+        // Setup recensioni list cell factory
+        recensioniRecentList.setCellFactory(_ -> new ListCell<>() {
+            @Override
+            protected void updateItem(Recensione item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    VBox container = new VBox(5);
+                    container.getStyleClass().add("recensione-cell");
+
+                    HBox headerBox = new HBox(10);
+                    Label stelleLabel = new Label("⭐".repeat(item.getStelle()));
+                    Label dataLabel = new Label(item.getData());
+                    dataLabel.getStyleClass().add("data-label");
+                    Label utenteLabel = new Label("da " + item.getUsername());
+                    utenteLabel.getStyleClass().add("utente-label");
+                    headerBox.getChildren().addAll(stelleLabel, dataLabel, utenteLabel);
+
+                    Label testoLabel = new Label(item.getTesto());
+                    testoLabel.setWrapText(true);
+
+                    container.getChildren().addAll(headerBox, testoLabel);
+
+                    if (!item.getRisposta().isEmpty()) {
+                        VBox rispostaBox = new VBox(5);
+                        rispostaBox.getStyleClass().add("risposta-box");
+                        Label rispostaLabel = new Label("Risposta del ristoratore:");
+                        rispostaLabel.getStyleClass().add("risposta-header");
+                        Label rispostaTestoLabel = new Label(item.getRisposta());
+                        rispostaTestoLabel.setWrapText(true);
+                        rispostaBox.getChildren().addAll(rispostaLabel, rispostaTestoLabel);
+                        container.getChildren().add(rispostaBox);
+                    }
+
+                    setGraphic(container);
+                }
+            }
+        });
+
+        // Show/hide write review button based on user role
+        scriviRecensioneButton.setVisible(SessioneUtente.isCliente());
     }
 
     /**
@@ -93,6 +153,15 @@ public class RistoranteDetailController implements Initializable {
             posizioneButton.getStyleClass().add("maps-button");
             // Imposta il testo del bottone
             posizioneButton.setText("📍 Vedi su Maps");
+        }
+    }
+
+    /**
+     * Configura il bottone preferito
+     */
+    private void setupPreferitoButton() {
+        if (preferitoButton != null) {
+            preferitoButton.setVisible(SessioneUtente.isCliente());
         }
     }
 
@@ -162,7 +231,17 @@ public class RistoranteDetailController implements Initializable {
             System.out.println("========================");
         }
 
+        // Aggiorna lo stato del bottone preferiti
+        if (preferitoButton != null && SessioneUtente.getUsernameUtente() != null) {
+            boolean isPreferito = preferenceService.isPreferito(
+                SessioneUtente.getUsernameUtente(),
+                ristorante.getNome()
+            );
+            preferitoButton.setText(isPreferito ? "❤️ Rimuovi dai preferiti" : "🤍 Aggiungi ai preferiti");
+        }
+
         updateUI();
+        loadRecensioni(); // Load reviews after setting the restaurant
     }
 
     /**
@@ -321,10 +400,9 @@ public class RistoranteDetailController implements Initializable {
 
     /**
      * Gestisce il click sul bottone posizione - apre Google Maps
-     * @param event evento del click
      */
     @FXML
-    private void handlePosizioneClick(ActionEvent event) {
+    private void handlePosizioneClick() {
         if (ristorante == null || !hasValidLocation()) {
             System.out.println("Nessuna posizione disponibile");
             showAlert("Attenzione", "Nessuna informazione di posizione disponibile per questo ristorante.");
@@ -374,7 +452,7 @@ public class RistoranteDetailController implements Initializable {
             }
         }
 
-        // Metodo 2: Fallback con Desktop (AWT) se HostServices non funziona o non è disponibile
+        // Metodo 2: Fallback con Desktop (AWT)
         if (Desktop.isDesktopSupported()) {
             try {
                 Desktop desktop = Desktop.getDesktop();
@@ -388,24 +466,23 @@ public class RistoranteDetailController implements Initializable {
             }
         }
 
-        // Metodo 3: Tentativo con Runtime (comando del sistema operativo)
+        // Metodo 3: ProcessBuilder per una gestione più sicura dei comandi
         try {
             String os = System.getProperty("os.name").toLowerCase();
-            Runtime runtime = Runtime.getRuntime();
+            ProcessBuilder processBuilder;
 
             if (os.contains("win")) {
-                // Windows
-                runtime.exec("rundll32 url.dll,FileProtocolHandler " + url);
+                processBuilder = new ProcessBuilder("cmd", "/c", "start", url);
             } else if (os.contains("mac")) {
-                // macOS
-                runtime.exec("open " + url);
+                processBuilder = new ProcessBuilder("open", url);
             } else if (os.contains("nix") || os.contains("nux")) {
-                // Linux/Unix
-                runtime.exec("xdg-open " + url);
+                processBuilder = new ProcessBuilder("xdg-open", url);
             } else {
                 throw new UnsupportedOperationException("Sistema operativo non supportato: " + os);
             }
-            System.out.println("URL aperto con comando del sistema operativo");
+
+            processBuilder.start();
+            System.out.println("URL aperto con ProcessBuilder");
         } catch (Exception e) {
             System.err.println("Errore nell'apertura dell'URL: " + e.getMessage());
             showAlert("Errore", "Impossibile aprire l'URL. URL: " + url);
@@ -601,10 +678,9 @@ public class RistoranteDetailController implements Initializable {
     /**
      * Gestisce il click sul link del sito web - VERSIONE MIGLIORATA
      * Utilizza sia HostServices che Desktop come fallback
-     * @param event evento del click
      */
     @FXML
-    private void handleSitoWebClick(ActionEvent event) {
+    private void handleSitoWebClick() {
         if (ristorante == null || ristorante.getSitoWeb() == null ||
                 ristorante.getSitoWeb().trim().isEmpty()) {
             System.out.println("Nessun sito web disponibile");
@@ -649,18 +725,112 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Mostra un alert informativo
-     * @param titolo titolo dell'alert
-     * @param messaggio messaggio dell'alert
+     * Gestisce il click per mostrare tutte le recensioni
      */
-    private void showAlert(String titolo, String messaggio) {
-        Platform.runLater(() -> {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle(titolo);
-            alert.setHeaderText(null);
-            alert.setContentText(messaggio);
-            alert.showAndWait();
-        });
+    @FXML
+    private void handleMostraRecensioni() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/recensioni.fxml"));
+            if (loader.getLocation() == null) {
+                throw new IOException("File recensioni.fxml non trovato nel classpath");
+            }
+            Parent root = loader.load();
+
+            RecensioniController controller = loader.getController();
+            controller.setRistoranteId(ristorante.getNome());
+
+            Stage stage = new Stage();
+            stage.setTitle("Recensioni - " + ristorante.getNome());
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(mostraRecensioniButton.getScene().getWindow());
+            stage.show();
+
+            // Aggiorna le recensioni quando si chiude la finestra
+            stage.setOnHiding(e -> loadRecensioni());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Errore", "Impossibile caricare le recensioni: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gestisce il click per scrivere una recensione
+     */
+    @FXML
+    private void handleScriviRecensione() {
+        if (!SessioneUtente.isUtenteLoggato()) {
+            showAlert("Accesso richiesto", "Per scrivere una recensione devi effettuare l'accesso");
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/recensioni.fxml"));
+            if (loader.getLocation() == null) {
+                throw new IOException("File recensioni.fxml non trovato nel classpath");
+            }
+            Parent root = loader.load();
+
+            RecensioniController controller = loader.getController();
+            controller.setRistoranteId(ristorante.getNome());
+
+            Stage stage = new Stage();
+            stage.setTitle("Scrivi Recensione - " + ristorante.getNome());
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(scriviRecensioneButton.getScene().getWindow());
+            stage.show();
+
+            // Aggiorna le recensioni quando si chiude la finestra
+            stage.setOnHiding(e -> loadRecensioni());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Errore", "Impossibile aprire il form per la recensione: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Gestisce il click sul bottone preferito
+     */
+    @FXML
+    private void handlePreferitoClick() {
+        if (!SessioneUtente.isUtenteLoggato()) {
+            showAlert("Accesso richiesto", "Per aggiungere ai preferiti devi effettuare l'accesso");
+            return;
+        }
+
+        if (ristorante == null) return;
+
+        String username = SessioneUtente.getUsernameUtente();
+        String ristoranteId = ristorante.getNome();
+
+        if (preferenceService.isPreferito(username, ristoranteId)) {
+            preferenceService.rimuoviPreferito(username, ristoranteId);
+            preferitoButton.setText("🤍 Aggiungi ai preferiti");
+        } else {
+            preferenceService.aggiungiPreferito(username, ristoranteId);
+            preferitoButton.setText("❤️ Rimuovi dai preferiti");
+        }
+    }
+
+    /**
+     * Carica le recensioni recenti per il ristorante
+     */
+    private void loadRecensioni() {
+        if (ristorante == null || recensioniRecentList == null) return;
+
+        // Load only the 3 most recent reviews
+        List<Recensione> listaRecensioni = recensioneService.getRecensioniRistorante(ristorante.getNome());
+        ObservableList<Recensione> recensioni = FXCollections.observableArrayList(listaRecensioni);
+        recensioni.sort((r1, r2) -> r2.getData().compareTo(r1.getData())); // Sort by date descending
+
+        if (recensioni.size() > 3) {
+            recensioni = FXCollections.observableArrayList(recensioni.subList(0, 3));
+        }
+
+        recensioniRecentList.setItems(recensioni);
     }
 
     /**
@@ -669,5 +839,13 @@ public class RistoranteDetailController implements Initializable {
      */
     public Ristorante getRistorante() {
         return ristorante;
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

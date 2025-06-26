@@ -1,13 +1,5 @@
-stelle,recensione
-5,"Ottimo prodotto, consigliato!"
-4,"Buono, ma con qualche piccolo difetto."
-3,"Prodotto nella media, niente di eccezionale."
-2,"Non ha soddisfatto le aspettative."
-1,"Pessimo, molto deludente."
-5,"Consigliato!"
-5,"Ottimo prodotto"
-3,"Prodotto nella media"
-3,"Niente di eccezionale"
-5,"Ottimo!"
-5,"Wow"
-5,"Consigliato!"
+username,ristoranteId,stelle,testo,data,risposta
+flavio.marin,asagsagasgag,1,"hisahgs",2025-06-13 19:22:36,""
+mati.lecchi,null,3,"okok",2025-06-13 20:28:21,""
+mati.lecchi,Steirereck im Stadtpark,3,"asgsaga",2025-06-26 11:09:18,""
+flavio.marin,Amador,3,"Skibidi buono",2025-06-13 16:22:52,"Grazie"

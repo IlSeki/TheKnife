@@ -1,5 +1,7 @@
 package com.example.theknife;
 
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
@@ -10,18 +12,9 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-
 /**
- * La classe {@code Main} è il punto di ingresso principale per l'applicazione JavaFX "TheKnife".
- * Essa estende {@link javafx.application.Application} e si occupa di:
- * <ul>
- *   <li>Caricare il file FXML "login.fxml" che definisce l'interfaccia utente della schermata di login;</li>
- *   <li>Creare una scena che si adatta automaticamente alle dimensioni dello schermo;</li>
- *   <li>Supportare modalità a schermo intero e ridimensionamento dinamico;</li>
- *   <li>Applicare il foglio di stile CSS per la personalizzazione dell'interfaccia;</li>
- *   <li>Impostare e visualizzare lo {@link Stage} principale.</li>
- * </ul>
+ * Classe principale dell'applicazione JavaFX "The Knife".
+ * Gestisce l'inizializzazione dell'applicazione e il caricamento della prima schermata.
  *
  * @author Samuele Secchi, 761031, Sede CO
  * @author Flavio Marin, 759910, Sede CO

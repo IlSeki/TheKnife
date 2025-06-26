@@ -9,6 +9,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -20,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.stage.Stage;
+import javafx.stage.Modality;
 import javafx.application.HostServices;
 
 import java.io.BufferedReader;
@@ -34,15 +36,16 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
- * Controller per la gestione della ricerca dei ristoranti.
- * Permette di cercare ristoranti dal file CSV michelin_my_maps.csv
- * tramite un TextField che filtra dinamicamente i risultati e un MenuButton per ordinare.
+ * Classe che gestisce il menu di ricerca avanzata dei ristoranti.
+ * Permette di filtrare i ristoranti in base a vari criteri come cucina,
+ * servizi offerti, premi e fascia di prezzo.
  *
- * Inoltre, per ogni ristorante viene aggiunto un pulsante [info] che, una volta cliccato, ti porterà alla pagina
- * con le informazioni sul ristorante.
- *
- * @author Samuele
- * @version 2.0
+ * @author Samuele Secchi, 761031, Sede CO
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
+ * @version 1.0
+ * @since 2025-05-20
  */
 public class MenuRicerca implements Initializable {
 
@@ -54,6 +57,15 @@ public class MenuRicerca implements Initializable {
 
     @FXML
     private MenuButton filterMenu;
+
+    @FXML
+    private Button preferitiButton; // Pulsante per i preferiti
+
+    @FXML
+    private Button dashboardButton; // Pulsante per la dashboard ristoratore
+
+    @FXML
+    private Button userMenuButton;
 
     // Lista principale di tutti i ristoranti
     private ObservableList<Ristorante> tuttiRistoranti;
@@ -81,11 +93,15 @@ public class MenuRicerca implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Aggiorna l'interfaccia utente in base al ruolo dell'utente
+        preferitiButton.setVisible(SessioneUtente.isCliente());
+        dashboardButton.setVisible(SessioneUtente.isRistoratore());
+
         // Carica i ristoranti dal file CSV
         caricaRistorantiDaCSV();
 
         // Crea la FilteredList utilizzando la lista principale
-        ristorantiFiltrati = new FilteredList<>(tuttiRistoranti, ristorante -> true);
+        ristorantiFiltrati = new FilteredList<>(tuttiRistoranti, _ -> true);
 
         // Crea la SortedList incapsulando la FilteredList
         sortedData = new SortedList<>(ristorantiFiltrati);
@@ -94,29 +110,7 @@ public class MenuRicerca implements Initializable {
         resultList.setItems(sortedData);
 
         // Imposta un CellFactory personalizzato per aggiungere il pulsante [info] in ogni cella
-        resultList.setCellFactory(lv -> new ListCell<>() {
-            @Override
-            protected void updateItem(Ristorante item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                    setGraphic(null);
-                } else {
-                    // Crea una label con le informazioni del ristorante
-                    Label infoLabel = new Label(item.getNome() + " - " + item.getLocalita() + " (" + item.getCucina() + ")");
-
-                    // Crea il pulsante [info] e definisci l'azione da eseguire al click
-                    Button infoButton = new Button("[info]");
-                    infoButton.setOnAction(e -> openRestaurantInfo(item));
-
-                    // Inserisci label e pulsante in un contenitore orizzontale
-                    HBox container = new HBox(infoLabel, infoButton);
-                    container.setSpacing(10);
-
-                    setGraphic(container);
-                }
-            }
-        });
+        updateListCell();
 
         // Aggiunge il listener per la ricerca in tempo reale: modifica il predicato della FilteredList
         searchField.textProperty().addListener(new ChangeListener<String>() {
@@ -128,27 +122,7 @@ public class MenuRicerca implements Initializable {
         });
 
         // Imposta gli handler per i MenuItem del MenuButton per l'ordinamento
-        for (MenuItem item : filterMenu.getItems()) {
-            item.setOnAction(event -> {
-                String filterText = item.getText();
-                switch (filterText) {
-                    case "Per Nome":
-                        sortedData.setComparator((r1, r2) -> r1.getNome().compareToIgnoreCase(r2.getNome()));
-                        break;
-                    case "Per Città":
-                        sortedData.setComparator((r1, r2) -> r1.getLocalita().compareToIgnoreCase(r2.getLocalita()));
-                        break;
-                    case "Per Tipo Cucina":
-                        sortedData.setComparator((r1, r2) -> r1.getCucina().compareToIgnoreCase(r2.getCucina()));
-                        break;
-                    default:
-                        sortedData.setComparator(null);
-                        break;
-                }
-                // Aggiorna il testo del MenuButton per indicare il criterio di ordinamento selezionato
-                filterMenu.setText(filterText);
-            });
-        }
+        handleMenuItems();
     }
 
     /**
@@ -159,32 +133,34 @@ public class MenuRicerca implements Initializable {
      */
     private void openRestaurantInfo(Ristorante ristorante) {
         try {
-            // Carica l'FXML della pagina dettagli
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("ristorante-detail.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/ristorante-detail.fxml"));
+            if (loader.getLocation() == null) {
+                throw new IOException("File ristorante-detail.fxml non trovato nel classpath");
+            }
             Parent root = loader.load();
 
-            // Ottieni il controller della pagina dettagli
             RistoranteDetailController controller = loader.getController();
-
-            // Passa i servizi host se disponibili
-            if (hostServices != null) {
-                controller.setHostServices(hostServices);
-            }
-
-            // Imposta il ristorante da visualizzare
+            controller.setHostServices(hostServices);
             controller.setRistorante(ristorante);
-
-            // Crea una nuova finestra per mostrare i dettagli
+            
+            // Crea e configura la finestra
             Stage stage = new Stage();
-            stage.setTitle("Dettagli Ristorante - " + ristorante.getNome());
-            stage.setScene(new Scene(root));
+            stage.setTitle("TheKnife - " + ristorante.getNome());
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.initOwner(searchField.getScene().getWindow());
+            stage.setResizable(true);
+            stage.setOnCloseRequest(event -> {
+                // Aggiorna la lista quando si chiude la finestra
+                filtraRistoranti(searchField.getText());
+            });
             stage.show();
 
-            System.out.println("Apertura info per: " + ristorante.getNome());
-
         } catch (IOException e) {
-            System.err.println("Errore nel caricamento della pagina dettagli: " + e.getMessage());
+            System.err.println("Errore: " + e.getMessage());
             e.printStackTrace();
+            mostraErrore("Errore", "Impossibile aprire i dettagli del ristorante: " + e.getMessage());
         }
     }
 
@@ -345,15 +321,184 @@ public class MenuRicerca implements Initializable {
      */
     private void filtraRistoranti(String filtro) {
         if (filtro == null || filtro.trim().isEmpty()) {
-            ristorantiFiltrati.setPredicate(ristorante -> true);
+            ristorantiFiltrati.setPredicate(_ -> true);
         } else {
             String filtroLower = filtro.toLowerCase().trim();
             ristorantiFiltrati.setPredicate(ristorante ->
                     ristorante.getNome().toLowerCase().contains(filtroLower) ||
-                            ristorante.getLocalita().toLowerCase().contains(filtroLower) ||
-                            ristorante.getCucina().toLowerCase().contains(filtroLower) ||
-                            ristorante.getIndirizzo().toLowerCase().contains(filtroLower)
+                    ristorante.getLocalita().toLowerCase().contains(filtroLower) ||
+                    ristorante.getCucina().toLowerCase().contains(filtroLower) ||
+                    ristorante.getIndirizzo().toLowerCase().contains(filtroLower)
             );
+        }
+    }
+
+    /**
+     * Metodo per gestire la navigazione ai preferiti.
+     * Carica l'FXML della pagina preferiti e apre una nuova finestra.
+     */
+    @FXML
+    private void handlePreferiti() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/preferiti.fxml"));
+            if (loader.getLocation() == null) {
+                throw new IOException("File preferiti.fxml non trovato nel classpath");
+            }
+            Parent root = loader.load();
+
+            PreferitiController controller = loader.getController();
+            if (hostServices != null) {
+                controller.setHostServices(hostServices);
+            }
+
+            Stage stage = new Stage();
+            stage.setTitle("I Miei Preferiti");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(preferitiButton.getScene().getWindow());
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("Errore nel caricamento della vista preferiti: " + e.getMessage());
+            e.printStackTrace();
+            mostraErrore("Errore", "Impossibile aprire la vista preferiti: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Metodo per gestire la navigazione alla dashboard del ristoratore.
+     * Carica l'FXML della dashboard e apre una nuova finestra.
+     */
+    @FXML
+    private void handleRistoratoreDashboard() {
+        if (!SessioneUtente.isRistoratore()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Accesso Negato");
+            alert.setHeaderText(null);
+            alert.setContentText("Solo i ristoratori possono accedere a questa funzionalità.");
+            alert.showAndWait();
+            return;
+        }
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/ristoratore-dashboard.fxml"));
+            if (loader.getLocation() == null) {
+                throw new IOException("File ristoratore-dashboard.fxml non trovato nel classpath");
+            }
+            Parent root = loader.load();
+
+            Stage stage = new Stage();
+            stage.setTitle("Dashboard Ristoratore");
+            stage.setScene(new Scene(root));
+            stage.initModality(Modality.WINDOW_MODAL);
+            stage.initOwner(dashboardButton.getScene().getWindow());
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("Errore nel caricamento della dashboard: " + e.getMessage());
+            e.printStackTrace();
+            mostraErrore("Errore", "Impossibile aprire la dashboard del ristoratore: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Metodo per gestire il menu utente.
+     * Carica l'FXML della pagina profilo utente o login a seconda dello stato di autenticazione.
+     */
+    @FXML
+    private void handleUserMenu() {
+        try {
+            String resource = SessioneUtente.isUtenteLoggato() ? "user-profile.fxml" : "login.fxml";
+            String title = SessioneUtente.isUtenteLoggato() ? "Il Tuo Profilo" : "Accedi";
+            
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(resource));
+            if (loader.getLocation() == null) {
+                throw new IOException("File " + resource + " non trovato nel classpath");
+            }
+            Parent root = loader.load();
+            
+            // Usa la finestra esistente invece di crearne una nuova
+            Stage currentStage = (Stage) userMenuButton.getScene().getWindow();
+            currentStage.setTitle(title);
+            currentStage.setScene(new Scene(root));
+            
+            // Se è la finestra di login, imposta il callback
+            if (!SessioneUtente.isUtenteLoggato()) {
+                LoginController controller = loader.getController();
+                controller.setOnLoginSuccess(() -> {
+                    // Aggiorna l'interfaccia dopo il login
+                    preferitiButton.setVisible(SessioneUtente.isCliente());
+                    dashboardButton.setVisible(SessioneUtente.isRistoratore());
+                    currentStage.setTitle("TheKnife - Menu (" + SessioneUtente.getUsernameUtente() + ")");
+                });
+            }
+        } catch (IOException e) {
+            System.err.println("Errore: " + e.getMessage());
+            e.printStackTrace();
+            mostraErrore("Errore", "Impossibile aprire la finestra: " + e.getMessage());
+        }
+    }
+
+    private void mostraErrore(String titolo, String messaggio) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titolo);
+        alert.setHeaderText(null);
+        alert.setContentText(messaggio);
+        alert.showAndWait();
+    }
+
+    private void updateListCell() {
+        resultList.setCellFactory(_ -> new ListCell<>() {
+            private final Button infoButton = new Button("[info]");
+            private final HBox container = new HBox();
+            private final Label infoLabel = new Label();
+            
+            {
+                container.setSpacing(10);
+                infoButton.setOnAction(event -> {
+                    Ristorante item = getItem();
+                    if (item != null) {
+                        openRestaurantInfo(item);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Ristorante item, boolean empty) {
+                super.updateItem(item, empty);
+                
+                if (empty || item == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else {
+                    infoLabel.setText(item.getNome() + " - " + item.getLocalita() + " (" + item.getCucina() + ")");
+                    container.getChildren().setAll(infoLabel, infoButton);
+                    setGraphic(container);
+                }
+            }
+        });
+    }
+
+    private void handleMenuItems() {
+        for (MenuItem item : filterMenu.getItems()) {
+            item.setOnAction(_ -> {
+                String filterText = item.getText();
+                switch (filterText) {
+                    case "Per Nome":
+                        sortedData.setComparator((r1, r2) -> r1.getNome().compareToIgnoreCase(r2.getNome()));
+                        break;
+                    case "Per Città":
+                        sortedData.setComparator((r1, r2) -> r1.getLocalita().compareToIgnoreCase(r2.getLocalita()));
+                        break;
+                    case "Per Tipo Cucina":
+                        sortedData.setComparator((r1, r2) -> r1.getCucina().compareToIgnoreCase(r2.getCucina()));
+                        break;
+                    default:
+                        sortedData.setComparator(null);
+                        break;
+                }
+                filterMenu.setText(filterText);
+            });
         }
     }
 }

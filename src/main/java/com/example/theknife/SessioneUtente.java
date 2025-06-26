@@ -1,24 +1,16 @@
 package com.example.theknife;
 
 /**
- * La classe {@code SessioneUtente} gestisce i dati della sessione utente corrente.
- * Utilizza il pattern Singleton per mantenere le informazioni dell'utente
- * autenticato durante tutta la sessione dell'applicazione.
- *
- * <p>
- * Questa classe permette di:
- * <ul>
- *   <li>Memorizzare i dati dell'utente dopo l'autenticazione</li>
- *   <li>Verificare se un utente è autenticato</li>
- *   <li>Ottenere informazioni sull'utente corrente</li>
- *   <li>Terminare la sessione (logout)</li>
- *   <li>Fornire informazioni di debug per il troubleshooting</li>
- * </ul>
- * </p>
+ * Classe per la gestione della sessione utente.
+ * Mantiene le informazioni dell'utente correntemente loggato
+ * durante l'esecuzione dell'applicazione.
  *
  * @author Samuele Secchi, 761031, Sede CO
- * @version 1.1
- * @since 2025-05-27
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
+ * @version 1.0
+ * @since 2025-05-20
  */
 public class SessioneUtente {
 
@@ -116,8 +108,7 @@ public class SessioneUtente {
      * @return Il ruolo dell'utente o null se nessun utente è autenticato.
      */
     public static String getRuoloUtente() {
-        SessioneUtente sessione = getIstanza();
-        return sessione.isLoggato ? sessione.ruolo : null;
+        return getIstanza().ruolo;
     }
 
     /**
@@ -125,17 +116,30 @@ public class SessioneUtente {
      *
      * @return Il nome completo (nome + cognome), "Ospite" se ospite, stringa vuota se non loggato.
      */
-    public static String getNomeCompletoUtente() {
+    public static String getNomeCompleto() {
         SessioneUtente sessione = getIstanza();
-        if (sessione.isLoggato) {
-            if ("ospite".equalsIgnoreCase(sessione.ruolo)) {
-                return "Ospite";
-            }
-            if (sessione.nome != null && sessione.cognome != null) {
-                return sessione.nome + " " + sessione.cognome;
-            }
-        }
-        return "";
+        if (!sessione.isLoggato) return "";
+        if (isOspite()) return "Ospite";
+        return sessione.nome + " " + sessione.cognome;
+    }
+
+    /**
+     * Alias per getNomeCompleto().
+     *
+     * @return Il nome completo dell'utente corrente.
+     */
+    public static String getNomeCompletoUtente() {
+        return getNomeCompleto();
+    }
+
+    /**
+     * Restituisce il ruolo dell'utente corrente.
+     *
+     * @return Il ruolo dell'utente o null se nessun utente è autenticato.
+     */
+    public static String getRuolo() {
+        SessioneUtente sessione = getIstanza();
+        return sessione.isLoggato ? sessione.ruolo : null;
     }
 
     /**
@@ -213,7 +217,6 @@ public class SessioneUtente {
 
     /**
      * Restituisce informazioni dettagliate di debug sulla sessione corrente.
-     * Utile per il troubleshooting e il monitoraggio dello stato della sessione.
      *
      * @return Stringa con informazioni complete di debug.
      */

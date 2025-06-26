@@ -49,6 +49,7 @@
                             <Label fx:id="localitaLabel" styleClass="info-text-secondary" text="Milano, Italia" />
                             <!-- Bottone Google Maps -->
                             <HBox alignment="CENTER_LEFT" spacing="10.0">
+                                <Button fx:id="preferitoButton" text="🤍 Aggiungi ai preferiti" onAction="#handlePreferitoClick"/>
                                 <Button fx:id="posizioneButton"
                                         onAction="#handlePosizioneClick"
                                         styleClass="maps-button"
@@ -190,6 +191,21 @@
                         <!-- Qui puoi aggiungere altre sezioni se necessario -->
                     </VBox>
 
+                    <!-- Sezione Recensioni -->
+                    <VBox spacing="10.0" styleClass="reviews-section">
+                        <Label styleClass="section-title" text="⭐ Recensioni">
+                            <font>
+                                <Font name="System Bold" size="16.0" />
+                            </font>
+                        </Label>
+                        <HBox spacing="10.0">
+                            <Button fx:id="mostraRecensioniButton" text="Vedi tutte le recensioni" 
+                                    onAction="#handleMostraRecensioni" styleClass="primary-button"/>
+                            <Button fx:id="scriviRecensioneButton" text="Scrivi una recensione" 
+                                    onAction="#handleScriviRecensione" styleClass="primary-button"/>
+                        </HBox>
+                        <ListView fx:id="recensioniRecentList" prefHeight="200"/>
+                    </VBox>
                 </VBox>
             </HBox>
         </VBox>

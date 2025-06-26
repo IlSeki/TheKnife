@@ -1,91 +1,86 @@
 package com.example.theknife;
 
-import com.opencsv.CSVReader;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
-
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
+import com.opencsv.CSVReader;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+
 /**
- * La classe {@code RistorantiController} funge da controller principale per l'interfaccia utente
- * dell'applicazione "The Knife". In qualità di controller JavaFX, essa implementa l'interfaccia
- * {@link Initializable} per garantire l'inizializzazione corretta dei componenti grafici definiti in FXML
- * e per stabilire il legame tra il modello dei dati (classe {@link Ristorante}) e la vista.
- *
- * <p>
- * Le funzionalità principali della classe includono:
- * <ul>
- *   <li>Collegamento delle proprietà del modello ai componenti grafici, in particolare alle colonne della
- *       {@code TableView} che visualizza i dati relativi ai ristoranti.</li>
- *   <li>Caricamento dei dati da un file CSV presente tra le risorse del progetto, mediante il metodo
- *       {@link #caricaDatiCSV()}.</li>
- *   <li>Impostazione dei dati caricati nella {@code TableView} per una visualizzazione dinamica e interattiva.</li>
- *   <li>Debug durante il caricamento dei dati, mediante la stampa in console della working directory e delle
- *       prime cinque righe lette dal CSV.</li>
- * </ul>
- * </p>
+ * Controller principale per la visualizzazione e ricerca dei ristoranti.
+ * Gestisce la schermata principale che mostra tutti i ristoranti disponibili
+ * e permette agli utenti di cercare e visualizzare i dettagli dei ristoranti.
  *
  * @author Samuele Secchi, 761031, Sede CO
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
  * @version 1.0
- * @see Ristorante
- * @since 2025-05-13
+ * @since 2025-05-20
  */
 public class RistorantiController implements Initializable {
 
-    @FXML
-    private TableView<Ristorante> tabellaRistoranti;
-    @FXML
-    private TableColumn<Ristorante, String> colonnaNome;
-    @FXML
-    private TableColumn<Ristorante, String> colonnaIndirizzo;
-    @FXML
-    private TableColumn<Ristorante, String> colonnaLocalita;
-    @FXML
-    private TableColumn<Ristorante, String> colonnaPrezzo;
-    @FXML
-    private TableColumn<Ristorante, String> colonnaCucina;
+    @FXML private TableView<Ristorante> tabellaRistoranti;
+    @FXML private TableColumn<Ristorante, String> colonnaNome;
+    @FXML private TableColumn<Ristorante, String> colonnaIndirizzo;
+    @FXML private TableColumn<Ristorante, String> colonnaLocalita;
+    @FXML private TableColumn<Ristorante, String> colonnaPrezzo;
+    @FXML private TableColumn<Ristorante, String> colonnaCucina;
+    @FXML private TextField campoRicerca;
+    @FXML private Button dashboardButton;
+    @FXML private Button profiloButton;
 
     private final ObservableList<Ristorante> listaRistoranti = FXCollections.observableArrayList();
 
     /**
-     * Inizializza il controller, configurando i componenti dell'interfaccia utente e caricando i dati
-     * dei ristoranti dal file CSV. Durante l'inizializzazione vengono:
-     * <ul>
-     *   <li>Stampata la working directory per scopi di debug.</li>
-     *   <li>Associate le proprietà del modello alle corrispondenti colonne della {@code TableView}.</li>
-     *   <li>Richiamato il metodo {@link #caricaDatiCSV()} per il caricamento dei dati dai file di risorsa.</li>
-     *   <li>Impostati i dati caricati nella {@code TableView} per la visualizzazione.</li>
-     * </ul>
+     * Inizializza il controller configurando la tabella dei ristoranti
+     * e caricando i dati iniziali.
      *
-     * @param location  L'URL di localizzazione della risorsa FXML (non utilizzato).
-     * @param resources Le risorse aggiuntive per l'inizializzazione (non utilizzate).
+     * @param location  L'URL di localizzazione della risorsa FXML (non utilizzato)
+     * @param resources Le risorse aggiuntive per l'inizializzazione (non utilizzate)
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Stampa la working directory per verificare il contesto d'esecuzione (utile per debug)
-        System.out.println("Working Directory = " + System.getProperty("user.dir"));
-
-        // Collega le proprietà del modello alle colonne del TableView
         colonnaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         colonnaIndirizzo.setCellValueFactory(new PropertyValueFactory<>("indirizzo"));
         colonnaLocalita.setCellValueFactory(new PropertyValueFactory<>("localita"));
         colonnaPrezzo.setCellValueFactory(new PropertyValueFactory<>("prezzo"));
         colonnaCucina.setCellValueFactory(new PropertyValueFactory<>("cucina"));
 
-        // Carica i dati dal file CSV e visualizza le prime 5 righe per debug
-        caricaDatiCSV();
+        tabellaRistoranti.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) {
+                Ristorante ristorante = tabellaRistoranti.getSelectionModel().getSelectedItem();
+                if (ristorante != null) {
+                    apriDettagliRistorante(ristorante);
+                }
+            }
+        });
 
-        // Imposta i dati nella TableView
+        caricaDatiCSV();
         tabellaRistoranti.setItems(listaRistoranti);
+        String ruoloUtente = SessioneUtente.getRuoloUtente();
+        dashboardButton.setVisible("ristoratore".equals(ruoloUtente));
+        dashboardButton.setManaged("ristoratore".equals(ruoloUtente));
     }
 
     /**
@@ -125,9 +120,8 @@ public class RistorantiController implements Initializable {
                     // Stampa le prime 5 righe per debug
                     if (contatore < 5) {
                         System.out.println("Riga " + (contatore + 1) + ": " + Arrays.toString(riga));
-                    } else {
-                        break;
                     }
+                    
                     try {
                         String nome = riga[0];
                         String indirizzo = riga[1];
@@ -152,13 +146,125 @@ public class RistorantiController implements Initializable {
                         );
                         listaRistoranti.add(ristorante);
                     } catch (Exception e) {
-                        System.out.println("Errore nella riga: " + e.getMessage());
+                        System.err.println("Errore nella riga " + (contatore + 1) + ": " + e.getMessage());
                     }
                     contatore++;
                 }
+                System.out.println("Totale ristoranti caricati: " + listaRistoranti.size());
             }
         } catch (Exception e) {
+            System.err.println("Errore nel caricamento del CSV: " + e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Apre la finestra dei dettagli per il ristorante selezionato.
+     *
+     * @param ristorante Il ristorante di cui visualizzare i dettagli
+     */
+    private void apriDettagliRistorante(Ristorante ristorante) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ristorante-detail.fxml"));
+            Parent root = loader.load();
+
+            RistoranteDetailController controller = loader.getController();
+            controller.setRistorante(ristorante);
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
+
+            Stage stage = new Stage();
+            stage.setTitle("Dettagli Ristorante - " + ristorante.getNome());
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            mostraErrore("Errore durante l'apertura dei dettagli del ristorante", e);
+        }
+    }
+
+    /**
+     * Gestisce il click sul pulsante del profilo utente.
+     * Reindirizza l'utente alla sua pagina profilo.
+     *
+     * @param event L'evento di click
+     */
+    @FXML
+    private void onProfiloClick(ActionEvent event) {
+        try {
+            // Il pulsante "Il Mio Profilo" porta sempre alla pagina del profilo utente
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("user-profile.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
+
+            Window window = tabellaRistoranti.getScene().getWindow();
+            Stage stage = (Stage) window;
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            mostraErrore("Errore durante l'apertura del profilo", e);
+        }
+    }
+
+    /**
+     * Gestisce il click sul pulsante della dashboard ristoratore.
+     * Disponibile solo per gli utenti con ruolo ristoratore.
+     *
+     * @param event L'evento di click
+     */
+    @FXML
+    private void onDashboardClick(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("ristoratore-dashboard.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
+
+            Window window = tabellaRistoranti.getScene().getWindow();
+            Stage stage = (Stage) window;
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            mostraErrore("Errore durante l'apertura della dashboard", e);
+        }
+    }
+
+    /**
+     * Gestisce il click sul pulsante di ricerca.
+     * Filtra i ristoranti in base al testo inserito nel campo di ricerca.
+     *
+     * @param event L'evento di click
+     */
+    @FXML
+    private void onCercaClick(ActionEvent event) {
+        String ricerca = campoRicerca.getText().toLowerCase().trim();
+        if (ricerca.isEmpty()) {
+            tabellaRistoranti.setItems(listaRistoranti);
+            return;
+        }
+
+        ObservableList<Ristorante> risultati = FXCollections.observableArrayList(
+            listaRistoranti.filtered(r -> 
+                r.getNome().toLowerCase().contains(ricerca) ||
+                r.getIndirizzo().toLowerCase().contains(ricerca) ||
+                r.getLocalita().toLowerCase().contains(ricerca) ||
+                r.getCucina().toLowerCase().contains(ricerca)
+            )
+        );
+        tabellaRistoranti.setItems(risultati);
+    }
+
+    private void mostraErrore(String messaggio, Exception e) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Errore");
+        alert.setHeaderText(messaggio);
+        alert.setContentText(e.getMessage());
+        alert.showAndWait();
     }
 }

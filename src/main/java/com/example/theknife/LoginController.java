@@ -1,18 +1,5 @@
 package com.example.theknife;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
-import javafx.scene.Node;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,23 +10,30 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
+
 /**
- * La classe {@code LoginController} gestisce le interazioni dell'interfaccia di login.
- * Implementa l'autenticazione degli utenti tramite lettura del file CSV "utenti.csv"
- * e la navigazione verso diverse interfacce in base al ruolo dell'utente.
- *
- * <p>
- * Il controller supporta diverse modalità di accesso:
- * <ul>
- *   <li>Accesso con credenziali: verifica username e password cifrata tramite SHA-256</li>
- *   <li>Accesso diretto senza login: accesso come utente non registrato</li>
- *   <li>Registrazione: collegamento alla schermata di registrazione nuovi utenti</li>
- * </ul>
- * </p>
+ * Controller per la gestione del login degli utenti.
+ * Gestisce l'autenticazione degli utenti e il reindirizzamento alla schermata
+ * appropriata in base al ruolo dell'utente.
  *
  * @author Samuele Secchi, 761031, Sede CO
- * @version 3.0
- * @since 2025-05-27
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
+ * @version 1.0
+ * @since 2025-05-20
  */
 public class LoginController {
 
@@ -48,6 +42,16 @@ public class LoginController {
 
     @FXML
     private PasswordField campoPassword;
+
+    private Runnable onLoginSuccess;
+
+    /**
+     * Imposta il callback da eseguire al login avvenuto con successo
+     * @param callback il callback da eseguire
+     */
+    public void setOnLoginSuccess(Runnable callback) {
+        this.onLoginSuccess = callback;
+    }
 
     /**
      * Metodo invocato alla pressione del pulsante "Accedi".
@@ -99,6 +103,11 @@ public class LoginController {
                 );
 
                 System.out.println("DEBUG: Utente autenticato: " + utenteAutenticato.toString());
+
+                if (onLoginSuccess != null) {
+                    onLoginSuccess.run();
+                }
+
                 reindirizzaAllInterfacciaPrincipale(evento, utenteAutenticato.getRuolo());
             } else {
                 // Credenziali errate
@@ -268,74 +277,37 @@ public class LoginController {
      * @throws IOException Se si verifica un errore durante il caricamento dell'interfaccia.
      */
     private void reindirizzaAllInterfacciaPrincipale(ActionEvent evento, String ruolo) throws IOException {
-        String fileFxml;
-        String titoloFinestra;
+        // Tutti gli utenti vengono portati alla schermata di ricerca
+        String fileFxml = "lista.fxml";
+        String titoloFinestra = "TheKnife - Ricerca Ristoranti";
 
-        // Determina quale interfaccia caricare in base al ruolo
-        switch (ruolo.toLowerCase()) {
-            case "cliente":
-                fileFxml = "menu.fxml"; // Interfaccia per i clienti
-                titoloFinestra = "TheKnife - Area Cliente";
-                break;
-            case "ristoratore":
-                fileFxml = "ristoratore.fxml"; // Interfaccia per i ristoratori
-                titoloFinestra = "TheKnife - Area Ristoratore";
-                break;
-            case "ospite":
-            default:
-                fileFxml = "menu.fxml"; // Interfaccia per utenti non registrati
-                titoloFinestra = "TheKnife - Ospite";
-                break;
-        }
+        // Carica l'interfaccia
+        FXMLLoader caricatore = new FXMLLoader(getClass().getResource(fileFxml));
+        Parent radice = caricatore.load();
 
+        // Calcola le dimensioni della finestra
+        Rectangle2D limitiSchermo = Screen.getPrimary().getVisualBounds();
+        double larghezza = Math.min(1024, limitiSchermo.getWidth() * 0.8);
+        double altezza = Math.min(768, limitiSchermo.getHeight() * 0.8);
+
+        // Crea la scena
+        Scene scena = new Scene(radice, larghezza, altezza);
+
+        // Applica il CSS se disponibile
         try {
-            // Debug: verifica se il file esiste
-            System.out.println("DEBUG: Tentativo di caricare: " + fileFxml);
-            if (getClass().getResource(fileFxml) == null) {
-                System.out.println("ERROR: File " + fileFxml + " non trovato nel classpath");
-                mostraAvviso("Errore", "File interfaccia non trovato: " + fileFxml +
-                        "\nVerifica che il file sia presente nella directory src/main/resources/", Alert.AlertType.ERROR);
-                return;
+            String cssPath = "/data/stile.css";
+            if (getClass().getResource(cssPath) != null) {
+                scena.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
             }
-
-            // Carica il file FXML appropriato
-            FXMLLoader caricatore = new FXMLLoader(getClass().getResource(fileFxml));
-            Parent radice = caricatore.load();
-
-            // Calcola le dimensioni dinamiche dello schermo
-            Rectangle2D limitiSchermo = Screen.getPrimary().getVisualBounds();
-            double larghezza = limitiSchermo.getWidth() * 0.8;
-            double altezza = limitiSchermo.getHeight() * 0.8;
-
-            // Crea la scena con le dimensioni calcolate
-            Scene scena = new Scene(radice, larghezza, altezza);
-
-            // Applica il CSS se disponibile
-            try {
-                String cssPath = "/data/stile.css";
-                if (getClass().getResource(cssPath) != null) {
-                    scena.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
-                } else {
-                    System.out.println("WARNING: File CSS non trovato: " + cssPath);
-                }
-            } catch (Exception e) {
-                System.out.println("WARNING: Errore nel caricamento CSS: " + e.getMessage());
-            }
-
-            // Ottieni lo stage corrente e imposta la nuova scena
-            Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-            palcoscenico.setTitle(titoloFinestra);
-            palcoscenico.setScene(scena);
-            palcoscenico.show();
-
-            System.out.println("DEBUG: Interfaccia caricata con successo: " + fileFxml);
-
-        } catch (IOException e) {
-            System.out.println("ERROR: Impossibile caricare " + fileFxml + " - " + e.getMessage());
-            e.printStackTrace();
-            mostraAvviso("Errore", "Impossibile caricare l'interfaccia: " + fileFxml +
-                    "\nDettagli: " + e.getMessage(), Alert.AlertType.ERROR);
+        } catch (Exception e) {
+            System.out.println("WARNING: Errore nel caricamento CSS: " + e.getMessage());
         }
+
+        // Imposta la nuova scena
+        Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
+        palcoscenico.setTitle(titoloFinestra);
+        palcoscenico.setScene(scena);
+        palcoscenico.show();
     }
 
     /**
