@@ -192,23 +192,6 @@ public class RistorantiController implements Initializable {
     }
 
     /**
-     * Torna alla schermata principale/menu ricerca.
-     */
-    private void tornaAlMenuPrincipale() {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("lista.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
-            Stage stage = (Stage) tabellaRistoranti.getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            mostraErrore("Errore durante il ritorno al menu principale", e);
-        }
-    }
-
-    /**
      * Gestisce il click sul pulsante del profilo utente.
      * Reindirizza l'utente alla sua pagina profilo.
      *
@@ -294,14 +277,32 @@ public class RistorantiController implements Initializable {
     }
 
 
-
-
+    /**
+     * Aggiorna i dati della tabella dei ristoranti.
+     * <p>
+     * L'operazione prevede:
+     * <ul>
+     *   <li>Svuotare la lista corrente dei ristoranti</li>
+     *   <li>Ricaricare i dati da sorgente CSV</li>
+     *   <li>Ripopolare la {@code TableView} con i nuovi dati</li>
+     * </ul>
+     * </p>
+     */
     public void refreshData() {
         listaRistoranti.clear();
         caricaDatiCSV();
         tabellaRistoranti.setItems(listaRistoranti);
     }
-
+    /**
+     * Mostra un messaggio di errore in una finestra di dialogo.
+     * <p>
+     * Utile per segnalare problemi durante l’esecuzione di operazioni
+     * (ad esempio il caricamento dei dati).
+     * </p>
+     *
+     * @param messaggio descrizione sintetica dell’errore da visualizzare come intestazione
+     * @param e         eccezione che ha causato l’errore, da cui viene mostrato il {@code getMessage()}
+     */
     private void mostraErrore(String messaggio, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Errore");

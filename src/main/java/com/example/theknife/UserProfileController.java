@@ -52,6 +52,11 @@ public class UserProfileController implements Initializable {
     private final PreferenceService preferenceService = PreferenceService.getInstance();
     private final RistoranteService ristoranteService = RistoranteService.getInstance();
 
+    /**
+     * Aggiunge lo stylesheet CSS principale alla scena, se non già presente.
+     *
+     * @param scene scena JavaFX a cui applicare lo stile
+     */
     private void addStylesheet(Scene scene) {
         try {
             String cssPath = getClass().getResource("/data/stile.css").toExternalForm();
@@ -153,13 +158,21 @@ public class UserProfileController implements Initializable {
             }
         });
     }
-
+    /**
+     * Aggiorna la lista dei ristoranti preferiti dell'utente corrente.
+     */
     private void aggiornaListaPreferiti() {
         preferitiList.setItems(FXCollections.observableArrayList(
             preferenceService.getPreferiti(SessioneUtente.getUsernameUtente())
         ));
     }
-
+    /**
+     * Gestisce l'operazione di logout dell'utente:
+     * <ul>
+     *   <li>Termina la sessione utente</li>
+     *   <li>Mostra la schermata di login</li>
+     * </ul>
+     */
     @FXML
     private void handleLogout() {
         SessioneUtente.eseguiLogout();
@@ -180,7 +193,12 @@ public class UserProfileController implements Initializable {
             showError("Errore", "Impossibile tornare alla schermata di login");
         }
     }
-
+    /**
+     * Apre i dettagli di un ristorante a partire dal suo nome.
+     * Se il ristorante non è più disponibile, mostra un messaggio di errore.
+     *
+     * @param nomeRistorante identificativo o nome del ristorante da mostrare
+     */
     private void openRistoranteDetail(String nomeRistorante) {
         Ristorante ristorante = ristoranteService.getRistorante(nomeRistorante);
         if (ristorante == null) {
@@ -228,7 +246,12 @@ public class UserProfileController implements Initializable {
         // Aggiorna preferiti
         aggiornaListaPreferiti();
     }
-
+    /**
+     * Mostra un messaggio di errore tramite finestra di dialogo.
+     *
+     * @param header  titolo dell'errore
+     * @param content messaggio descrittivo dell'errore
+     */
     private void showError(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Errore");

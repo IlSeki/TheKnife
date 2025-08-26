@@ -41,13 +41,29 @@ public class RistoranteService {
     private final Map<String, Set<String>> proprietariRistoranti; // username -> set nomi ristoranti
     private static final String PROPRIETARI_FILE = "src/main/resources/data/proprietari_ristoranti.csv";
 
+    /**
+     * Costruttore privato della classe RistoranteService.
+     * <p>
+     * Inizializza le mappe dei ristoranti e dei proprietari
+     * e carica i dati dai file CSV.
+     * </p>
+     *
+     * <p>Pattern utilizzato: <b>Singleton</b></p>
+     */
     private RistoranteService() {
         ristoranti = new HashMap<>();
         proprietariRistoranti = new HashMap<>();
         caricaRistoranti();
         caricaProprietari();
     }
-
+    /**
+     * Restituisce l'istanza unica (singleton) del servizio.
+     * <p>
+     * Se non esiste ancora, viene creata all’occorrenza.
+     * </p>
+     *
+     * @return istanza di {@code RistoranteService}
+     */
     public static RistoranteService getInstance() {
         if (instance == null) {
             instance = new RistoranteService();
@@ -55,6 +71,14 @@ public class RistoranteService {
         return instance;
     }
 
+
+    /**
+     * Carica i ristoranti dal file CSV e li memorizza nella mappa {@code ristoranti}.
+     * <p>
+     * Ogni riga del CSV corrisponde a un ristorante, con i vari campi separati da virgole.
+     * Le eventuali eccezioni di conversione dei numeri vengono gestite e loggate a console.
+     * </p>
+     */
     private void caricaRistoranti() {
         try (InputStream is = getClass().getResourceAsStream(CSV_FILE);
              BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
@@ -97,6 +121,15 @@ public class RistoranteService {
         }
     }
 
+    /**
+     * Effettua il parsing di una singola riga CSV in una lista di valori.
+     * <p>
+     * Gestisce correttamente i campi racchiusi tra virgolette e contenenti virgole.
+     * </p>
+     *
+     * @param line riga CSV da elaborare
+     * @return lista di valori parsati e ripuliti
+     */
     private List<String> parseCsvLine(String line) {
         List<String> result = new ArrayList<>();
         boolean inQuotes = false;
@@ -122,7 +155,13 @@ public class RistoranteService {
         
         return result;
     }
-
+    /**
+     * Carica l’associazione tra ristoranti e i rispettivi proprietari
+     * leggendo i dati dal file {@code PROPRIETARI_FILE}.
+     * <p>
+     * Se il file non esiste, viene mostrato un messaggio di errore su console.
+     * </p>
+     */
     private void caricaProprietari() {
         File file = new File(PROPRIETARI_FILE);
         if (!file.exists()) {
@@ -242,6 +281,13 @@ public class RistoranteService {
         }
     }
 
+    /**
+     * Salva su file le associazioni tra utenti e ristoranti di cui sono proprietari.
+     * <p>
+     * Se la directory non esiste, viene creata. In caso di errore di scrittura,
+     * l’eccezione viene stampata su console.
+     * </p>
+     */
     private void salvaProprietari() {
         File dir = new File("src/main/resources/data");
         if (!dir.exists() && !dir.mkdirs()) {
