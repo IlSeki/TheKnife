@@ -47,6 +47,8 @@ public class RistorantiController implements Initializable {
     @FXML private TableColumn<Ristorante, String> colonnaPrezzo;
     @FXML private TableColumn<Ristorante, String> colonnaCucina;
     @FXML private TextField campoRicerca;
+    @FXML private TextField campoRicerca1;
+    @FXML private TextField campoRicerca2;
     @FXML private Button dashboardButton;
     @FXML private Button profiloButton;
 
@@ -256,20 +258,26 @@ public class RistorantiController implements Initializable {
      */
     @FXML
     private void onCercaClick(ActionEvent event) {
-        String ricerca = campoRicerca.getText().toLowerCase().trim();
-        if (ricerca.isEmpty()) {
+        String ricercaR = campoRicerca.getText().toLowerCase().trim();
+        String ricercaL = campoRicerca1.getText().toLowerCase().trim();
+        String ricercaC = campoRicerca2.getText().toLowerCase().trim();
+
+        // se tutti vuoti → mostra tutta la lista
+        if (ricercaR.isEmpty() && ricercaL.isEmpty() && ricercaC.isEmpty()) {
             tabellaRistoranti.setItems(listaRistoranti);
             return;
         }
 
         ObservableList<Ristorante> risultati = FXCollections.observableArrayList(
-            listaRistoranti.filtered(r -> 
-                r.getNome().toLowerCase().contains(ricerca) ||
-                r.getIndirizzo().toLowerCase().contains(ricerca) ||
-                r.getLocalita().toLowerCase().contains(ricerca) ||
-                r.getCucina().toLowerCase().contains(ricerca)
-            )
+                listaRistoranti.filtered(r -> {
+                    boolean matchNome = ricercaR.isEmpty() || r.getNome().toLowerCase().contains(ricercaR);
+                    boolean matchLocalita = ricercaL.isEmpty() || r.getLocalita().toLowerCase().startsWith(ricercaL);
+                    boolean matchCucina = ricercaC.isEmpty() || r.getCucina().toLowerCase().contains(ricercaC);
+                    // devono essere tutti veri
+                    return matchNome && matchLocalita && matchCucina;
+                })
         );
+
         tabellaRistoranti.setItems(risultati);
     }
 
