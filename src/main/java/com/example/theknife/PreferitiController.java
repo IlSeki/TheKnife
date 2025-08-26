@@ -23,13 +23,21 @@ import javafx.scene.layout.HBox;
 
 /**
  * Controller per la gestione dei ristoranti preferiti dell'utente.
- * Gestisce l'interfaccia che mostra la lista dei ristoranti salvati come preferiti
- * e permette di visualizzarne i dettagli o rimuoverli dai preferiti.
+ * <p>
+ * Questa classe gestisce l'interfaccia che mostra la lista dei ristoranti
+ * salvati come preferiti dall'utente. Permette di:
+ * <ul>
+ *     <li>Visualizzare la lista dei preferiti</li>
+ *     <li>Aprire i dettagli di un ristorante con doppio click</li>
+ *     <li>Rimuovere ristoranti dalla lista dei preferiti</li>
+ *     <li>Aggiornare dinamicamente la lista in caso di modifiche</li>
+ * </ul>
+ * </p>
  *
- * @author Samuele Secchi, 761031, Sede CO
- * @author Flavio Marin, 759910, Sede CO
- * @author Matilde Lecchi, 759875, Sede CO
- * @author Davide Caccia, 760742, Sede CO
+ * @author Samuele Secchi, 761031
+ * @author Flavio Marin, 759910
+ * @author Matilde Lecchi, 759875
+ * @author Davide Caccia, 760742
  * @version 1.0
  * @since 2025-05-20
  */
@@ -41,13 +49,13 @@ public class PreferitiController implements Initializable {
 
     /**
      * Inizializza il controller configurando la ListView dei preferiti.
-     * Imposta il gestore per il doppio click che apre i dettagli del ristorante
-     * e configura il factory delle celle per mostrare le informazioni dei ristoranti
-     * con il pulsante di rimozione.
+     * Imposta il gestore per il doppio click per aprire i dettagli
+     * del ristorante e configura il cell factory con pulsante di rimozione.
      *
-     * @param location  L'URL di localizzazione della risorsa FXML (non utilizzato)
-     * @param resources Le risorse aggiuntive per l'inizializzazione (non utilizzate)
+     * @param location  URL della risorsa FXML (non utilizzato)
+     * @param resources Risorse per l'inizializzazione (non utilizzate)
      */
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Configura il doppio click sulla ListView
@@ -97,7 +105,7 @@ public class PreferitiController implements Initializable {
     /**
      * Imposta i servizi host necessari per aprire link esterni.
      *
-     * @param hostServices I servizi host di JavaFX per aprire link esterni
+     * @param hostServices I servizi host di JavaFX
      */
     public void setHostServices(HostServices hostServices) {
         this.hostServices = hostServices;
@@ -105,8 +113,8 @@ public class PreferitiController implements Initializable {
 
     /**
      * Carica la lista dei ristoranti preferiti dell'utente corrente.
-     * Recupera l'username dell'utente dalla sessione, ottiene la lista dei preferiti
-     * dal PreferenceService e carica i dettagli dei ristoranti tramite il RistoranteService.
+     * Recupera l'username dalla sessione, ottiene i preferiti dal PreferenceService
+     * e i dettagli dei ristoranti dal RistoranteService.
      */
     private void caricaPreferiti() {
         String username = SessioneUtente.getUsernameUtente();
@@ -120,8 +128,9 @@ public class PreferitiController implements Initializable {
     }
 
     /**
-     * Apre una nuova finestra con i dettagli del ristorante selezionato.
-     * 
+     * Apre una nuova finestra o cambia la scena per mostrare i dettagli
+     * del ristorante selezionato.
+     *
      * @param ristorante Il ristorante di cui visualizzare i dettagli
      */
     private void openRestaurantInfo(Ristorante ristorante) {
@@ -152,7 +161,7 @@ public class PreferitiController implements Initializable {
     }
 
     /**
-     * Rimuove un ristorante dalla lista dei preferiti dell'utente.
+     * Rimuove un ristorante dai preferiti dell'utente corrente.
      * Aggiorna sia il servizio delle preferenze che la visualizzazione.
      *
      * @param ristorante Il ristorante da rimuovere dai preferiti
@@ -168,7 +177,7 @@ public class PreferitiController implements Initializable {
     /**
      * Aggiorna dinamicamente la lista dei ristoranti preferiti.
      * Recupera la lista aggiornata dei preferiti dal PreferenceService
-     * e aggiorna la ListView per riflettere le modifiche.
+     * e aggiorna la ListView.
      */
     public void refreshData() {
         String username = SessioneUtente.getUsernameUtente();
@@ -179,6 +188,12 @@ public class PreferitiController implements Initializable {
         preferitiListView.setItems(items);
     }
 
+    /**
+     * Mostra un messaggio di errore all'utente tramite un Alert JavaFX.
+     *
+     * @param titolo   Il titolo della finestra di alert
+     * @param messaggio Il contenuto del messaggio di errore
+     */
     private void mostraErrore(String titolo, String messaggio) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titolo);

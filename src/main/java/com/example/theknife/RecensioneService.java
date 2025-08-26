@@ -20,13 +20,21 @@ import javafx.collections.ObservableList;
 
 /**
  * Servizio per la gestione delle recensioni dei ristoranti.
- * Implementa il pattern Singleton per garantire un'unica istanza del servizio
- * in tutta l'applicazione.
+ * <p>
+ * Implementa il pattern Singleton per garantire un'unica istanza in tutta l'applicazione.
+ * Permette di:
+ * <ul>
+ *     <li>Caricare e salvare recensioni da/verso CSV</li>
+ *     <li>Aggiungere, modificare o eliminare recensioni</li>
+ *     <li>Gestire le risposte dei ristoratori</li>
+ *     <li>Calcolare la media delle stelle per un ristorante</li>
+ * </ul>
+ * </p>
  *
- * @author Samuele Secchi, 761031, Sede CO
- * @author Flavio Marin, 759910, Sede CO
- * @author Matilde Lecchi, 759875, Sede CO
- * @author Davide Caccia, 760742, Sede CO
+ * @author Samuele Secchi
+ * @author Flavio Marin
+ * @author Matilde Lecchi
+ * @author Davide Caccia
  * @version 1.0
  * @since 2025-05-20
  */
@@ -38,8 +46,8 @@ public class RecensioneService {
     private final ObservableList<Recensione> allRecensioni;
 
     /**
-     * Costruttore privato per implementare il pattern Singleton.
-     * Inizializza le strutture dati e carica le recensioni dal file CSV.
+     * Costruttore privato per il pattern Singleton.
+     * Inizializza la mappa e la lista osservabile e carica le recensioni dal CSV.
      */
     private RecensioneService() {
         allRecensioni = FXCollections.observableArrayList();
@@ -59,16 +67,11 @@ public class RecensioneService {
     }
 
     /**
-     * Carica tutte le recensioni dal file CSV in memoria.
-     * Legge il file utilizzando UTF-8 per supportare caratteri speciali
-     * e gestisce correttamente le virgole nei campi di testo usando una regex.
-     * Per ogni recensione caricata:
-     * <ul>
-     *   <li>Crea un nuovo oggetto Recensione</li>
-     *   <li>Imposta la data originale</li>
-     *   <li>Aggiunge eventuali risposte dei ristoratori</li>
-     *   <li>Memorizza la recensione nella mappa e nella lista osservabile</li>
-     * </ul>
+     * Carica tutte le recensioni dal file CSV.
+     * <p>
+     * Supporta caratteri speciali UTF-8 e campi di testo con virgole.
+     * Aggiorna la mappa e la lista osservabile.
+     * </p>
      */
     private void caricaRecensioni() {
         recensioniMap.clear();
@@ -109,9 +112,9 @@ public class RecensioneService {
 
     /**
      * Salva tutte le recensioni su file CSV.
-     * Scrive l'header del CSV e poi tutte le recensioni nel formato:
-     * username,ristoranteId,stelle,testo,data,risposta
-     * Gestisce correttamente le virgole nei campi di testo usando le virgolette.
+     * <p>
+     * I campi di testo che contengono virgole vengono racchiusi tra virgolette.
+     * </p>
      */
     private void salvaRecensioni() {
         String filePath = "src/main/resources/data/recensioni.csv";
@@ -132,10 +135,10 @@ public class RecensioneService {
     }
 
     /**
-     * Aggiunge una nuova recensione.
-     * Imposta la data corrente e aggiorna sia la mappa che la lista osservabile.
+     * Aggiunge una nuova recensione e aggiorna la data corrente.
+     * Aggiorna sia la mappa che la lista osservabile e salva su CSV.
      *
-     * @param recensione La nuova recensione da aggiungere
+     * @param recensione La recensione da aggiungere
      */
     public void aggiungiRecensione(Recensione recensione) {
         recensione.setData(LocalDateTime.now().format(formatter));
@@ -145,7 +148,12 @@ public class RecensioneService {
     }
 
     /**
-     * Modifica una recensione esistente
+     * Modifica una recensione esistente.
+     *
+     * @param username l'utente autore della recensione
+     * @param ristoranteId l'ID del ristorante recensito
+     * @param nuovoTesto il nuovo testo della recensione
+     * @param nuoveStelle il nuovo numero di stelle
      */
     public void modificaRecensione(String username, String ristoranteId, String nuovoTesto, int nuoveStelle) {
         List<Recensione> recensioni = recensioniMap.get(ristoranteId);
@@ -163,7 +171,10 @@ public class RecensioneService {
     }
 
     /**
-     * Elimina una recensione
+     * Elimina una recensione di un utente per un ristorante.
+     *
+     * @param username l'utente autore della recensione
+     * @param ristoranteId l'ID del ristorante
      */
     public void eliminaRecensione(String username, String ristoranteId) {
         List<Recensione> recensioni = recensioniMap.get(ristoranteId);
@@ -174,7 +185,15 @@ public class RecensioneService {
     }
 
     /**
-     * Aggiunge una risposta a una recensione
+     * Aggiunge una risposta a una recensione.
+     * <p>
+     * Solo il proprietario del ristorante può rispondere.
+     * </p>
+     *
+     * @param username l'autore della recensione a cui rispondere
+     * @param ristoranteId l'ID del ristorante
+     * @param risposta testo della risposta
+     * @throws IllegalStateException se l'utente corrente non è proprietario
      */
     public void aggiungiRisposta(String username, String ristoranteId, String risposta) {
         String currentUser = SessioneUtente.getUsernameUtente();
@@ -207,7 +226,13 @@ public class RecensioneService {
     }
 
     /**
-     * Recupera tutte le recensioni per un dato ristorante (sempre aggiornate dal CSV)
+     * Restituisce tutte le recensioni di un ristorante.
+     * <p>
+     * Carica sempre le recensioni aggiornate dal CSV.
+     * </p>
+     *
+     * @param nomeRistorante l'ID del ristorante
+     * @return lista delle recensioni
      */
     public List<Recensione> getRecensioniRistorante(String nomeRistorante) {
         caricaRecensioni();
@@ -215,7 +240,13 @@ public class RecensioneService {
     }
 
     /**
-     * Recupera tutte le recensioni fatte da un utente (sempre aggiornate dal CSV)
+     * Restituisce tutte le recensioni fatte da un utente.
+     * <p>
+     * Carica sempre le recensioni aggiornate dal CSV.
+     * </p>
+     *
+     * @param username l'utente autore delle recensioni
+     * @return lista delle recensioni dell'utente
      */
     public List<Recensione> getRecensioniUtente(String username) {
         caricaRecensioni();
@@ -226,7 +257,10 @@ public class RecensioneService {
     }
 
     /**
-     * Calcola la media delle stelle per un ristorante (sempre aggiornata dal CSV)
+     * Calcola la media delle stelle per un ristorante.
+     *
+     * @param ristoranteId l'ID del ristorante
+     * @return media delle stelle (0.0 se non ci sono recensioni)
      */
     public double getMediaStelleRistorante(String ristoranteId) {
         caricaRecensioni();
@@ -240,6 +274,13 @@ public class RecensioneService {
             .orElse(0.0);
     }
 
+    /**
+     * Controlla se un utente è l'autore di una recensione.
+     *
+     * @param username l'username da verificare
+     * @param recensione la recensione da controllare
+     * @return true se l'utente è l'autore, false altrimenti
+     */
     public boolean isRecensioneOwner(String username, Recensione recensione) {
         return recensione != null && recensione.getUsername().equals(username);
     }

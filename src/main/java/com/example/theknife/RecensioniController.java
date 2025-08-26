@@ -23,14 +23,22 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
 /**
- * Controller per la gestione delle recensioni.
- * Gestisce l'interfaccia che mostra la lista delle recensioni di un ristorante
- * e permette di aggiungere nuove recensioni o rispondere a quelle esistenti.
+ * Controller per la gestione delle recensioni di un ristorante.
+ * <p>
+ * Permette di:
+ * <ul>
+ *     <li>Visualizzare le recensioni in una TableView</li>
+ *     <li>Aggiungere, modificare o eliminare recensioni da parte degli utenti</li>
+ *     <li>Rispondere alle recensioni da parte dei ristoratori</li>
+ *     <li>Filtrare recensioni per numero di stelle</li>
+ *     <li>Mostrare un grafico a torta con la distribuzione delle stelle</li>
+ * </ul>
+ * </p>
  *
- * @author Samuele Secchi, 761031, Sede CO
- * @author Flavio Marin, 759910, Sede CO
- * @author Matilde Lecchi, 759875, Sede CO
- * @author Davide Caccia, 760742, Sede CO
+ * @author Samuele Secchi
+ * @author Flavio Marin
+ * @author Matilde Lecchi
+ * @author Davide Caccia
  * @version 1.0
  * @since 2025-05-20
  */
@@ -66,9 +74,12 @@ public class RecensioniController {
 
     /**
      * Imposta il controller della dashboard del ristoratore come parent.
-     * Questo permette di aggiornare la dashboard quando vengono fatte modifiche alle recensioni.
+     * <p>
+     * Serve per notificare aggiornamenti quando le recensioni vengono aggiunte,
+     * modificate o eliminate.
+     * </p>
      *
-     * @param controller Il controller della dashboard del ristoratore
+     * @param controller il controller padre della dashboard
      */
     public void setParentController(RistoratoreDashboardController controller) {
         this.parentController = controller;
@@ -94,6 +105,13 @@ public class RecensioniController {
         this.refreshParentCallback = callback;
     }
 
+    /**
+     * Inizializza il controller.
+     * <p>
+     * Configura la tabella delle recensioni, il grafico a torta, i filtri e i listener
+     * per selezione, modifica e risposta.
+     * </p>
+     */
     @FXML
     public void initialize() {
         comboBox.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5));
@@ -147,6 +165,9 @@ public class RecensioniController {
         rispostaBox.setVisible(isRistoratore);
     }
 
+    /**
+     * Aggiorna la lista delle recensioni e il grafico a torta.
+     */
     public void refreshData() {
         if (ristoranteId != null) {
             List<Recensione> recensioni = recensioneService.getRecensioniRistorante(ristoranteId);
@@ -157,18 +178,20 @@ public class RecensioniController {
         }
     }
 
+    /**
+     * Imposta l'ID del ristorante corrente e aggiorna i dati.
+     *
+     * @param id ID del ristorante
+     */
     public void setRistoranteId(String id) {
         this.ristoranteId = id;
         refreshData();
         aggiornaPieChart();
     }
 
-    private void caricaRecensioni() {
-        masterRecensioniList.clear();
-        masterRecensioniList.addAll(recensioneService.getRecensioniRistorante(ristoranteId));
-        aggiornaPieChart();
-    }
-
+    /**
+     * Torna al menu principale.
+     */
     @FXML
     private void handleTornaAlMenuPrincipale() {
         // Torna sempre al dettaglio del ristorante
@@ -178,6 +201,9 @@ public class RecensioniController {
         }
     }
 
+    /**
+     * Aggiorna il grafico a torta con il conteggio delle recensioni per ogni numero di stelle.
+     */
     private void aggiornaPieChart() {
         pieChart.getData().clear();
         recensioniMap.clear();
@@ -197,6 +223,13 @@ public class RecensioniController {
         }
     }
 
+    /**
+     * Gestisce l'invio di una nuova recensione.
+     * <p>
+     * Controlla se l'utente è loggato, se il testo non è vuoto e se l'utente
+     * non ha già recensito il ristorante. Poi crea la recensione e aggiorna
+     * la vista.
+     */
     @FXML
     private void handleInvia() {
         if (!SessioneUtente.isUtenteLoggato()) {
@@ -226,6 +259,11 @@ public class RecensioniController {
         notificaAggiornamentoRecensioni();
     }
 
+    /**
+     * Gestisce la modifica della recensione selezionata.
+     * <p>
+     * Permette all'utente di modificare solo le proprie recensioni.
+     */
     @FXML
     private void handleModifica() {
         Recensione selected = tableView.getSelectionModel().getSelectedItem();
@@ -253,6 +291,11 @@ public class RecensioniController {
         notificaAggiornamentoRecensioni();
     }
 
+    /**
+     * Gestisce l'eliminazione della recensione selezionata.
+     * <p>
+     * Permette all'utente di eliminare solo le proprie recensioni.
+     */
     @FXML
     private void handleElimina() {
         Recensione selected = tableView.getSelectionModel().getSelectedItem();
@@ -270,6 +313,11 @@ public class RecensioniController {
         notificaAggiornamentoRecensioni();
     }
 
+    /**
+     * Gestisce l'invio di una risposta alla recensione selezionata.
+     * <p>
+     * Solo i ristoratori possono rispondere.
+     */
     @FXML
     private void handleRispondi() {
         Recensione selected = tableView.getSelectionModel().getSelectedItem();
@@ -288,6 +336,9 @@ public class RecensioniController {
         notificaAggiornamentoRecensioni();
     }
 
+    /**
+     * Pulisce i campi di testo e resetta la selezione della tabella.
+     */
     private void pulisciCampi() {
         recensioneTextArea.clear();
         rispostaTextArea.clear();
@@ -295,6 +346,12 @@ public class RecensioniController {
         tableView.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Mostra un alert di errore.
+     *
+     * @param titolo titolo dell'alert
+     * @param messaggio contenuto dell'alert
+     */
     private void mostraErrore(String titolo, String messaggio) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titolo);

@@ -15,6 +15,11 @@ import java.util.Set;
  * Implementa il pattern Singleton e gestisce i ristoranti preferiti
  * degli utenti, mantenendo la persistenza su file CSV.
  *
+ * <p>
+ * Fornisce metodi per aggiungere, rimuovere, recuperare e verificare i ristoranti preferiti
+ * di ciascun utente. Garantisce la sincronizzazione dei dati con il file CSV.
+ * </p>
+ *
  * @author Samuele Secchi, 761031, Sede CO
  * @author Flavio Marin, 759910, Sede CO
  * @author Matilde Lecchi, 759875, Sede CO
@@ -28,11 +33,20 @@ public class PreferenceService {
     private static PreferenceService instance;
     private final Map<String, Set<String>> preferitiPerUtente;
 
+    /**
+     * Costruttore privato per il pattern Singleton.
+     * Inizializza la mappa dei preferiti e carica i dati dal CSV.
+     */
     private PreferenceService() {
         preferitiPerUtente = new HashMap<>();
         caricaPreferiti();
     }
 
+    /**
+     * Restituisce l'istanza singola del servizio.
+     *
+     * @return istanza di {@link PreferenceService}
+     */
     public static PreferenceService getInstance() {
         if (instance == null) {
             instance = new PreferenceService();
@@ -41,7 +55,8 @@ public class PreferenceService {
     }
 
     /**
-     * Carica i preferiti dal file CSV
+     * Carica i preferiti dal file CSV.
+     * Se il file non esiste, viene creato con l'intestazione.
      */
     private void caricaPreferiti() {
         preferitiPerUtente.clear();
@@ -83,7 +98,7 @@ public class PreferenceService {
     }
 
     /**
-     * Salva i preferiti su file CSV
+     * Salva i preferiti correnti su file CSV.
      */
     private void salvaPreferiti() {
         try (FileWriter writer = new FileWriter(CSV_FILE)) {
@@ -100,7 +115,10 @@ public class PreferenceService {
     }
 
     /**
-     * Aggiunge un ristorante ai preferiti di un utente
+     * Aggiunge un ristorante ai preferiti di un utente e aggiorna il CSV.
+     *
+     * @param username    nome dell'utente
+     * @param ristoranteId ID del ristorante da aggiungere
      */
     public void aggiungiPreferito(String username, String ristoranteId) {
         preferitiPerUtente
@@ -110,7 +128,10 @@ public class PreferenceService {
     }
 
     /**
-     * Rimuove un ristorante dai preferiti di un utente
+     * Rimuove un ristorante dai preferiti di un utente e aggiorna il CSV.
+     *
+     * @param username    nome dell'utente
+     * @param ristoranteId ID del ristorante da rimuovere
      */
     public void rimuoviPreferito(String username, String ristoranteId) {
         if (preferitiPerUtente.containsKey(username)) {
@@ -120,7 +141,11 @@ public class PreferenceService {
     }
 
     /**
-     * Recupera tutti i ristoranti preferiti di un utente (sempre aggiornati dal CSV)
+     * Recupera tutti i ristoranti preferiti di un utente.
+     * I dati vengono aggiornati dal CSV prima del ritorno.
+     *
+     * @param username nome dell'utente
+     * @return insieme degli ID dei ristoranti preferiti
      */
     public Set<String> getPreferiti(String username) {
         caricaPreferiti();
@@ -128,7 +153,12 @@ public class PreferenceService {
     }
 
     /**
-     * Verifica se un ristorante è tra i preferiti di un utente (sempre aggiornato dal CSV)
+     * Verifica se un ristorante è tra i preferiti di un utente.
+     * I dati vengono aggiornati dal CSV prima della verifica.
+     *
+     * @param username    nome dell'utente
+     * @param ristoranteId ID del ristorante da verificare
+     * @return true se il ristorante è tra i preferiti, false altrimenti
      */
     public boolean isPreferito(String username, String ristoranteId) {
         caricaPreferiti();

@@ -30,10 +30,16 @@ import javafx.scene.control.TextField;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+
 /**
- * La classe {@code RegistrazioneController} gestisce la registrazione di nuovi utenti.
- * Permette l'inserimento di tutti i dati richiesti e la scelta del ruolo,
- * quindi salva il nuovo utente nel file CSV degli utenti.
+ * Controller per la gestione della registrazione di nuovi utenti.
+ * <p>
+ * Permette l'inserimento dei dati personali e la scelta del ruolo (cliente o ristoratore),
+ * valida tutti i campi e salva l'utente nel file CSV.
+ * </p>
+ * <p>
+ * Gestisce inoltre il passaggio alla schermata di login dopo la registrazione.
+ * </p>
  *
  * @author Samuele Secchi, 761031, Sede CO
  * @version 1.0
@@ -78,8 +84,11 @@ public class RegistrazioneController {
     }
 
     /**
-     * Metodo invocato alla pressione del pulsante "Registrati".
-     * Valida tutti i campi e registra il nuovo utente se i dati sono corretti.
+     * Gestisce la registrazione di un nuovo utente.
+     * <p>
+     * Valida tutti i campi obbligatori, verifica la disponibilità dell'username,
+     * cifra la password e salva l'utente nel file CSV. Infine, ritorna al login.
+     * </p>
      *
      * @param evento L'evento generato dal clic sul pulsante di registrazione.
      */
@@ -135,8 +144,11 @@ public class RegistrazioneController {
     }
 
     /**
-     * Metodo invocato alla pressione del pulsante "Torna al Login".
-     * Riporta l'utente alla schermata di login.
+     * Torna alla schermata di login.
+     * <p>
+     * Carica il file FXML del login, applica il CSS se disponibile
+     * e imposta la scena nella finestra corrente.
+     * </p>
      *
      * @param evento L'evento generato dal clic sul pulsante.
      */
@@ -178,7 +190,11 @@ public class RegistrazioneController {
     }
 
     /**
-     * Valida tutti i campi di input per la registrazione.
+     * Valida tutti i campi di input.
+     * <p>
+     * Controlla la presenza dei dati, la lunghezza minima e la correttezza di username e password.
+     * Inoltre verifica età minima e dati del domicilio.
+     * </p>
      *
      * @return true se tutti i campi sono validi, false altrimenti.
      */
@@ -280,7 +296,7 @@ public class RegistrazioneController {
     }
 
     /**
-     * Salva il nuovo utente nel file CSV.
+     * Salva un nuovo utente nel file CSV.
      *
      * @param utente L'utente da salvare.
      * @return true se il salvataggio è riuscito, false altrimenti.
@@ -316,11 +332,11 @@ public class RegistrazioneController {
     }
 
     /**
-     * Calcola l'hash SHA-256 di una password.
+     * Cifra la password con SHA-256.
      *
-     * @param password La password in chiaro da cifrare.
-     * @return L'hash SHA-256 della password in formato esadecimale.
-     * @throws NoSuchAlgorithmException Se l'algoritmo SHA-256 non è disponibile.
+     * @param password La password in chiaro.
+     * @return La password cifrata in formato esadecimale.
+     * @throws NoSuchAlgorithmException Se SHA-256 non è disponibile.
      */
     private String cifraPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -339,11 +355,11 @@ public class RegistrazioneController {
     }
 
     /**
-     * Mostra un dialog di avviso all'utente.
+     * Mostra un alert all'utente.
      *
-     * @param titolo Il titolo del dialog.
-     * @param messaggio Il messaggio da visualizzare.
-     * @param tipoAvviso Il tipo di alert (INFO, WARNING, ERROR).
+     * @param titolo Titolo dell'alert.
+     * @param messaggio Messaggio da visualizzare.
+     * @param tipoAvviso Tipo di alert (INFO, WARNING, ERROR).
      */
     private void mostraAvviso(String titolo, String messaggio, Alert.AlertType tipoAvviso) {
         Alert avviso = new Alert(tipoAvviso);
@@ -353,6 +369,11 @@ public class RegistrazioneController {
         avviso.showAndWait();
     }
 
+    /**
+     * Imposta un callback da eseguire quando un utente viene registrato con successo.
+     *
+     * @param callback La funzione da eseguire dopo la registrazione.
+     */
     public void setOnUserRegistered(Runnable callback) {
         this.onUserRegistered = callback;
     }
