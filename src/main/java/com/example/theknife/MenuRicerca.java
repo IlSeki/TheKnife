@@ -81,6 +81,7 @@ public class MenuRicerca implements Initializable {
 
     /**
      * Imposta i servizi host per aprire link esterni
+     *
      * @param hostServices servizi host dell'applicazione
      */
     public void setHostServices(HostServices hostServices) {
@@ -88,8 +89,11 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Inizializza il controller caricando i dati dal CSV, impostando il filtro di ricerca ed
-     * configurando gli eventi per il MenuButton che gestisce l'ordinamento.
+     * Inizializza il controller caricando i dati dal CSV, impostando il filtro di ricerca
+     * e configurando gli eventi per il MenuButton che gestisce l'ordinamento.
+     *
+     * @param location  l'URL della risorsa FXML
+     * @param resources il bundle di risorse per la localizzazione
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -126,10 +130,9 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Metodo per aprire la pagina di informazioni sul ristorante.
-     * Carica l'FXML della pagina dettagli e passa i dati del ristorante.
+     * Apre la pagina dei dettagli di un ristorante in una nuova finestra.
      *
-     * @param ristorante il ristorante di cui visualizzare le informazioni.
+     * @param ristorante il ristorante di cui visualizzare le informazioni
      */
     private void openRestaurantInfo(Ristorante ristorante) {
         try {
@@ -165,8 +168,7 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Carica i ristoranti dal file CSV michelin_my_maps.csv
-     * utilizzando la classe Ristorante principale del progetto
+     * Carica tutti i ristoranti dal file CSV.
      */
     private void caricaRistorantiDaCSV() {
         tuttiRistoranti = FXCollections.observableArrayList();
@@ -208,8 +210,11 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Parsing di una riga del CSV per creare un oggetto Ristorante utilizzando
-     * la classe Ristorante principale del progetto.
+     * Parsing di una riga del CSV per creare un oggetto {@link Ristorante}.
+     *
+     * @param line    la riga CSV
+     * @param headers intestazioni delle colonne CSV
+     * @return il ristorante creato o null se non valido
      */
     private Ristorante parseRigaCSV(String line, String[] headers) {
         try {
@@ -287,7 +292,12 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Restituisce il valore dal record o un valore di default
+     * Restituisce il valore dal record CSV o un valore di default se mancante.
+     *
+     * @param record       mappa dei valori CSV
+     * @param key          chiave della colonna
+     * @param defaultValue valore di default
+     * @return il valore associato alla chiave o default
      */
     private String getValueOrDefault(Map<String, String> record, String key, String defaultValue) {
         String value = record.get(key);
@@ -295,7 +305,10 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Parsing più robusto per gestire CSV con virgolette.
+     * Parsing robusto di una riga CSV con gestione delle virgolette.
+     *
+     * @param line la riga CSV
+     * @return array dei valori
      */
     private String[] parseCSVLine(String line) {
         List<String> result = new ArrayList<>();
@@ -317,7 +330,9 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Filtra i ristoranti in base al testo inserito nel campo di ricerca.
+     * Filtra la lista dei ristoranti in base al testo inserito nel campo di ricerca.
+     *
+     * @param filtro testo da cercare
      */
     private void filtraRistoranti(String filtro) {
         if (filtro == null || filtro.trim().isEmpty()) {
@@ -334,8 +349,7 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Metodo per gestire la navigazione ai preferiti.
-     * Carica l'FXML della pagina preferiti e apre una nuova finestra.
+     * Gestisce l'apertura della finestra dei preferiti.
      */
     @FXML
     private void handlePreferiti() {
@@ -366,8 +380,7 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Metodo per gestire la navigazione alla dashboard del ristoratore.
-     * Carica l'FXML della dashboard e apre una nuova finestra.
+     * Gestisce l'apertura della dashboard del ristoratore.
      */
     @FXML
     private void handleRistoratoreDashboard() {
@@ -402,8 +415,7 @@ public class MenuRicerca implements Initializable {
     }
 
     /**
-     * Metodo per gestire il menu utente.
-     * Carica l'FXML della pagina profilo utente o login a seconda dello stato di autenticazione.
+     * Gestisce il menu utente (login o profilo).
      */
     @FXML
     private void handleUserMenu() {
@@ -439,6 +451,12 @@ public class MenuRicerca implements Initializable {
         }
     }
 
+    /**
+     * Mostra un errore tramite {@link Alert}.
+     *
+     * @param titolo   titolo della finestra di errore
+     * @param messaggio messaggio di errore
+     */
     private void mostraErrore(String titolo, String messaggio) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titolo);
@@ -447,6 +465,10 @@ public class MenuRicerca implements Initializable {
         alert.showAndWait();
     }
 
+    /**
+     * Aggiorna il {@link ListView} con un {@link ListCell} personalizzato,
+     * aggiungendo il pulsante [info] in ogni riga.
+     */
     private void updateListCell() {
         resultList.setCellFactory(_ -> new ListCell<>() {
             private final Button infoButton = new Button("[info]");
@@ -479,6 +501,9 @@ public class MenuRicerca implements Initializable {
         });
     }
 
+    /**
+     * Gestisce gli eventi dei {@link MenuItem} del {@link MenuButton} per l'ordinamento.
+     */
     private void handleMenuItems() {
         for (MenuItem item : filterMenu.getItems()) {
             item.setOnAction(_ -> {
@@ -502,6 +527,11 @@ public class MenuRicerca implements Initializable {
         }
     }
 
+    /**
+     * Apre la finestra di dettaglio del ristorante e gestisce la callback per il refresh.
+     *
+     * @param ristorante ristorante da visualizzare
+     */
     private void openRistoranteDetail(Ristorante ristorante) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/example/theknife/ristorante-detail.fxml"));
@@ -534,7 +564,13 @@ public class MenuRicerca implements Initializable {
         sortedData = new SortedList<>(ristorantiFiltrati);
         resultList.setItems(sortedData);
     }
-    
+
+    /**
+     * Mostra un alert di errore generico.
+     *
+     * @param header  intestazione dell'alert
+     * @param content contenuto dell'alert
+     */
     private void showError(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Errore");
