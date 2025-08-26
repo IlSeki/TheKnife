@@ -16,10 +16,18 @@ import java.util.Map;
  * Implementa il pattern Singleton e gestisce le associazioni tra ristoratori
  * e i loro ristoranti, mantenendo la persistenza su file CSV.
  *
- * @author Samuele Secchi, 761031, Sede CO
- * @author Flavio Marin, 759910, Sede CO
- * @author Matilde Lecchi, 759875, Sede CO
- * @author Davide Caccia, 760742, Sede CO
+ * Gestisce operazioni quali:
+ * <ul>
+ *     <li>Recupero dei ristoranti posseduti da un utente</li>
+ *     <li>Verifica se un utente è proprietario di un ristorante</li>
+ *     <li>Associazione di un ristorante a un proprietario</li>
+ *     <li>Aggiornamento dei dati dal CSV</li>
+ * </ul>
+ *
+ * @author Samuele Secchi, 761031
+ * @author Flavio Marin, 759910
+ * @author Matilde Lecchi, 759875
+ * @author Davide Caccia, 760742
  * @version 1.0
  * @since 2025-05-20
  */
@@ -28,10 +36,19 @@ public class RistoranteOwnershipService {
     private final Map<String, List<String>> ownershipMap = new HashMap<>();
     private static final String OWNERSHIP_FILE_PATH = "src/main/resources/data/proprietari_ristoranti.csv";
 
+    /**
+     * Costruttore privato per il Singleton.
+     * Carica i dati iniziali dal file CSV.
+     */
     private RistoranteOwnershipService() {
         loadOwnershipData();
     }
 
+    /**
+     * Restituisce l'istanza singleton del servizio.
+     *
+     * @return istanza unica di {@link RistoranteOwnershipService}
+     */
     public static RistoranteOwnershipService getInstance() {
         if (instance == null) {
             instance = new RistoranteOwnershipService();
@@ -39,6 +56,10 @@ public class RistoranteOwnershipService {
         return instance;
     }
 
+    /**
+     * Carica i dati di proprietà dal file CSV nella mappa in memoria.
+     * Se il file non esiste, lo crea con l'header corretto.
+     */
     private void loadOwnershipData() {
         File file = new File(OWNERSHIP_FILE_PATH);
         if (!file.exists()) {
@@ -78,6 +99,13 @@ public class RistoranteOwnershipService {
         }
     }
 
+    /**
+     * Restituisce la lista dei ristoranti posseduti da un utente.
+     * Ricarica i dati dal file CSV per assicurarsi che siano aggiornati.
+     *
+     * @param username username dell'utente
+     * @return lista di nomi di ristoranti posseduti; lista vuota se nessun ristorante
+     */
     public List<String> getOwnedRestaurants(String username) {
         // Ricarica sempre i dati dal filesystem per assicurarsi di avere i dati più aggiornati
         ownershipMap.clear();
@@ -85,12 +113,28 @@ public class RistoranteOwnershipService {
         return ownershipMap.getOrDefault(username, new ArrayList<>());
     }
 
+    /**
+     * Verifica se un utente è proprietario di un determinato ristorante.
+     *
+     * @param username username dell'utente
+     * @param ristoranteId nome del ristorante
+     * @return true se l'utente possiede il ristorante, false altrimenti
+     */
     public boolean isOwner(String username, String ristoranteId) {
         // Ricarica i dati per assicurarsi di avere lo stato più aggiornato
         List<String> ownedRestaurants = getOwnedRestaurants(username);
         return ownedRestaurants.contains(ristoranteId);
     }
 
+    /**
+     * Associa un ristorante a un proprietario.
+     * Se necessario, crea la directory e il file CSV.
+     * Aggiorna anche la mappa in memoria.
+     *
+     * @param ristoranteNome nome del ristorante da associare
+     * @param username username del proprietario
+     * @throws IOException se non è possibile creare la directory o scrivere sul file
+     */
     public void associaRistoranteAProprietario(String ristoranteNome, String username) throws IOException {
         // Crea la directory se non esiste
         File dir = new File("src/main/resources/data");
@@ -129,6 +173,10 @@ public class RistoranteOwnershipService {
         }
     }
 
+    /**
+     * Ricarica i dati di proprietà dal file CSV.
+     * Utile per aggiornare la mappa in memoria dopo modifiche esterne.
+     */
     public void refreshOwnershipData() {
         ownershipMap.clear();
         loadOwnershipData();

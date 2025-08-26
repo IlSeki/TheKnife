@@ -27,10 +27,17 @@ import javafx.collections.ObservableList;
  * Implementa il pattern Singleton e gestisce tutte le operazioni CRUD sui ristoranti,
  * inclusa la persistenza su file CSV.
  *
- * @author Samuele Secchi, 761031, Sede CO
- * @author Flavio Marin, 759910, Sede CO
- * @author Matilde Lecchi, 759875, Sede CO
- * @author Davide Caccia, 760742, Sede CO
+ * Gestisce operazioni quali:
+ * <ul>
+ *     <li>Caricamento dei ristoranti dal CSV</li>
+ *     <li>Gestione dei proprietari dei ristoranti</li>
+ *     <li>Recupero, aggiunta e verifica di ristoranti</li>
+ * </ul>
+ *
+ * @author Samuele Secchi, 761031
+ * @author Flavio Marin, 759910
+ * @author Matilde Lecchi, 759875
+ * @author Davide Caccia, 760742
  * @version 1.0
  * @since 2025-05-20
  */
@@ -42,12 +49,11 @@ public class RistoranteService {
     private static final String PROPRIETARI_FILE = "src/main/resources/data/proprietari_ristoranti.csv";
 
     /**
-     * Costruttore privato della classe RistoranteService.
+     * Costruttore privato della classe {@code RistoranteService}.
      * <p>
      * Inizializza le mappe dei ristoranti e dei proprietari
      * e carica i dati dai file CSV.
      * </p>
-     *
      * <p>Pattern utilizzato: <b>Singleton</b></p>
      */
     private RistoranteService() {
@@ -58,9 +64,7 @@ public class RistoranteService {
     }
     /**
      * Restituisce l'istanza unica (singleton) del servizio.
-     * <p>
      * Se non esiste ancora, viene creata all’occorrenza.
-     * </p>
      *
      * @return istanza di {@code RistoranteService}
      */
@@ -158,9 +162,7 @@ public class RistoranteService {
     /**
      * Carica l’associazione tra ristoranti e i rispettivi proprietari
      * leggendo i dati dal file {@code PROPRIETARI_FILE}.
-     * <p>
      * Se il file non esiste, viene mostrato un messaggio di errore su console.
-     * </p>
      */
     private void caricaProprietari() {
         File file = new File(PROPRIETARI_FILE);
@@ -194,7 +196,10 @@ public class RistoranteService {
     }
 
     /**
-     * Recupera un ristorante dal suo nome usando la cache aggiornata
+     * Recupera un ristorante dal suo nome usando la cache aggiornata.
+     *
+     * @param nome nome del ristorante
+     * @return l'oggetto {@code Ristorante} corrispondente o {@code null} se non trovato
      */
     public Ristorante getRistorante(String nome) {
         caricaRistoranti();
@@ -202,7 +207,9 @@ public class RistoranteService {
     }
 
     /**
-     * Recupera tutti i ristoranti (sempre aggiornati dal CSV)
+     * Recupera tutti i ristoranti presenti nel CSV.
+     *
+     * @return lista aggiornata di tutti i ristoranti
      */
     public List<Ristorante> getTuttiRistoranti() {
         caricaRistoranti();
@@ -210,7 +217,10 @@ public class RistoranteService {
     }
 
     /**
-     * Recupera una lista di ristoranti dai loro nomi (sempre aggiornati dal CSV)
+     * Recupera una lista di ristoranti dati i loro nomi.
+     *
+     * @param nomi collezione dei nomi dei ristoranti
+     * @return lista di ristoranti corrispondenti ai nomi forniti
      */
     public List<Ristorante> getRistorantiByNomi(Collection<String> nomi) {
         caricaRistoranti();
@@ -221,7 +231,10 @@ public class RistoranteService {
     }
 
     /**
-     * Recupera i ristoranti di proprietà di un ristoratore (sempre aggiornati dal CSV)
+     * Recupera i ristoranti di proprietà di un ristoratore.
+     *
+     * @param username username del ristoratore
+     * @return lista osservabile dei ristoranti del ristoratore
      */
     public ObservableList<Ristorante> getRistorantiByRistoratore(String username) {
         caricaRistoranti();
@@ -236,7 +249,11 @@ public class RistoranteService {
     }
 
     /**
-     * Verifica se un utente è proprietario di un ristorante
+     * Verifica se un utente è proprietario di un ristorante.
+     *
+     * @param username username dell’utente
+     * @param nomeRistorante nome del ristorante
+     * @return true se l’utente possiede il ristorante, false altrimenti
      */
     public boolean isProprietario(String username, String nomeRistorante) {
         return proprietariRistoranti.containsKey(username) &&
@@ -244,7 +261,11 @@ public class RistoranteService {
     }
 
     /**
-     * Aggiunge un ristorante e lo associa a un proprietario
+     * Aggiunge un nuovo ristorante e lo associa a un proprietario.
+     *
+     * @param username username del proprietario
+     * @param ristorante oggetto {@code Ristorante} da aggiungere
+     * @return true se l’operazione ha avuto successo, false altrimenti
      */
     public boolean aggiungiRistorante(String username, Ristorante ristorante) {
         if (username == null || ristorante == null) return false;
@@ -282,10 +303,10 @@ public class RistoranteService {
     }
 
     /**
-     * Salva su file le associazioni tra utenti e ristoranti di cui sono proprietari.
+     * Salva le associazioni tra utenti e ristoranti di cui sono proprietari su file CSV.
      * <p>
-     * Se la directory non esiste, viene creata. In caso di errore di scrittura,
-     * l’eccezione viene stampata su console.
+     * Se la directory non esiste, viene creata.
+     * In caso di errore di scrittura, l’eccezione viene loggata su console.
      * </p>
      */
     private void salvaProprietari() {
