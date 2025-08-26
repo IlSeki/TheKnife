@@ -1,45 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ContextMenu?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<VBox xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.example.theknife.RistorantiController"
-      stylesheets="/data/stile.css"
-      spacing="10">
-    
+<VBox spacing="10" stylesheets="/data/stile.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.RistorantiController">
+
     <!-- Barra di navigazione -->
-    <HBox spacing="10" alignment="CENTER_LEFT" styleClass="header-bar">
+    <HBox alignment="CENTER_LEFT" prefHeight="73.0" prefWidth="500.0" spacing="10" styleClass="header-bar">
         <padding>
-            <Insets top="10" right="20" bottom="10" left="20"/>
+            <Insets bottom="10" left="20" right="20" top="10" />
         </padding>
-        
-        <Label text="TheKnife" styleClass="app-title"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        
-        <Button fx:id="profiloButton" text="Il Mio Profilo" onAction="#onProfiloClick" styleClass="nav-button"/>
-        <Button fx:id="dashboardButton" text="Dashboard Ristoratore" onAction="#onDashboardClick" 
-                styleClass="nav-button" visible="false" managed="false"/>
+
+        <Label styleClass="app-title" text="TheKnife" />
+        <Region HBox.hgrow="ALWAYS" />
+
+        <Button fx:id="profiloButton" onAction="#onProfiloClick" styleClass="nav-button" text="Il Mio Profilo" />
+        <Button fx:id="dashboardButton" managed="false" onAction="#onDashboardClick" styleClass="nav-button" text="Dashboard Ristoratore" visible="false" />
     </HBox>
 
     <!-- Barra di ricerca -->
-    <HBox spacing="10" alignment="CENTER_LEFT">
+    <HBox alignment="CENTER_LEFT" prefWidth="294.0" spacing="10">
         <padding>
-            <Insets left="20" right="20"/>
+            <Insets left="20" right="20" />
         </padding>
-        <TextField fx:id="campoRicerca" promptText="Cerca ristoranti..." HBox.hgrow="ALWAYS"/>
-        <Button text="Cerca" onAction="#onCercaClick" styleClass="primary-button"/>
+        <TextField fx:id="campoRicerca" promptText="Cerca ristoranti..." HBox.hgrow="ALWAYS" />
+        <TextField fx:id="campoRicerca1" layoutX="30.0" layoutY="10.0" promptText="Cerca citta..." />
+        <TextField fx:id="campoRicerca2" layoutX="30.0" layoutY="10.0" promptText="Cerca cucina..." />
+        <Button onAction="#onCercaClick" prefHeight="26.0" prefWidth="42.0" styleClass="primary-button" text="Cerca" />
+    </HBox>
+    <HBox prefHeight="22.0" prefWidth="500.0">
+        <children>
+            <MenuButton mnemonicParsing="false" prefHeight="26.0" prefWidth="231.0" text="Fascia prezzo">
+                <items>
+                    <MenuItem mnemonicParsing="false" text=" ~Cheap" />
+                    <MenuItem mnemonicParsing="false" text="~not cheap" />
+                    <MenuItem mnemonicParsing="false" text=" ~Not very cheap" />
+                </items>
+                <contextMenu>
+                    <ContextMenu>
+                        <items>
+                            <MenuItem mnemonicParsing="false" text="Unspecified Action" />
+                        </items>
+                    </ContextMenu>
+                </contextMenu>
+            </MenuButton>
+        </children>
     </HBox>
 
     <!-- Tabella ristoranti -->
     <TableView fx:id="tabellaRistoranti" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colonnaNome" text="Nome"/>
-            <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo"/>
-            <TableColumn fx:id="colonnaLocalita" text="Località"/>
-            <TableColumn fx:id="colonnaPrezzo" text="Prezzo"/>
-            <TableColumn fx:id="colonnaCucina" text="Cucina"/>
+            <TableColumn fx:id="colonnaNome" text="Nome" />
+            <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo" />
+            <TableColumn fx:id="colonnaLocalita" text="Località" />
+            <TableColumn fx:id="colonnaPrezzo" text="Prezzo" />
+            <TableColumn fx:id="colonnaCucina" text="Cucina" />
         </columns>
     </TableView>
 </VBox>
