@@ -77,10 +77,11 @@ public class RistoratoreDashboardController implements Initializable {
         setupRecensioniList();
         detailsContainer.setVisible(false);
     }
-
+    /**
+     * Aggiorna dettagli, grafici, ecc. se necessario
+     */
     public void refreshData() {
         loadRistoranti();
-        // Aggiorna dettagli, grafici, ecc. se necessario
     }
 
     /**
@@ -420,11 +421,16 @@ public class RistoratoreDashboardController implements Initializable {
             showError("Errore nell'apertura della finestra delle recensioni", e);
         }
     }
-
-    public void refreshRistoranti() {
-        loadRistoranti();
-    }
-
+    /**
+     * Mostra una finestra di dialogo di errore con un titolo fisso ("Errore"),
+     * un'intestazione personalizzata e il messaggio dell'eccezione.
+     * <p>
+     * Utile per segnalare all'utente errori imprevisti in modo chiaro e immediato.
+     * </p>
+     *
+     * @param header testo da visualizzare come intestazione della finestra
+     * @param e      eccezione da cui estrarre il messaggio da mostrare nel contenuto
+     */
     private void showError(String header, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Errore");
