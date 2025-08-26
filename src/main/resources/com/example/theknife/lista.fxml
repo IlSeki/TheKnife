@@ -40,11 +40,12 @@
     </HBox>
     <HBox prefHeight="22.0" prefWidth="500.0">
         <children>
-            <MenuButton mnemonicParsing="false" prefHeight="26.0" prefWidth="231.0" text="Fascia prezzo">
+            <MenuButton fx:id="fasciaPrezzo" mnemonicParsing="false" prefHeight="26.0" prefWidth="231.0" text="Fascia prezzo">
                 <items>
-                    <MenuItem mnemonicParsing="false" text=" ~Cheap" />
-                    <MenuItem mnemonicParsing="false" text="~not cheap" />
-                    <MenuItem mnemonicParsing="false" text=" ~Not very cheap" />
+                    <MenuItem mnemonicParsing="false" text="€" />
+                    <MenuItem mnemonicParsing="false" text="€€" />
+                    <MenuItem mnemonicParsing="false" text="€€€" />
+                    <MenuItem mnemonicParsing="false" text="€€€€" />
                 </items>
                 <contextMenu>
                     <ContextMenu>

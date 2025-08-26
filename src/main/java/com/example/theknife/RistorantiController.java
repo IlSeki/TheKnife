@@ -17,11 +17,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -49,10 +45,12 @@ public class RistorantiController implements Initializable {
     @FXML private TextField campoRicerca;
     @FXML private TextField campoRicerca1;
     @FXML private TextField campoRicerca2;
+    @FXML private MenuButton fasciaPrezzo;
     @FXML private Button dashboardButton;
     @FXML private Button profiloButton;
 
     private final ObservableList<Ristorante> listaRistoranti = FXCollections.observableArrayList();
+    private String fasciaPrezzoSelezionata = "";
 
     /**
      * Inizializza il controller configurando la tabella dei ristoranti
@@ -69,6 +67,7 @@ public class RistorantiController implements Initializable {
         colonnaPrezzo.setCellValueFactory(new PropertyValueFactory<>("prezzo"));
         colonnaCucina.setCellValueFactory(new PropertyValueFactory<>("cucina"));
 
+
         tabellaRistoranti.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 Ristorante ristorante = tabellaRistoranti.getSelectionModel().getSelectedItem();
@@ -77,6 +76,13 @@ public class RistorantiController implements Initializable {
                 }
             }
         });
+
+        for (MenuItem item : fasciaPrezzo.getItems()) {
+            item.setOnAction(e -> {
+                fasciaPrezzoSelezionata = item.getText();   // salva la fascia scelta
+                fasciaPrezzo.setText(item.getText());       // cambia il testo del MenuButton
+            });
+        }
 
         refreshData();
         String ruoloUtente = SessioneUtente.getRuoloUtente();
@@ -262,8 +268,11 @@ public class RistorantiController implements Initializable {
         String ricercaL = campoRicerca1.getText().toLowerCase().trim();
         String ricercaC = campoRicerca2.getText().toLowerCase().trim();
 
+        int selezioneCount = fasciaPrezzoSelezionata == null ? 0
+                : fasciaPrezzoSelezionata.codePointCount(0, fasciaPrezzoSelezionata.length());
+
         // se tutti vuoti → mostra tutta la lista
-        if (ricercaR.isEmpty() && ricercaL.isEmpty() && ricercaC.isEmpty()) {
+        if (ricercaR.isEmpty() && ricercaL.isEmpty() && ricercaC.isEmpty() && selezioneCount == 0) {
             tabellaRistoranti.setItems(listaRistoranti);
             return;
         }
@@ -273,13 +282,19 @@ public class RistorantiController implements Initializable {
                     boolean matchNome = ricercaR.isEmpty() || r.getNome().toLowerCase().contains(ricercaR);
                     boolean matchLocalita = ricercaL.isEmpty() || r.getLocalita().toLowerCase().startsWith(ricercaL);
                     boolean matchCucina = ricercaC.isEmpty() || r.getCucina().toLowerCase().contains(ricercaC);
-                    // devono essere tutti veri
-                    return matchNome && matchLocalita && matchCucina;
+
+                    int prezzoCount = r.getPrezzo().codePointCount(0, r.getPrezzo().length());
+                    boolean matchPrezzo = (selezioneCount == 0) || (prezzoCount == selezioneCount);
+
+                    return matchNome && matchLocalita && matchCucina && matchPrezzo;
                 })
         );
 
         tabellaRistoranti.setItems(risultati);
     }
+
+
+
 
     public void refreshData() {
         listaRistoranti.clear();
