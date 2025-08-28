@@ -74,8 +74,8 @@ public class RistoranteDetailController implements Initializable {
 
     private Ristorante ristorante;
     private HostServices hostServices;
-    private final PreferenceService preferenceService = PreferenceService.getInstance();
-    private final RecensioneService recensioneService = RecensioneService.getInstance();
+    private final GestionePreferiti gestionePreferiti = com.example.theknife.GestionePreferiti.getInstance();
+    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
     private Runnable returnToMenuCallback;
     private Runnable tornaAlMenuPrincipaleCallback;
     private Parent rootToRestore;
@@ -249,7 +249,7 @@ public class RistoranteDetailController implements Initializable {
 
         // Aggiorna lo stato del bottone preferiti
         if (preferitoButton != null && SessioneUtente.getUsernameUtente() != null) {
-            boolean isPreferito = preferenceService.isPreferito(
+            boolean isPreferito = gestionePreferiti.isPreferito(
                 SessioneUtente.getUsernameUtente(),
                 ristorante.getNome()
             );
@@ -785,11 +785,11 @@ public class RistoranteDetailController implements Initializable {
         String username = SessioneUtente.getUsernameUtente();
         String ristoranteId = ristorante.getNome();
 
-        if (preferenceService.isPreferito(username, ristoranteId)) {
-            preferenceService.rimuoviPreferito(username, ristoranteId);
+        if (gestionePreferiti.isPreferito(username, ristoranteId)) {
+            gestionePreferiti.rimuoviPreferito(username, ristoranteId);
             preferitoButton.setText("🤍 Aggiungi ai preferiti");
         } else {
-            preferenceService.aggiungiPreferito(username, ristoranteId);
+            gestionePreferiti.aggiungiPreferito(username, ristoranteId);
             preferitoButton.setText("❤️ Rimuovi dai preferiti");
         }
     }
@@ -801,7 +801,7 @@ public class RistoranteDetailController implements Initializable {
         if (ristorante == null || recensioniRecentList == null) return;
 
         // Load only the 3 most recent reviews
-        List<Recensione> listaRecensioni = recensioneService.getRecensioniRistorante(ristorante.getNome());
+        List<Recensione> listaRecensioni = gestioneRecensioni.getRecensioniRistorante(ristorante.getNome());
         ObservableList<Recensione> recensioni = FXCollections.observableArrayList(listaRecensioni);
         recensioni.sort((r1, r2) -> r2.getData().compareTo(r1.getData())); // Sort by date descending
 

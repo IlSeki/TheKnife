@@ -57,9 +57,9 @@ public class RistoratoreDashboardController implements Initializable {
     @FXML private PieChart recensioniChart;
     @FXML private ListView<Recensione> recensioniList;
 
-    private final RistoranteService ristoranteService = RistoranteService.getInstance();
-    private final RistoranteOwnershipService ownershipService = RistoranteOwnershipService.getInstance();
-    private final RecensioneService recensioneService = RecensioneService.getInstance();
+    private final GestioneRistorante gestioneRistorante = GestioneRistorante.getInstance();
+    private final GestionePossessoRistorante ownershipService = GestionePossessoRistorante.getInstance();
+    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
     private Ristorante selectedRistorante;
 
     /**
@@ -146,8 +146,8 @@ public class RistoratoreDashboardController implements Initializable {
 
     /**
      * Carica i ristoranti di proprietà del ristoratore corrente.
-     * Utilizza RistoranteOwnershipService per ottenere la lista dei ristoranti
-     * posseduti e RistoranteService per caricare i dettagli di ogni ristorante.
+     * Utilizza GestionePossessoRistorante per ottenere la lista dei ristoranti
+     * posseduti e GestioneRistorante per caricare i dettagli di ogni ristorante.
      */
     private void loadRistoranti() {
         String currentUser = SessioneUtente.getUsernameUtente();
@@ -172,7 +172,7 @@ public class RistoratoreDashboardController implements Initializable {
 
         List<Ristorante> ristoranti = ownedRestaurants.stream()
                 .map(nome -> {
-                    Ristorante r = ristoranteService.getRistorante(nome);
+                    Ristorante r = gestioneRistorante.getRistorante(nome);
                     if (r == null) {
                         System.err.println("Ristorante non trovato nel database: " + nome);
                     }
@@ -229,7 +229,7 @@ public class RistoratoreDashboardController implements Initializable {
     private void updateStatistiche() {
         if (selectedRistorante == null) return;
 
-        List<Recensione> recensioni = recensioneService.getRecensioniRistorante(selectedRistorante.getNome());
+        List<Recensione> recensioni = gestioneRecensioni.getRecensioniRistorante(selectedRistorante.getNome());
 
         double media = recensioni.stream()
                 .mapToInt(Recensione::getStelle)
@@ -255,7 +255,7 @@ public class RistoratoreDashboardController implements Initializable {
     private void loadRecensioni() {
         if (selectedRistorante == null) return;
 
-        List<Recensione> recensioni = recensioneService.getRecensioniRistorante(selectedRistorante.getNome());
+        List<Recensione> recensioni = gestioneRecensioni.getRecensioniRistorante(selectedRistorante.getNome());
 
         recensioni.sort((r1, r2) -> r2.getData().compareTo(r1.getData()));
         if (recensioni.size() > 5) {
@@ -299,7 +299,7 @@ public class RistoratoreDashboardController implements Initializable {
             String risposta = rispostaArea.getText().trim();
             if (!risposta.isEmpty()) {
                 recensione.setRisposta(risposta);
-                recensioneService.salvaRispostaRecensione(recensione);
+                gestioneRecensioni.salvaRispostaRecensione(recensione);
                 loadRecensioni(); // Aggiorna la lista delle recensioni
                 dialogStage.close();
             }

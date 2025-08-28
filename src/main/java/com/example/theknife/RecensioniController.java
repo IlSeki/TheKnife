@@ -61,8 +61,8 @@ public class RecensioniController {
     @FXML private TextArea rispostaTextArea;
     @FXML private Label totaleRecensioniLabel;
 
-    private final RecensioneService recensioneService = RecensioneService.getInstance();
-    private final RistoranteOwnershipService ownershipService = RistoranteOwnershipService.getInstance();
+    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
+    private final GestionePossessoRistorante ownershipService = GestionePossessoRistorante.getInstance();
     private String ristoranteId;
     private final Map<Integer, Integer> recensioniMap = new HashMap<>();
     private ObservableList<Recensione> masterRecensioniList;
@@ -171,7 +171,7 @@ public class RecensioniController {
      */
     public void refreshData() {
         if (ristoranteId != null) {
-            List<Recensione> recensioni = recensioneService.getRecensioniRistorante(ristoranteId);
+            List<Recensione> recensioni = gestioneRecensioni.getRecensioniRistorante(ristoranteId);
             masterRecensioniList = FXCollections.observableArrayList(recensioni);
             filteredList = new javafx.collections.transformation.FilteredList<>(masterRecensioniList, p -> true);
             tableView.setItems(filteredList);
@@ -253,7 +253,7 @@ public class RecensioniController {
             ristoranteId,
             SessioneUtente.getUsernameUtente()
         );
-        recensioneService.aggiungiRecensione(recensione);
+        gestioneRecensioni.aggiungiRecensione(recensione);
         refreshData();
         if (refreshParentCallback != null) refreshParentCallback.run();
         pulisciCampi();
@@ -275,7 +275,7 @@ public class RecensioniController {
             return;
         }
 
-        recensioneService.modificaRecensione(
+        gestioneRecensioni.modificaRecensione(
             selected.getUsername(),
             ristoranteId,
             recensioneTextArea.getText(),
@@ -307,7 +307,7 @@ public class RecensioniController {
             return;
         }
 
-        recensioneService.eliminaRecensione(selected.getUsername(), ristoranteId);
+        gestioneRecensioni.eliminaRecensione(selected.getUsername(), ristoranteId);
         refreshData();
         if (refreshParentCallback != null) refreshParentCallback.run();
         pulisciCampi();
@@ -330,7 +330,7 @@ public class RecensioniController {
         }
 
         selected.setRisposta(rispostaTextArea.getText().trim());
-        recensioneService.salvaRispostaRecensione(selected);
+        gestioneRecensioni.salvaRispostaRecensione(selected);
         refreshData();
         if (refreshParentCallback != null) refreshParentCallback.run();
         rispostaTextArea.clear();

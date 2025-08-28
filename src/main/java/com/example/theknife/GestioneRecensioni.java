@@ -38,10 +38,10 @@ import javafx.collections.ObservableList;
  * @version 1.0
  * @since 2025-05-20
  */
-public class RecensioneService {
-    private static RecensioneService instance;
+public class GestioneRecensioni {
+    private static GestioneRecensioni instance;
     private final Map<String, List<Recensione>> recensioniMap = new HashMap<>();
-    private final RistoranteOwnershipService ownershipService = RistoranteOwnershipService.getInstance();
+    private final GestionePossessoRistorante ownershipService = GestionePossessoRistorante.getInstance();
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final ObservableList<Recensione> allRecensioni;
 
@@ -49,7 +49,7 @@ public class RecensioneService {
      * Costruttore privato per il pattern Singleton.
      * Inizializza la mappa e la lista osservabile e carica le recensioni dal CSV.
      */
-    private RecensioneService() {
+    private GestioneRecensioni() {
         allRecensioni = FXCollections.observableArrayList();
         caricaRecensioni();
     }
@@ -57,11 +57,11 @@ public class RecensioneService {
     /**
      * Restituisce l'istanza singleton del servizio.
      *
-     * @return L'unica istanza di RecensioneService
+     * @return L'unica istanza di GestioneRecensioni
      */
-    public static RecensioneService getInstance() {
+    public static GestioneRecensioni getInstance() {
         if (instance == null) {
-            instance = new RecensioneService();
+            instance = new GestioneRecensioni();
         }
         return instance;
     }

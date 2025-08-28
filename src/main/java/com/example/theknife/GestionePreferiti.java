@@ -27,17 +27,17 @@ import java.util.Set;
  * @version 1.0
  * @since 2025-05-20
  */
-public class PreferenceService {
+public class GestionePreferiti {
     private static final String CSV_FILE = "src/main/resources/data/preferiti.csv";
     private static final String CSV_HEADER = "username,ristoranteId";
-    private static PreferenceService instance;
+    private static GestionePreferiti instance;
     private final Map<String, Set<String>> preferitiPerUtente;
 
     /**
      * Costruttore privato per il pattern Singleton.
      * Inizializza la mappa dei preferiti e carica i dati dal CSV.
      */
-    private PreferenceService() {
+    private GestionePreferiti() {
         preferitiPerUtente = new HashMap<>();
         caricaPreferiti();
     }
@@ -45,11 +45,11 @@ public class PreferenceService {
     /**
      * Restituisce l'istanza singola del servizio.
      *
-     * @return istanza di {@link PreferenceService}
+     * @return istanza di {@link GestionePreferiti}
      */
-    public static PreferenceService getInstance() {
+    public static GestionePreferiti getInstance() {
         if (instance == null) {
-            instance = new PreferenceService();
+            instance = new GestionePreferiti();
         }
         return instance;
     }

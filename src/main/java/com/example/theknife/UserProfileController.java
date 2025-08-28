@@ -48,9 +48,9 @@ public class UserProfileController implements Initializable {
     @FXML private Button tornaalMenuButton;
     @FXML private Button dashboardButton;
 
-    private final RecensioneService recensioneService = RecensioneService.getInstance();
-    private final PreferenceService preferenceService = PreferenceService.getInstance();
-    private final RistoranteService ristoranteService = RistoranteService.getInstance();
+    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
+    private final GestionePreferiti gestionePreferiti = com.example.theknife.GestionePreferiti.getInstance();
+    private final GestioneRistorante gestioneRistorante = GestioneRistorante.getInstance();
 
     /**
      * Aggiunge lo stylesheet CSS principale alla scena, se non già presente.
@@ -81,7 +81,7 @@ public class UserProfileController implements Initializable {
         dataColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
 
         // Carica recensioni utente
-        List<Recensione> recensioniUtente = recensioneService.getRecensioniUtente(SessioneUtente.getUsernameUtente());
+        List<Recensione> recensioniUtente = gestioneRecensioni.getRecensioniUtente(SessioneUtente.getUsernameUtente());
         recensioniTable.setItems(FXCollections.observableArrayList(recensioniUtente));
 
         // Configura vista in base al ruolo
@@ -146,7 +146,7 @@ public class UserProfileController implements Initializable {
      */
     private void aggiornaListaPreferiti() {
         preferitiList.setItems(FXCollections.observableArrayList(
-            preferenceService.getPreferiti(SessioneUtente.getUsernameUtente())
+            gestionePreferiti.getPreferiti(SessioneUtente.getUsernameUtente())
         ));
     }
     /**
@@ -207,7 +207,7 @@ public class UserProfileController implements Initializable {
      * @param nomeRistorante identificativo o nome del ristorante da mostrare
      */
     private void openRistoranteDetail(String nomeRistorante) {
-        Ristorante ristorante = ristoranteService.getRistorante(nomeRistorante);
+        Ristorante ristorante = gestioneRistorante.getRistorante(nomeRistorante);
         if (ristorante == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Errore");
@@ -259,7 +259,7 @@ public class UserProfileController implements Initializable {
      */
     public void refreshData() {
         // Aggiorna recensioni
-        List<Recensione> recensioniUtente = recensioneService.getRecensioniUtente(SessioneUtente.getUsernameUtente());
+        List<Recensione> recensioniUtente = gestioneRecensioni.getRecensioniUtente(SessioneUtente.getUsernameUtente());
         recensioniTable.setItems(FXCollections.observableArrayList(recensioniUtente));
         // Aggiorna preferiti
         aggiornaListaPreferiti();

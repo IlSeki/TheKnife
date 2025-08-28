@@ -559,7 +559,7 @@ public class MenuRicerca implements Initializable {
      */
     public void refreshData() {
         // Ricarica i ristoranti dal servizio e aggiorna la lista
-        tuttiRistoranti.setAll(RistoranteService.getInstance().getTuttiRistoranti());
+        tuttiRistoranti.setAll(GestioneRistorante.getInstance().getTuttiRistoranti());
         ristorantiFiltrati = new FilteredList<>(tuttiRistoranti, p -> true);
         sortedData = new SortedList<>(ristorantiFiltrati);
         resultList.setItems(sortedData);

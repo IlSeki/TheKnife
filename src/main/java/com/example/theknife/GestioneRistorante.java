@@ -41,22 +41,22 @@ import javafx.collections.ObservableList;
  * @version 1.0
  * @since 2025-05-20
  */
-public class RistoranteService {
+public class GestioneRistorante {
     private static final String CSV_FILE = "/data/michelin_my_maps.csv";
-    private static RistoranteService instance;
+    private static GestioneRistorante instance;
     private final Map<String, Ristorante> ristoranti;
     private final Map<String, Set<String>> proprietariRistoranti; // username -> set nomi ristoranti
     private static final String PROPRIETARI_FILE = "src/main/resources/data/proprietari_ristoranti.csv";
 
     /**
-     * Costruttore privato della classe {@code RistoranteService}.
+     * Costruttore privato della classe {@code GestioneRistorante}.
      * <p>
      * Inizializza le mappe dei ristoranti e dei proprietari
      * e carica i dati dai file CSV.
      * </p>
      * <p>Pattern utilizzato: <b>Singleton</b></p>
      */
-    private RistoranteService() {
+    private GestioneRistorante() {
         ristoranti = new HashMap<>();
         proprietariRistoranti = new HashMap<>();
         caricaRistoranti();
@@ -66,11 +66,11 @@ public class RistoranteService {
      * Restituisce l'istanza unica (singleton) del servizio.
      * Se non esiste ancora, viene creata all’occorrenza.
      *
-     * @return istanza di {@code RistoranteService}
+     * @return istanza di {@code GestioneRistorante}
      */
-    public static RistoranteService getInstance() {
+    public static GestioneRistorante getInstance() {
         if (instance == null) {
-            instance = new RistoranteService();
+            instance = new GestioneRistorante();
         }
         return instance;
     }

@@ -31,8 +31,8 @@ import java.util.Map;
  * @version 1.0
  * @since 2025-05-20
  */
-public class RistoranteOwnershipService {
-    private static RistoranteOwnershipService instance;
+public class GestionePossessoRistorante {
+    private static GestionePossessoRistorante instance;
     private final Map<String, List<String>> ownershipMap = new HashMap<>();
     private static final String OWNERSHIP_FILE_PATH = "src/main/resources/data/proprietari_ristoranti.csv";
 
@@ -40,18 +40,18 @@ public class RistoranteOwnershipService {
      * Costruttore privato per il Singleton.
      * Carica i dati iniziali dal file CSV.
      */
-    private RistoranteOwnershipService() {
+    private GestionePossessoRistorante() {
         loadOwnershipData();
     }
 
     /**
      * Restituisce l'istanza singleton del servizio.
      *
-     * @return istanza unica di {@link RistoranteOwnershipService}
+     * @return istanza unica di {@link GestionePossessoRistorante}
      */
-    public static RistoranteOwnershipService getInstance() {
+    public static GestionePossessoRistorante getInstance() {
         if (instance == null) {
-            instance = new RistoranteOwnershipService();
+            instance = new GestionePossessoRistorante();
         }
         return instance;
     }
@@ -86,7 +86,7 @@ public class RistoranteOwnershipService {
                     // Verifica che entrambi i valori non siano vuoti
                     if (!username.isEmpty() && !ristoranteId.isEmpty()) {
                         // Verifica che il ristorante esista veramente
-                        if (RistoranteService.getInstance().getRistorante(ristoranteId) != null) {
+                        if (GestioneRistorante.getInstance().getRistorante(ristoranteId) != null) {
                             ownershipMap.computeIfAbsent(username, _ -> new ArrayList<>()).add(ristoranteId);
                         } else {
                             System.err.println("Ristorante non trovato nel database: " + ristoranteId);

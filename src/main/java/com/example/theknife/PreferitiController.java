@@ -43,8 +43,8 @@ import javafx.scene.layout.HBox;
  */
 public class PreferitiController implements Initializable {
     @FXML private ListView<Ristorante> preferitiListView;
-    private final PreferenceService preferenceService = PreferenceService.getInstance();
-    private final RistoranteService ristoranteService = RistoranteService.getInstance();
+    private final GestionePreferiti gestionePreferiti = com.example.theknife.GestionePreferiti.getInstance();
+    private final GestioneRistorante gestioneRistorante = GestioneRistorante.getInstance();
     private HostServices hostServices;
 
     /**
@@ -113,15 +113,15 @@ public class PreferitiController implements Initializable {
 
     /**
      * Carica la lista dei ristoranti preferiti dell'utente corrente.
-     * Recupera l'username dalla sessione, ottiene i preferiti dal PreferenceService
-     * e i dettagli dei ristoranti dal RistoranteService.
+     * Recupera l'username dalla sessione, ottiene i preferiti dal GestionePreferiti
+     * e i dettagli dei ristoranti dal GestioneRistorante.
      */
     private void caricaPreferiti() {
         String username = SessioneUtente.getUsernameUtente();
         if (username == null) return;
 
-        Set<String> preferiti = preferenceService.getPreferiti(username);
-        List<Ristorante> ristoranti = ristoranteService.getRistorantiByNomi(preferiti);
+        Set<String> preferiti = gestionePreferiti.getPreferiti(username);
+        List<Ristorante> ristoranti = gestioneRistorante.getRistorantiByNomi(preferiti);
         
         ObservableList<Ristorante> items = FXCollections.observableArrayList(ristoranti);
         preferitiListView.setItems(items);
@@ -170,20 +170,20 @@ public class PreferitiController implements Initializable {
         String username = SessioneUtente.getUsernameUtente();
         if (username == null) return;
 
-        preferenceService.rimuoviPreferito(username, ristorante.getNome());
+        gestionePreferiti.rimuoviPreferito(username, ristorante.getNome());
         caricaPreferiti();
     }
 
     /**
      * Aggiorna dinamicamente la lista dei ristoranti preferiti.
-     * Recupera la lista aggiornata dei preferiti dal PreferenceService
+     * Recupera la lista aggiornata dei preferiti dal GestionePreferiti
      * e aggiorna la ListView.
      */
     public void refreshData() {
         String username = SessioneUtente.getUsernameUtente();
         if (username == null) return;
-        Set<String> preferiti = preferenceService.getPreferiti(username);
-        List<Ristorante> ristoranti = ristoranteService.getRistorantiByNomi(preferiti);
+        Set<String> preferiti = gestionePreferiti.getPreferiti(username);
+        List<Ristorante> ristoranti = gestioneRistorante.getRistorantiByNomi(preferiti);
         ObservableList<Ristorante> items = FXCollections.observableArrayList(ristoranti);
         preferitiListView.setItems(items);
     }

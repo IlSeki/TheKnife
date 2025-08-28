@@ -51,8 +51,8 @@ public class RistoranteInputController implements Initializable {
     @FXML private ListView<String> checkBoxServizi;
     @FXML private TextArea descrizioneArea;
 
-    private final RistoranteService ristoranteService = RistoranteService.getInstance();
-    private final RistoranteOwnershipService ownershipService = RistoranteOwnershipService.getInstance();
+    private final GestioneRistorante gestioneRistorante = GestioneRistorante.getInstance();
+    private final GestionePossessoRistorante ownershipService = GestionePossessoRistorante.getInstance();
 
     /**
      * Inizializza il controller configurando gli elementi dell'interfaccia.
@@ -107,7 +107,7 @@ public class RistoranteInputController implements Initializable {
 
             String nome = nomeField.getText().trim();
             
-            if (ristoranteService.getRistorante(nome) != null) {
+            if (gestioneRistorante.getRistorante(nome) != null) {
                 mostraErrore("Errore", "Esiste già un ristorante con questo nome. Scegli un nome diverso.");
                 return;
             }
