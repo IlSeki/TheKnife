@@ -19,11 +19,10 @@
                         <!-- Titolo -->
                         <VBox alignment="CENTER" spacing="5">
                             <children>
-                                <Label styleClass="login-title" text="Benvenuto in TheKnife" />
-                                <Label text="Accedi al tuo account o registrati per iniziare" />
+                                <Label styleClass="login-title" text="Benvenuto in TheKnife" wrapText="true" textAlignment="CENTER" maxWidth="350" prefWidth="350" />
+                                <Label styleClass="login-subtitle,wrap-text" text="Accedi al tuo account o registrati per iniziare" />
                             </children>
                         </VBox>
-
                         <!-- Sezione Login -->
                         <VBox alignment="CENTER" spacing="15">
                             <children>
@@ -66,8 +65,8 @@
 
                                 <VBox alignment="CENTER" spacing="8">
                                     <children>
-                                        <Label text="Non sei ancora registrato?" />
-                                        <Label maxWidth="280" text="Crea un account per accedere a tutte le funzionalità" />
+                                        <Label styleClass="description-text,wrap-text" text="Non sei ancora registrato?" />
+                                        <Label styleClass="description-text,wrap-text" text="Crea un account per accedere a tutte le funzionalità" />
                                     </children>
                                 </VBox>
 
@@ -87,12 +86,12 @@
                         <!-- Sezione Accesso Ospite -->
                         <VBox alignment="CENTER" spacing="10">
                             <children>
-                                <Label text="Vuoi solo dare un'occhiata?" />
+                                <Label styleClass="description-text,wrap-text" text="Vuoi solo dare un'occhiata?" />
 
                                 <!-- Bottone Accesso Ospite -->
                                 <Button maxWidth="300" onAction="#gestisciAccessoSenzaLogin" styleClass="guest-button" text="Continua come Ospite" />
 
-                                <Label maxWidth="280" text="* Funzionalità limitate per utenti non registrati" />
+                                <Label styleClass="disclaimer-text,wrap-text" text="* Funzionalità limitate per utenti non registrati" />
                             </children>
                         </VBox>
 

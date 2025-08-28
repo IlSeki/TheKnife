@@ -690,3 +690,16 @@
 .list-view .list-cell:selected {
     -fx-background-color: #c8e6c9;
 }
+
+/* Override specifico per il titolo del login */
+.login-title {
+    -fx-font-size: 2em;
+    -fx-font-weight: 700;
+    -fx-text-fill: #0c4b3d;
+    -fx-alignment: center;
+    -fx-padding: 0 0 0.6em 0;
+    -fx-wrap-text: true !important;
+    -fx-text-alignment: center;
+    -fx-max-width: 350px;
+    -fx-pref-width: 350px;
+}
