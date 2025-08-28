@@ -98,6 +98,9 @@ public class UserProfileController implements Initializable {
         // Setup pulsante logout
         logoutButton.setOnAction(event -> handleLogout());
 
+        // Setup pulsante torna al menu
+        tornaalMenuButton.setOnAction(event -> handleTornaAlMenu());
+
         // Configura il click sui preferiti
         preferitiList.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
@@ -146,6 +149,30 @@ public class UserProfileController implements Initializable {
             preferenceService.getPreferiti(SessioneUtente.getUsernameUtente())
         ));
     }
+    /**
+     * Gestisce il click sul pulsante "Torna al menu principale".
+     * Riporta l'utente alla schermata principale dell'applicazione.
+     */
+    @FXML
+    private void handleTornaAlMenu() {
+        try {
+            URL resourceUrl = getClass().getResource("/com/example/theknife/lista.fxml");
+            if (resourceUrl == null) {
+                throw new IOException("FXML file not found: lista.fxml");
+            }
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
+            Stage currentStage = (Stage) tornaalMenuButton.getScene().getWindow();
+            Scene scene = new Scene(root);
+            addStylesheet(scene);
+            currentStage.setScene(scene);
+            currentStage.show();
+        } catch (IOException e) {
+            System.err.println("Error loading main menu: " + e.getMessage());
+            showError("Errore", "Impossibile tornare al menu principale: " + e.getMessage());
+        }
+    }
+
     /**
      * Gestisce l'operazione di logout dell'utente:
      * <ul>
