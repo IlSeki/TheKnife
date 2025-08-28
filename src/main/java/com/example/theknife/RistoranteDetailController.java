@@ -832,6 +832,13 @@ public class RistoranteDetailController implements Initializable {
      */
     @FXML
     private void handleTornaAlMenuPrincipale() {
+        System.out.println("DEBUG: Bottone premuto");
+        if (tornaAlMenuPrincipaleCallback != null) {
+            System.out.println("DEBUG: Eseguo callback");
+            tornaAlMenuPrincipaleCallback.run();
+        } else {
+            System.out.println("DEBUG: Nessuna callback disponibile");
+        }
         if (tornaAlMenuPrincipaleCallback != null) {
             tornaAlMenuPrincipaleCallback.run();
         } else if (rootToRestore != null) {

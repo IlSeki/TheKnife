@@ -118,26 +118,6 @@ public class UserProfileController implements Initializable {
             }
         });
 
-        // Aggiungi pulsante per tornare al menu
-        tornaalMenuButton.setOnAction(event -> {
-            try {
-                URL resourceUrl = getClass().getResource("/com/example/theknife/lista.fxml");
-                if (resourceUrl == null) {
-                    throw new IOException("FXML file not found: lista.fxml");
-                }
-                FXMLLoader loader = new FXMLLoader(resourceUrl);
-                Parent root = loader.load();
-                Stage currentStage = (Stage) tornaalMenuButton.getScene().getWindow();
-                Scene scene = new Scene(root);
-                addStylesheet(scene);
-                currentStage.setScene(scene);
-                currentStage.show();
-            } catch (IOException e) {
-                System.err.println("Error loading menu: " + e.getMessage());
-                showError("Errore", "Impossibile tornare al menu principale");
-            }
-        });
-
         // Aggiungi handler per il pulsante dashboard
         dashboardButton.setOnAction(event -> {
             try {
@@ -214,26 +194,37 @@ public class UserProfileController implements Initializable {
             if (resourceUrl == null) {
                 throw new IOException("FXML file not found: ristorante-detail.fxml");
             }
+
             FXMLLoader loader = new FXMLLoader(resourceUrl);
             Parent root = loader.load();
             RistoranteDetailController controller = loader.getController();
             controller.setRistorante(ristorante);
-            // Passa la callback di refresh per aggiornare il profilo al ritorno
-            Parent rootToRestore = nomeLabel.getScene().getRoot();
+
+            Stage currentStage = (Stage) nomeLabel.getScene().getWindow();
+
+            // 🔹 Salvo la scena originale
+            Scene originalScene = currentStage.getScene();
+
+            // 🔹 Callback: ripristina la scena originale
             controller.setTornaAlMenuPrincipaleCallback(() -> {
-                Scene scene = root.getScene();
-                scene.setRoot(rootToRestore);
+                System.out.println("DEBUG: Callback eseguita, torno al menu principale");
+                currentStage.setScene(originalScene);
+                currentStage.show();
                 this.refreshData();
             });
-            Stage currentStage = (Stage) nomeLabel.getScene().getWindow();
-            Scene scene = new Scene(root);
-            addStylesheet(scene);
-            currentStage.setScene(scene);
+
+            // 🔹 Creo e setto la nuova scena dei dettagli
+            Scene newScene = new Scene(root);
+            addStylesheet(newScene);
+            currentStage.setScene(newScene);
             currentStage.show();
+
         } catch (IOException e) {
             System.err.println("Error loading restaurant details: " + e.getMessage());
             showError("Errore", "Impossibile aprire i dettagli del ristorante: " + e.getMessage());
         }
+
+
     }
 
     /**
