@@ -163,6 +163,7 @@ public class RecensioniController {
         boolean isRistoratore = SessioneUtente.isRistoratore();
         rispondiButton.setVisible(isRistoratore);
         rispostaBox.setVisible(isRistoratore);
+
     }
 
     /**

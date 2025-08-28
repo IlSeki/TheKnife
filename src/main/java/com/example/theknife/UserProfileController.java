@@ -98,6 +98,9 @@ public class UserProfileController implements Initializable {
         // Setup pulsante logout
         logoutButton.setOnAction(event -> handleLogout());
 
+        // Setup pulsante torna al menu
+        tornaalMenuButton.setOnAction(event -> handleTornaAlMenu());
+
         // Configura il click sui preferiti
         preferitiList.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
@@ -115,26 +118,6 @@ public class UserProfileController implements Initializable {
                 if (selectedRecensione != null) {
                     openRistoranteDetail(selectedRecensione.getRistoranteId());
                 }
-            }
-        });
-
-        // Aggiungi pulsante per tornare al menu
-        tornaalMenuButton.setOnAction(event -> {
-            try {
-                URL resourceUrl = getClass().getResource("/com/example/theknife/lista.fxml");
-                if (resourceUrl == null) {
-                    throw new IOException("FXML file not found: lista.fxml");
-                }
-                FXMLLoader loader = new FXMLLoader(resourceUrl);
-                Parent root = loader.load();
-                Stage currentStage = (Stage) tornaalMenuButton.getScene().getWindow();
-                Scene scene = new Scene(root);
-                addStylesheet(scene);
-                currentStage.setScene(scene);
-                currentStage.show();
-            } catch (IOException e) {
-                System.err.println("Error loading menu: " + e.getMessage());
-                showError("Errore", "Impossibile tornare al menu principale");
             }
         });
 
@@ -166,6 +149,30 @@ public class UserProfileController implements Initializable {
             preferenceService.getPreferiti(SessioneUtente.getUsernameUtente())
         ));
     }
+    /**
+     * Gestisce il click sul pulsante "Torna al menu principale".
+     * Riporta l'utente alla schermata principale dell'applicazione.
+     */
+    @FXML
+    private void handleTornaAlMenu() {
+        try {
+            URL resourceUrl = getClass().getResource("/com/example/theknife/lista.fxml");
+            if (resourceUrl == null) {
+                throw new IOException("FXML file not found: lista.fxml");
+            }
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
+            Stage currentStage = (Stage) tornaalMenuButton.getScene().getWindow();
+            Scene scene = new Scene(root);
+            addStylesheet(scene);
+            currentStage.setScene(scene);
+            currentStage.show();
+        } catch (IOException e) {
+            System.err.println("Error loading main menu: " + e.getMessage());
+            showError("Errore", "Impossibile tornare al menu principale: " + e.getMessage());
+        }
+    }
+
     /**
      * Gestisce l'operazione di logout dell'utente:
      * <ul>
@@ -214,26 +221,37 @@ public class UserProfileController implements Initializable {
             if (resourceUrl == null) {
                 throw new IOException("FXML file not found: ristorante-detail.fxml");
             }
+
             FXMLLoader loader = new FXMLLoader(resourceUrl);
             Parent root = loader.load();
             RistoranteDetailController controller = loader.getController();
             controller.setRistorante(ristorante);
-            // Passa la callback di refresh per aggiornare il profilo al ritorno
-            Parent rootToRestore = nomeLabel.getScene().getRoot();
+
+            Stage currentStage = (Stage) nomeLabel.getScene().getWindow();
+
+            // 🔹 Salvo la scena originale
+            Scene originalScene = currentStage.getScene();
+
+            // 🔹 Callback: ripristina la scena originale
             controller.setTornaAlMenuPrincipaleCallback(() -> {
-                Scene scene = root.getScene();
-                scene.setRoot(rootToRestore);
+                System.out.println("DEBUG: Callback eseguita, torno al menu principale");
+                currentStage.setScene(originalScene);
+                currentStage.show();
                 this.refreshData();
             });
-            Stage currentStage = (Stage) nomeLabel.getScene().getWindow();
-            Scene scene = new Scene(root);
-            addStylesheet(scene);
-            currentStage.setScene(scene);
+
+            // 🔹 Creo e setto la nuova scena dei dettagli
+            Scene newScene = new Scene(root);
+            addStylesheet(newScene);
+            currentStage.setScene(newScene);
             currentStage.show();
+
         } catch (IOException e) {
             System.err.println("Error loading restaurant details: " + e.getMessage());
             showError("Errore", "Impossibile aprire i dettagli del ristorante: " + e.getMessage());
         }
+
+
     }
 
     /**
