@@ -47,7 +47,7 @@ public class RistoratoreDashboardController implements Initializable {
     @FXML private TableColumn<Ristorante, String> localitaColumn;
     @FXML private TableColumn<Ristorante, String> cucinaColumn;
     @FXML private TableColumn<Ristorante, String> prezzoColumn;
-    
+
     @FXML private VBox detailsContainer;
     @FXML private Label nomeLabel;
     @FXML private Label indirizzoLabel;
@@ -71,17 +71,25 @@ public class RistoratoreDashboardController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        refreshData();
         setupRistorantiTable();
-        loadRistoranti();
         setupRecensioniList();
         detailsContainer.setVisible(false);
+
+        // Carica i dati una sola volta all'inizializzazione
+        loadRistoranti();
     }
+
     /**
      * Aggiorna dettagli, grafici, ecc. se necessario
+     * Chiamato esplicitamente quando serve refreshare i dati
      */
     public void refreshData() {
         loadRistoranti();
+        // Se c'è un ristorante selezionato, aggiorna anche i suoi dettagli
+        if (selectedRistorante != null) {
+            updateStatistiche();
+            loadRecensioni();
+        }
     }
 
     /**
@@ -98,7 +106,7 @@ public class RistoratoreDashboardController implements Initializable {
 
         // Gestisci la selezione di una riga
         ristorantiTable.getSelectionModel().selectedItemProperty().addListener(
-            (observable, oldValue, newValue) -> onRistoranteSelected(newValue));
+                (observable, oldValue, newValue) -> onRistoranteSelected(newValue));
     }
 
     /**
@@ -142,53 +150,46 @@ public class RistoratoreDashboardController implements Initializable {
      * posseduti e RistoranteService per caricare i dettagli di ogni ristorante.
      */
     private void loadRistoranti() {
-        // Forza sempre il refresh dei dati
-        ownershipService.refreshOwnershipData();
-        String currentUser = SessioneUtente.getUsernameUtente(); // Usa getUsernameUtente invece di getNomeUtente
+        String currentUser = SessioneUtente.getUsernameUtente();
         if (currentUser == null || currentUser.isEmpty()) {
             System.err.println("Nessun utente loggato");
             return;
         }
 
-        System.out.println("Caricamento ristoranti per l'utente: " + currentUser);
-
         // Forza il ricaricamento dei dati di proprietà
         ownershipService.refreshOwnershipData();
-        
+
         // Ottieni tutti i ristoranti di proprietà del ristoratore corrente
         List<String> ownedRestaurants = ownershipService.getOwnedRestaurants(currentUser);
-        
+
         if (ownedRestaurants.isEmpty()) {
-            System.err.println("Nessun ristorante trovato per l'utente: " + currentUser);
+            // Debug ridotto - solo un messaggio informativo
+            System.out.println("Nessun ristorante trovato per l'utente: " + currentUser);
             ristorantiTable.setItems(FXCollections.observableArrayList());
             detailsContainer.setVisible(false);
             return;
-        } else {
-            System.out.println("Trovati " + ownedRestaurants.size() + " ristoranti per l'utente " + currentUser + ": " + ownedRestaurants);
         }
-        
+
         List<Ristorante> ristoranti = ownedRestaurants.stream()
-            .map(nome -> {
-                Ristorante r = ristoranteService.getRistorante(nome);
-                if (r == null) {
-                    System.err.println("Ristorante non trovato nel database: " + nome);
-                } else {
-                    System.out.println("Caricato ristorante: " + r.getNome());
-                }
-                return r;
-            })
-            .filter(Objects::nonNull)
-            .toList();
-            
+                .map(nome -> {
+                    Ristorante r = ristoranteService.getRistorante(nome);
+                    if (r == null) {
+                        System.err.println("Ristorante non trovato nel database: " + nome);
+                    }
+                    return r;
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
         ristorantiTable.setItems(FXCollections.observableArrayList(ristoranti));
-        
-        // Se non ci sono ristoranti, nascondi i dettagli
+
+        // Debug ridotto - solo un messaggio di conferma
         if (ristoranti.isEmpty()) {
             detailsContainer.setVisible(false);
             selectedRistorante = null;
-            System.err.println("Nessun ristorante valido trovato per l'utente: " + currentUser);
+            System.out.println("Nessun ristorante valido trovato per l'utente: " + currentUser);
         } else {
-            System.out.println("Caricati " + ristoranti.size() + " ristoranti validi per l'utente " + currentUser);
+            System.out.println("Caricati " + ristoranti.size() + " ristoranti per l'utente " + currentUser);
         }
     }
 
@@ -231,9 +232,9 @@ public class RistoratoreDashboardController implements Initializable {
         List<Recensione> recensioni = recensioneService.getRecensioniRistorante(selectedRistorante.getNome());
 
         double media = recensioni.stream()
-            .mapToInt(Recensione::getStelle)
-            .average()
-            .orElse(0.0);
+                .mapToInt(Recensione::getStelle)
+                .average()
+                .orElse(0.0);
         mediaLabel.setText(String.format("%.1f", media));
 
         totaleRecensioniLabel.setText(String.valueOf(recensioni.size()));
@@ -242,8 +243,8 @@ public class RistoratoreDashboardController implements Initializable {
         recensioni.forEach(r -> stelleCount.merge(r.getStelle(), 1, Integer::sum));
 
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList();
-        stelleCount.forEach((stelle, count) -> 
-            pieChartData.add(new PieChart.Data(stelle + " ⭐", count)));
+        stelleCount.forEach((stelle, count) ->
+                pieChartData.add(new PieChart.Data(stelle + " ⭐", count)));
         recensioniChart.setData(pieChartData);
     }
 
@@ -255,7 +256,7 @@ public class RistoratoreDashboardController implements Initializable {
         if (selectedRistorante == null) return;
 
         List<Recensione> recensioni = recensioneService.getRecensioniRistorante(selectedRistorante.getNome());
-        
+
         recensioni.sort((r1, r2) -> r2.getData().compareTo(r1.getData()));
         if (recensioni.size() > 5) {
             recensioni = recensioni.subList(0, 5);
@@ -282,8 +283,8 @@ public class RistoratoreDashboardController implements Initializable {
         VBox dialogContent = new VBox(10);
         dialogContent.setStyle("-fx-padding: 10;");
 
-        Label recensioneLabel = new Label(String.format("Recensione di %s (%s):\n%s", 
-            recensione.getUsername(), "⭐".repeat(recensione.getStelle()), recensione.getTesto()));
+        Label recensioneLabel = new Label(String.format("Recensione di %s (%s):\n%s",
+                recensione.getUsername(), "⭐".repeat(recensione.getStelle()), recensione.getTesto()));
         recensioneLabel.setWrapText(true);
 
         javafx.scene.control.TextArea rispostaArea = new javafx.scene.control.TextArea();
@@ -359,9 +360,10 @@ public class RistoratoreDashboardController implements Initializable {
             stage.setTitle("Aggiungi ristorante");
             stage.setScene(new Scene(root));
             stage.show();
-            
-            stage.setOnHiding(__ -> loadRistoranti());
-            
+
+            // Refresh dei dati quando la finestra viene chiusa
+            stage.setOnHiding(__ -> refreshData());
+
         } catch (IOException e) {
             showError("Errore durante l'apertura del form di inserimento", e);
         }
@@ -372,7 +374,7 @@ public class RistoratoreDashboardController implements Initializable {
      */
     @FXML
     private void onAggiornaClick(ActionEvent event) {
-        loadRistoranti();
+        refreshData(); // Usa refreshData() invece di loadRistoranti() direttamente
     }
 
     /**
@@ -421,6 +423,7 @@ public class RistoratoreDashboardController implements Initializable {
             showError("Errore nell'apertura della finestra delle recensioni", e);
         }
     }
+
     /**
      * Mostra una finestra di dialogo di errore con un titolo fisso ("Errore"),
      * un'intestazione personalizzata e il messaggio dell'eccezione.
