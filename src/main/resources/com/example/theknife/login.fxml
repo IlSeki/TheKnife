@@ -19,7 +19,8 @@
                         <!-- Titolo -->
                         <VBox alignment="CENTER" spacing="5">
                             <children>
-                                <Label styleClass="login-title" text="Benvenuto in TheKnife" wrapText="true" textAlignment="CENTER" maxWidth="350" prefWidth="350" />
+                                <Label maxWidth="350" prefWidth="350" styleClass="login-title" text="Benvenuto in" textAlignment="CENTER" wrapText="true" />
+                        <Label maxWidth="350" prefWidth="350" styleClass="login-title" text="TheKnife" textAlignment="CENTER" wrapText="true" />
                                 <Label styleClass="login-subtitle,wrap-text" text="Accedi al tuo account o registrati per iniziare" />
                             </children>
                         </VBox>

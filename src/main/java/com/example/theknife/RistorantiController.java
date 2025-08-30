@@ -86,6 +86,9 @@ public class RistorantiController implements Initializable {
 
         refreshData();
         String ruoloUtente = SessioneUtente.getRuoloUtente();
+        if(!"ristoratore".equals(ruoloUtente) && !"cliente".equals(ruoloUtente)){
+            profiloButton.setText("Registrati");
+        }
         dashboardButton.setVisible("ristoratore".equals(ruoloUtente));
         dashboardButton.setManaged("ristoratore".equals(ruoloUtente));
     }

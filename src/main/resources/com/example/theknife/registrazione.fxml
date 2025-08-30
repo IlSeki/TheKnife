@@ -1,138 +1,115 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.ScrollPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.example.theknife.RegistrazioneController"
-            prefWidth="700" prefHeight="600"
-            stylesheets="/data/stile.css">
+<AnchorPane prefHeight="600" prefWidth="700" stylesheets="/data/stile.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.RegistrazioneController">
     <children>
         <!-- ScrollPane per permettere lo scrolling se necessario -->
-        <ScrollPane fitToWidth="true" fitToHeight="true"
-                    AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-                    AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <ScrollPane fitToHeight="true" fitToWidth="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <content>
                 <!-- VBox principale centrata con la form di registrazione -->
-                <VBox alignment="CENTER" spacing="10.0" minHeight="600">
+                <VBox alignment="CENTER" minHeight="1000.0" prefHeight="838.0" prefWidth="684.0" spacing="10.0">
                     <children>
                         <!-- Card di registrazione -->
-                        <VBox spacing="20" alignment="CENTER" styleClass="login-card" maxWidth="400">
+                        <VBox alignment="CENTER" maxWidth="400" spacing="20" styleClass="login-card">
                             <children>
                                 <!-- Titolo -->
-                                <Label text="Registrazione TheKnife" styleClass="login-title"/>
+                                <Label styleClass="login-title" text="Registrazione" />
 
                                 <!-- Sottotitolo -->
-                                <Label text="Compila tutti i campi per creare il tuo account"
-                                       style="-fx-font-size: 12px; -fx-text-fill: #666666;"/>
+                                <Label style="-fx-font-size: 12px; -fx-text-fill: #666666;" text="Compila tutti i campi per creare il tuo account" />
 
                                 <!-- Campo Nome -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Nome *" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <TextField fx:id="campoNome" promptText="Inserisci il tuo nome"
-                                                   maxWidth="350" styleClass="login-textfield"/>
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Nome *" />
+                                        <TextField fx:id="campoNome" maxWidth="350" promptText="Inserisci il tuo nome" styleClass="login-textfield" />
                                     </children>
                                 </VBox>
 
                                 <!-- Campo Cognome -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Cognome *" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <TextField fx:id="campoCognome" promptText="Inserisci il tuo cognome"
-                                                   maxWidth="350" styleClass="login-textfield"/>
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Cognome *" />
+                                        <TextField fx:id="campoCognome" maxWidth="350" promptText="Inserisci il tuo cognome" styleClass="login-textfield" />
                                     </children>
                                 </VBox>
 
                                 <!-- Campo Username -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Username *" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <TextField fx:id="campoUsername" promptText="Scegli un username univoco"
-                                                   maxWidth="350" styleClass="login-textfield"/>
-                                        <Label text="Solo lettere, numeri, punti, underscore e trattini"
-                                               style="-fx-font-size: 10px; -fx-text-fill: #888888;"/>
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Username *" />
+                                        <TextField fx:id="campoUsername" maxWidth="350" promptText="Scegli un username univoco" styleClass="login-textfield" />
+                                        <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="Solo lettere, numeri, punti, underscore e trattini" />
                                     </children>
                                 </VBox>
 
                                 <!-- Campo Password -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Password *" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <PasswordField fx:id="campoPassword" promptText="Inserisci una password sicura"
-                                                       maxWidth="350" styleClass="login-textfield"/>
-                                        <Label text="Minimo 5 caratteri"
-                                               style="-fx-font-size: 10px; -fx-text-fill: #888888;"/>
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Password *" />
+                                        <PasswordField fx:id="campoPassword" maxWidth="350" promptText="Inserisci una password sicura" styleClass="login-textfield" />
+                                        <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="Minimo 5 caratteri" />
                                     </children>
                                 </VBox>
 
                                 <!-- Campo Conferma Password -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Conferma Password *" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <PasswordField fx:id="campoConfermaPassword" promptText="Ripeti la password"
-                                                       maxWidth="350" styleClass="login-textfield"/>
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Conferma Password *" />
+                                        <PasswordField fx:id="campoConfermaPassword" maxWidth="350" promptText="Ripeti la password" styleClass="login-textfield" />
                                     </children>
                                 </VBox>
 
                                 <!-- Campo Data di Nascita -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Data di Nascita *" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <DatePicker fx:id="campoDataNascita" promptText="Seleziona la tua data di nascita"
-                                                    maxWidth="350" styleClass="login-textfield"/>
-                                        <Label text="Età minima richiesta: 16 anni"
-                                               style="-fx-font-size: 10px; -fx-text-fill: #888888;"/>
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Data di Nascita *" />
+                                        <DatePicker fx:id="campoDataNascita" maxWidth="350" promptText="Seleziona la tua data di nascita" styleClass="login-textfield" />
+                                        <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="Età minima richiesta: 16 anni" />
                                     </children>
                                 </VBox>
 
                                 <!-- Campo Luogo di Domicilio -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Luogo di Domicilio *" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <TextField fx:id="campoLuogoDomicilio" promptText="Es: Milano, Roma, Napoli..."
-                                                   maxWidth="350" styleClass="login-textfield"/>
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Luogo di Domicilio *" />
+                                        <TextField fx:id="campoLuogoDomicilio" maxWidth="350" promptText="Es: Milano, Roma, Napoli..." styleClass="login-textfield" />
                                     </children>
                                 </VBox>
 
                                 <!-- Campo Ruolo -->
                                 <VBox spacing="5">
                                     <children>
-                                        <Label text="Ruolo *" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
-                                        <ComboBox fx:id="comboRuolo" maxWidth="350" styleClass="login-textfield"/>
-                                        <Label text="Cliente: puoi recensire ristoranti | Ristoratore: puoi gestire il tuo ristorante"
-                                               style="-fx-font-size: 10px; -fx-text-fill: #888888; -fx-wrap-text: true;"
-                                               maxWidth="350"/>
+                                        <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Ruolo *" />
+                                        <ComboBox fx:id="comboRuolo" maxWidth="350" styleClass="login-textfield" />
+                                        <Label maxWidth="350" style="-fx-font-size: 10px; -fx-text-fill: #888888; -fx-wrap-text: true;" text="Cliente: puoi recensire ristoranti | Ristoratore: puoi gestire il tuo ristorante" />
                                     </children>
                                 </VBox>
 
                                 <!-- Separatore -->
-                                <VBox spacing="10" alignment="CENTER">
+                                <VBox alignment="CENTER" spacing="10">
                                     <children>
-                                        <Label text="* Campi obbligatori"
-                                               style="-fx-font-size: 11px; -fx-text-fill: #999999;"/>
+                                        <Label style="-fx-font-size: 11px; -fx-text-fill: #999999;" text="* Campi obbligatori" />
                                     </children>
                                 </VBox>
 
                                 <!-- Bottoni -->
-                                <VBox spacing="10" alignment="CENTER">
+                                <VBox alignment="CENTER" spacing="10">
                                     <children>
                                         <!-- Bottone Registrati -->
-                                        <Button text="Registrati" maxWidth="350" styleClass="primary-button"
-                                                onAction="#gestisciRegistrazione"/>
+                                        <Button maxWidth="350" onAction="#gestisciRegistrazione" styleClass="primary-button" text="Registrati" />
 
                                         <!-- Bottone Torna al Login -->
-                                        <Button text="Torna al Login" maxWidth="350" styleClass="secondary-button"
-                                                onAction="#tornaAlLogin"/>
+                                        <Button maxWidth="350" onAction="#tornaAlLogin" styleClass="secondary-button" text="Torna al Login" />
                                     </children>
                                 </VBox>
 

@@ -29,8 +29,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 
 /**
  * Controller per la visualizzazione dei dettagli di un ristorante.
@@ -63,11 +61,6 @@ public class RistoranteDetailController implements Initializable {
     @FXML private HBox prezzoContainer;
     @FXML private HBox premioContainer;
     @FXML private VBox stellaVerdeContainer;
-    @FXML private ImageView ristoranteImage;
-    @FXML private Circle prezzoCircle1;
-    @FXML private Circle prezzoCircle2;
-    @FXML private Circle prezzoCircle3;
-    @FXML private Circle prezzoCircle4;
     @FXML private Button preferitoButton;
     @FXML private ListView<Recensione> recensioniRecentList;
     @FXML private Button mostraRecensioniButton;
@@ -108,7 +101,6 @@ public class RistoranteDetailController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         // Inizializzazione dei componenti
         setupTextAreas();
-        setupPriceCircles();
         setupPosizioneButton();
         setupPreferitoButton();
 
@@ -211,19 +203,6 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Configura i cerchi per l'indicatore di prezzo
-     */
-    private void setupPriceCircles() {
-        Circle[] circles = {prezzoCircle1, prezzoCircle2, prezzoCircle3, prezzoCircle4};
-        for (Circle circle : circles) {
-            if (circle != null) {
-                circle.setFill(Color.LIGHTGRAY);
-                circle.setStroke(Color.GRAY);
-            }
-        }
-    }
-
-    /**
      * Imposta il ristorante da visualizzare e aggiorna l'interfaccia
      * @param ristorante il ristorante da visualizzare
      */
@@ -317,9 +296,6 @@ public class RistoranteDetailController implements Initializable {
                     posizioneButton.setDisable(!hasLocation);
                 }
 
-                // Prezzo
-                updatePrezzoDisplay();
-
                 // Premio
                 if (premioLabel != null && premioContainer != null) {
                     String premio = ristorante.getPremio();
@@ -355,9 +331,6 @@ public class RistoranteDetailController implements Initializable {
                         descrizioneTextArea.setText("Nessuna descrizione disponibile");
                     }
                 }
-
-                // Immagine placeholder
-                setPlaceholderImage();
 
                 System.out.println("UI aggiornata con successo!");
 
@@ -506,30 +479,6 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Aggiorna la visualizzazione del prezzo con indicatori circolari
-     */
-    private void updatePrezzoDisplay() {
-        if (prezzoLabel == null) return;
-
-        String prezzo = ristorante.getPrezzo();
-        prezzoLabel.setText(prezzo != null ? prezzo : "€");
-
-        // Calcola il numero di cerchi da riempire basandosi sul prezzo
-        int livelloPrezzo = calcolaLivelloPrezzo(prezzo);
-
-        Circle[] circles = {prezzoCircle1, prezzoCircle2, prezzoCircle3, prezzoCircle4};
-        for (int i = 0; i < circles.length; i++) {
-            if (circles[i] != null) {
-                if (i < livelloPrezzo) {
-                    circles[i].setFill(Color.web("#FF6B35")); // Arancione per prezzo
-                } else {
-                    circles[i].setFill(Color.LIGHTGRAY);
-                }
-            }
-        }
-    }
-
-    /**
      * Calcola il livello di prezzo basandosi sulla stringa del prezzo
      * Supporta diversi formati: €€€, $$$, £££, ecc.
      * @param prezzo stringa del prezzo
@@ -674,21 +623,6 @@ public class RistoranteDetailController implements Initializable {
         }
 
         return formatted;
-    }
-
-    /**
-     * Imposta un'immagine placeholder per il ristorante
-     */
-    private void setPlaceholderImage() {
-        if (ristoranteImage == null) return;
-
-        try {
-            Image placeholder = new Image(getClass().getResourceAsStream("/images/restaurant_placeholder.jpg"));
-            ristoranteImage.setImage(placeholder);
-        } catch (Exception e) {
-            // Se l'immagine placeholder non è disponibile, nasconde l'ImageView
-            ristoranteImage.setVisible(false);
-        }
     }
 
     /**
