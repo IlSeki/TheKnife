@@ -49,6 +49,7 @@
         </padding>
         <MenuButton fx:id="fasciaPrezzo" mnemonicParsing="false" prefHeight="26.0" prefWidth="150.0" text="Fascia prezzo">
             <items>
+                <MenuItem mnemonicParsing="false" text="" />
                 <MenuItem mnemonicParsing="false" text="€" />
                 <MenuItem mnemonicParsing="false" text="€€" />
                 <MenuItem mnemonicParsing="false" text="€€€" />
