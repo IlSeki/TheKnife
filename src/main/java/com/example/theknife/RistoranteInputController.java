@@ -9,10 +9,7 @@ import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -22,19 +19,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
-/**
- * Controller per la gestione dell'input dei dati di un ristorante.
- * Gestisce l'interfaccia per l'inserimento e la modifica dei dati
- * di un ristorante, inclusi nome, indirizzo, tipologia di cucina,
- * servizi offerti e premi.
- *
- * @author Samuele Secchi, 761031, Sede CO
- * @author Flavio Marin, 759910, Sede CO
- * @author Matilde Lecchi, 759875, Sede CO
- * @author Davide Caccia, 760742, Sede CO
- * @version 1.0
- * @since 2025-05-20
- */
 public class RistoranteInputController implements Initializable {
     @FXML private TextField nomeField;
     @FXML private TextField indirizzoField;
@@ -54,45 +38,44 @@ public class RistoranteInputController implements Initializable {
     private final GestioneRistorante gestioneRistorante = GestioneRistorante.getInstance();
     private final GestionePossessoRistorante ownershipService = GestionePossessoRistorante.getInstance();
 
-    /**
-     * Inizializza il controller configurando gli elementi dell'interfaccia.
-     * Popola i ComboBox e le ListView con le opzioni disponibili.
-     *
-     * @param location  L'URL di localizzazione della risorsa FXML (non utilizzato)
-     * @param resources Le risorse aggiuntive per l'inizializzazione (non utilizzate)
-     */
+    private Runnable tornaAllaDashboardCallback;
+    private Runnable aggiornaDatabaseRistorantiCallback;
+
+    public void setTornaAllaDashboardCallback(Runnable callback) {
+        this.tornaAllaDashboardCallback = callback;
+    }
+
+    public void setAggiornaDatabaseRistorantiCallback(Runnable callback) {
+        this.aggiornaDatabaseRistorantiCallback = callback;
+    }
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         prezzoComboBox.setItems(FXCollections.observableArrayList("€", "€€", "€€€", "€€€€"));
 
         cucinaListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         cucinaListView.setItems(FXCollections.observableArrayList(
-            "Creative", "Contemporary", "Korean", "French", "Italian",
-            "Japanese", "Chinese", "Indian", "Mediterranean", "Fusion",
-            "American", "Mexican", "Thai", "Vegetarian", "Vegan",
-            "Seafood", "Steakhouse", "Traditional", "Modern", "International"
+                "Creative", "Contemporary", "Korean", "French", "Italian",
+                "Japanese", "Chinese", "Indian", "Mediterranean", "Fusion",
+                "American", "Mexican", "Thai", "Vegetarian", "Vegan",
+                "Seafood", "Steakhouse", "Traditional", "Modern", "International"
         ));
 
         premiComboBox.setItems(FXCollections.observableArrayList(
-            "Nessun premio", "1 Star", "2 Stars", 
-            "3 Stars", "Bib Gourmand"
+                "Nessun premio", "1 Star", "2 Stars",
+                "3 Stars", "Bib Gourmand"
         ));
         premiComboBox.setValue("Nessun premio");
 
         checkBoxServizi.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         checkBoxServizi.setItems(FXCollections.observableArrayList(
-            "Air conditioning", "Garden or park", "Interesting wine list",
-            "Terrace", "Wheelchair access", "Great view", 
-            "Restaurant offering vegetarian menus", "Private dining room",
-            "Valet parking", "Bar", "Notable wine list", "Outdoor seating"
+                "Air conditioning", "Garden or park", "Interesting wine list",
+                "Terrace", "Wheelchair access", "Great view",
+                "Restaurant offering vegetarian menus", "Private dining room",
+                "Valet parking", "Bar", "Notable wine list", "Outdoor seating"
         ));
     }
 
-    /**
-     * Gestisce il salvataggio dei dati del ristorante.
-     * Valida i dati inseriti e, se validi, crea un nuovo ristorante
-     * e lo associa al ristoratore corrente.
-     */
     @FXML
     private void handleSalva() {
         if (!validaInput()) {
@@ -100,80 +83,63 @@ public class RistoranteInputController implements Initializable {
         }
 
         try {
-            double longitudine = longitudineField.getText().isEmpty() ? 0.0 : 
-                Double.parseDouble(longitudineField.getText());
-            double latitudine = latitudineField.getText().isEmpty() ? 0.0 : 
-                Double.parseDouble(latitudineField.getText());
+            double longitudine = longitudineField.getText().isEmpty() ? 0.0 :
+                    Double.parseDouble(longitudineField.getText());
+            double latitudine = latitudineField.getText().isEmpty() ? 0.0 :
+                    Double.parseDouble(latitudineField.getText());
 
             String nome = nomeField.getText().trim();
-            
             if (gestioneRistorante.getRistorante(nome) != null) {
                 mostraErrore("Errore", "Esiste già un ristorante con questo nome. Scegli un nome diverso.");
                 return;
             }
 
-            // Ottieni i tipi di cucina selezionati
             String cucine = cucinaListView.getSelectionModel().getSelectedItems()
-                .stream()
-                .collect(Collectors.joining(", "));
+                    .stream()
+                    .collect(Collectors.joining(", "));
 
-            // Ottieni i servizi selezionati
             String servizi = checkBoxServizi.getSelectionModel().getSelectedItems()
-                .stream()
-                .collect(Collectors.joining(", "));
+                    .stream()
+                    .collect(Collectors.joining(", "));
 
             Ristorante nuovoRistorante = new Ristorante(
-                nome,
-                indirizzoField.getText().trim(),
-                localitaField.getText().trim(),
-                prezzoComboBox.getValue(),
-                cucine,
-                longitudine,
-                latitudine,
-                telefonoField.getText().trim(),
-                urlField.getText().trim(),
-                sitoWebField.getText().trim(),
-                premiComboBox.getValue(),
-                stellaVerdeCheckBox.isSelected() ? "Sì" : "No",
-                servizi,
-                descrizioneArea.getText().trim()
+                    nome,
+                    indirizzoField.getText().trim(),
+                    localitaField.getText().trim(),
+                    prezzoComboBox.getValue(),
+                    cucine,
+                    longitudine,
+                    latitudine,
+                    telefonoField.getText().trim(),
+                    urlField.getText().trim(),
+                    sitoWebField.getText().trim(),
+                    premiComboBox.getValue(),
+                    stellaVerdeCheckBox.isSelected() ? "Sì" : "No",
+                    servizi,
+                    descrizioneArea.getText().trim()
             );
 
-            // Crea la directory se non esiste
-            File dir = new File("data");
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-
-            // Aggiungi il nuovo ristorante al CSV
             aggiungiRistoranteAlCSV(nuovoRistorante);
 
-            // Associa il ristorante al proprietario corrente
             String username = SessioneUtente.getUsernameUtente();
             if (username != null && SessioneUtente.isRistoratore()) {
                 ownershipService.associaRistoranteAProprietario(nome, username);
             }
 
-            // Torna alla dashboard del ristoratore
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("ristoratore-dashboard.fxml"));
-                Parent root = loader.load();
+            Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
+            successAlert.setTitle("Successo");
+            successAlert.setHeaderText(null);
+            successAlert.setContentText("Il ristorante è stato aggiunto con successo!");
+            successAlert.showAndWait();
 
-                // Usa la scena corrente invece di crearne una nuova
-                Scene currentScene = nomeField.getScene();
-                Stage stage = (Stage) currentScene.getWindow();
-                
-                // Applica lo stile
-                currentScene.setRoot(root);
-                currentScene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
-                
-                // Inizializza il controller per aggiornare la lista
-                RistoratoreDashboardController controller = loader.getController();
-                controller.refreshData();
+            // Passo cruciale: notifica alla dashboard di aggiornare il database principale
+            if (aggiornaDatabaseRistorantiCallback != null) {
+                aggiornaDatabaseRistorantiCallback.run();
+            }
 
-            } catch (IOException e) {
-                System.err.println("Errore nel ritorno alla dashboard: " + e.getMessage());
-                mostraErrore("Errore", "Impossibile tornare alla dashboard del ristoratore");
+            // Torna alla dashboard
+            if (tornaAllaDashboardCallback != null) {
+                tornaAllaDashboardCallback.run();
             }
 
         } catch (NumberFormatException e) {
@@ -181,13 +147,6 @@ public class RistoranteInputController implements Initializable {
         }
     }
 
-    /**
-     * Valida i dati inseriti nel form.
-     * Controlla che i campi obbligatori siano stati compilati
-     * e che i valori numerici siano validi.
-     *
-     * @return true se i dati sono validi, false altrimenti
-     */
     private boolean validaInput() {
         StringBuilder errori = new StringBuilder();
 
@@ -232,21 +191,13 @@ public class RistoranteInputController implements Initializable {
         return true;
     }
 
-    /**
-     * Chiude la finestra corrente senza salvare le modifiche.
-     */
     @FXML
     private void handleAnnulla() {
-        Stage stage = (Stage) nomeField.getScene().getWindow();
-        stage.close();
+        if (tornaAllaDashboardCallback != null) {
+            tornaAllaDashboardCallback.run();
+        }
     }
 
-    /**
-     * Mostra un messaggio di errore all'utente.
-     *
-     * @param titolo   Il titolo della finestra di errore
-     * @param messaggio Il messaggio di errore da mostrare
-     */
     private void mostraErrore(String titolo, String messaggio) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titolo);
@@ -256,11 +207,7 @@ public class RistoranteInputController implements Initializable {
     }
 
     private void aggiungiRistoranteAlCSV(Ristorante ristorante) {
-        // Il percorso deve puntare al file esterno, NON a quello nelle risorse del progetto.
         String filePath = "data/michelin_my_maps.csv";
-
-        // Costruisci la riga CSV.
-        // L'uso di OpenCSV con un CsvWriter sarebbe più robusto, ma questo approccio funziona per ora.
         String csvLine = String.format("%s,%s,%s,%s,%s,%.6f,%.6f,%s,%s,%s,%s,%s,%s,%s\n",
                 ristorante.getNome().replace(",", ";"),
                 ristorante.getIndirizzo().replace(",", ";"),
@@ -278,8 +225,6 @@ public class RistoranteInputController implements Initializable {
                 ristorante.getDescrizione().replace(",", ";")
         );
 
-        // Usa FileWriter con l'opzione `append` (il secondo parametro `true`) per aggiungere
-        // alla fine del file, senza sovrascrivere.
         try (FileWriter writer = new FileWriter(filePath, true)) {
             writer.append(csvLine);
             System.out.println("Ristorante aggiunto al file CSV.");

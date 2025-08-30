@@ -273,19 +273,21 @@ public class RegistrazioneController {
      * @return true se l'username esiste già, false altrimenti.
      */
     private boolean verificaUsernameEsistente(String username) {
-        try (InputStream inputStream = getClass().getResourceAsStream("/data/utenti.csv");
-             BufferedReader lettore = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
-
-            if (inputStream == null) {
+        try {
+            // Usa lo stesso percorso esterno del metodo di salvataggio
+            File file = new File("data/utenti.csv");
+            if (!file.exists()) {
                 return false; // Se il file non esiste, l'username non può esistere
             }
 
-            String riga = lettore.readLine(); // Salta l'header
-            while ((riga = lettore.readLine()) != null) {
-                if (!riga.trim().isEmpty()) {
-                    String[] parti = riga.split(",");
-                    if (parti.length >= 3 && parti[2].trim().equals(username)) {
-                        return true; // Username trovato
+            try (BufferedReader lettore = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+                String riga = lettore.readLine(); // Salta l'header
+                while ((riga = lettore.readLine()) != null) {
+                    if (!riga.trim().isEmpty()) {
+                        String[] parti = riga.split(",");
+                        if (parti.length >= 3 && parti[2].trim().equals(username)) {
+                            return true; // Username trovato
+                        }
                     }
                 }
             }
@@ -310,8 +312,20 @@ public class RegistrazioneController {
             // Controlla e crea la cartella 'data' se non esiste.
             File file = new File(percorsoFile);
             File parentDir = file.getParentFile();
+
+            // Questo blocco deve essere eseguito prima di qualsiasi operazione sul file
             if (parentDir != null && !parentDir.exists()) {
-                parentDir.mkdirs();
+                if (!parentDir.mkdirs()) {
+                    System.err.println("ERRORE: Impossibile creare la directory: " + parentDir.getAbsolutePath());
+                    return false;
+                }
+            }
+
+            // Controlla se il file esiste, se non esiste lo crea con l'header
+            if (!file.exists()) {
+                try (FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8)) {
+                    writer.write("nome,cognome,username,password,data_nascita,luogo_domicilio,ruolo\n");
+                }
             }
 
             // Crea la stringa CSV per il nuovo utente
@@ -333,7 +347,7 @@ public class RegistrazioneController {
             return true;
 
         } catch (IOException e) {
-            System.out.println("ERRORE: Impossibile salvare l'utente nel CSV: " + e.getMessage());
+            System.err.println("ERRORE: Impossibile salvare l'utente nel CSV: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
