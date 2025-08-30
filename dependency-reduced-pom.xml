@@ -20,7 +20,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.8</version>
         <configuration>
-          <mainClass>com.example.theknife.Main</mainClass>
+          <mainClass>${javafx.mainClass}</mainClass>
         </configuration>
       </plugin>
       <plugin>
@@ -35,12 +35,29 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.example.theknife.Main</mainClass>
+                  <mainClass>${javafx.mainClass}</mainClass>
                 </transformer>
               </transformers>
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <argLine>--add-exports javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -83,9 +100,11 @@
     </dependency>
   </dependencies>
   <properties>
-    <maven.compiler.target>22</maven.compiler.target>
     <maven.compiler.source>22</maven.compiler.source>
+    <maven.compiler.target>22</maven.compiler.target>
+    <javafx.mainClass>com.example.theknife.Main</javafx.mainClass>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <javafx.version>22.0.1</javafx.version>
     <junit.version>5.10.2</junit.version>
   </properties>
 </project>
