@@ -352,20 +352,26 @@ public class RistoratoreDashboardController implements Initializable {
     @FXML
     private void onAggiungiRistoranteClick(ActionEvent event) {
         try {
+            // Carica il nuovo FXML
             FXMLLoader loader = new FXMLLoader(getClass().getResource("ristorante-input.fxml"));
             Parent root = loader.load();
 
-            Stage stage = new Stage();
-            stage.initModality(Modality.WINDOW_MODAL);
-            stage.setTitle("Aggiungi ristorante");
-            stage.setScene(new Scene(root));
-            stage.show();
+            // Ottieni la scena corrente da un nodo qualsiasi della finestra, ad esempio 'ristorantiTable'
+            // e imposta il nuovo 'root'
+            Scene scene = ristorantiTable.getScene();
+            scene.setRoot(root);
 
-            // Refresh dei dati quando la finestra viene chiusa
-            stage.setOnHiding(__ -> refreshData());
+            // Aggiorna il titolo della finestra per riflettere il nuovo contenuto
+            Stage stage = (Stage) scene.getWindow();
+            stage.setTitle("Aggiungi ristorante");
+
+            // L'evento 'setOnHiding' non è più necessario perché non stai chiudendo una finestra,
+            // ma semplicemente cambiando il contenuto al suo interno.
+            // Il refresh dei dati andrà gestito in modo diverso, ad esempio quando l'utente salva o annulla.
 
         } catch (IOException e) {
-            showError("Errore durante l'apertura del form di inserimento", e);
+            e.printStackTrace();
+            // Gestisci l'eccezione, ad esempio mostrando un messaggio di errore
         }
     }
 

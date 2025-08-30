@@ -119,15 +119,10 @@ public class RistorantiController implements Initializable {
 
                 // Salta l'intestazione del CSV
                 String[] header = reader.readNext();
-                System.out.println("Intestazione: " + Arrays.toString(header));
 
                 String[] riga;
                 int contatore = 0;
                 while ((riga = reader.readNext()) != null) {
-                    // Stampa le prime 5 righe per debug
-                    if (contatore < 5) {
-                        System.out.println("Riga " + (contatore + 1) + ": " + Arrays.toString(riga));
-                    }
                     
                     try {
                         String nome = riga[0];
