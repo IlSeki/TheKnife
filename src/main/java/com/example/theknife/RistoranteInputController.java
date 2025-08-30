@@ -140,7 +140,7 @@ public class RistoranteInputController implements Initializable {
             );
 
             // Crea la directory se non esiste
-            File dir = new File("src/main/resources/data");
+            File dir = new File("data");
             if (!dir.exists()) {
                 dir.mkdirs();
             }
@@ -257,26 +257,36 @@ public class RistoranteInputController implements Initializable {
         alert.showAndWait();
     }
 
-    private void aggiungiRistoranteAlCSV(Ristorante ristorante) throws IOException {
+    private void aggiungiRistoranteAlCSV(Ristorante ristorante) {
+        // Il percorso deve puntare al file esterno, NON a quello nelle risorse del progetto.
+        String filePath = "data/michelin_my_maps.csv";
+
+        // Costruisci la riga CSV.
+        // L'uso di OpenCSV con un CsvWriter sarebbe più robusto, ma questo approccio funziona per ora.
         String csvLine = String.format("%s,%s,%s,%s,%s,%.6f,%.6f,%s,%s,%s,%s,%s,%s,%s\n",
-            ristorante.getNome().replace(",", ";"),
-            ristorante.getIndirizzo().replace(",", ";"),
-            ristorante.getLocalita().replace(",", ";"),
-            ristorante.getPrezzo(),
-            ristorante.getCucina().replace(",", ";"),
-            ristorante.getLongitudine(),
-            ristorante.getLatitudine(),
-            ristorante.getNumeroTelefono().replace(",", ";"),
-            ristorante.getUrl().replace(",", ";"),
-            ristorante.getSitoWeb().replace(",", ";"),
-            ristorante.getPremio().replace(",", ";"),
-            ristorante.getStellaVerde(),
-            ristorante.getServizi().replace(",", ";"),
-            ristorante.getDescrizione().replace(",", ";")
+                ristorante.getNome().replace(",", ";"),
+                ristorante.getIndirizzo().replace(",", ";"),
+                ristorante.getLocalita().replace(",", ";"),
+                ristorante.getPrezzo(),
+                ristorante.getCucina().replace(",", ";"),
+                ristorante.getLongitudine(),
+                ristorante.getLatitudine(),
+                ristorante.getNumeroTelefono().replace(",", ";"),
+                ristorante.getUrl().replace(",", ";"),
+                ristorante.getSitoWeb().replace(",", ";"),
+                ristorante.getPremio().replace(",", ";"),
+                ristorante.getStellaVerde(),
+                ristorante.getServizi().replace(",", ";"),
+                ristorante.getDescrizione().replace(",", ";")
         );
 
-        try (FileWriter writer = new FileWriter("src/main/resources/data/michelin_my_maps.csv", true)) {
+        // Usa FileWriter con l'opzione `append` (il secondo parametro `true`) per aggiungere
+        // alla fine del file, senza sovrascrivere.
+        try (FileWriter writer = new FileWriter(filePath, true)) {
             writer.append(csvLine);
+            System.out.println("Ristorante aggiunto al file CSV.");
+        } catch (IOException e) {
+            System.err.println("Errore durante l'aggiunta del ristorante al CSV: " + e.getMessage());
         }
     }
 }

@@ -1,14 +1,13 @@
 package com.example.theknife;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
 
 import com.opencsv.CSVReader;
 
+import com.opencsv.exceptions.CsvValidationException;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -111,55 +110,58 @@ public class RistorantiController implements Initializable {
      * @throws Nessuno - Tutte le eccezioni vengono gestite internamente e non vengono propagate.
      */
     private void caricaDatiCSV() {
-        // Usa getResourceAsStream per accedere al CSV incluso nelle risorse
-        try (InputStream is = getClass().getResourceAsStream("/data/michelin_my_maps.csv")) {
-            if (is == null) {
-                System.err.println("Risorsa non trovata: /data/michelin_my_maps.csv");
-                return;
-            }
-            try (InputStreamReader isr = new InputStreamReader(is);
-                 CSVReader reader = new CSVReader(isr)) {
+        // Definisci il percorso del file esterno, ad esempio nella stessa cartella del JAR
+        String filePath = "data/michelin_my_maps.csv";
 
-                // Salta l'intestazione del CSV
-                String[] header = reader.readNext();
+        // Controlla se il file esiste sul file system
+        File csvFile = new File(filePath);
+        if (!csvFile.exists()) {
+            System.err.println("File CSV non trovato: " + csvFile.getAbsolutePath());
+            // Potresti voler gestire questo caso, ad esempio uscendo o creando un file vuoto
+            return;
+        }
 
-                String[] riga;
-                int contatore = 0;
-                while ((riga = reader.readNext()) != null) {
-                    
-                    try {
-                        String nome = riga[0];
-                        String indirizzo = riga[1];
-                        String localita = riga[2];
-                        String prezzo = riga[3];
-                        String cucina = riga[4];
-                        double longitudine = Double.parseDouble(riga[5]);
-                        double latitudine = Double.parseDouble(riga[6]);
-                        String numeroTelefono = riga[7];
-                        String url = riga[8];
-                        String sitoWeb = riga[9];
-                        String premio = riga[10];
-                        String stellaVerde = riga[11];
-                        String servizi = riga[12];
-                        String descrizione = riga[13];
+        try (FileReader reader = new FileReader(csvFile);
+             CSVReader csvReader = new CSVReader(reader)) {
 
-                        Ristorante ristorante = new Ristorante(
-                                nome, indirizzo, localita, prezzo, cucina,
-                                longitudine, latitudine, numeroTelefono,
-                                url, sitoWeb, premio, stellaVerde,
-                                servizi, descrizione
-                        );
-                        listaRistoranti.add(ristorante);
-                    } catch (Exception e) {
-                        System.err.println("Errore nella riga " + (contatore + 1) + ": " + e.getMessage());
-                    }
-                    contatore++;
+            // Salta l'intestazione
+            String[] header = csvReader.readNext();
+
+            String[] riga;
+            while ((riga = csvReader.readNext()) != null) {
+                try {
+                    // ... il tuo codice di parsing rimane invariato ...
+                    String nome = riga[0];
+                    String indirizzo = riga[1];
+                    String localita = riga[2];
+                    String prezzo = riga[3];
+                    String cucina = riga[4];
+                    double longitudine = Double.parseDouble(riga[5]);
+                    double latitudine = Double.parseDouble(riga[6]);
+                    String numeroTelefono = riga[7];
+                    String url = riga[8];
+                    String sitoWeb = riga[9];
+                    String premio = riga[10];
+                    String stellaVerde = riga[11];
+                    String servizi = riga[12];
+                    String descrizione = riga[13];
+
+                    Ristorante ristorante = new Ristorante(
+                            nome, indirizzo, localita, prezzo, cucina,
+                            longitudine, latitudine, numeroTelefono,
+                            url, sitoWeb, premio, stellaVerde,
+                            servizi, descrizione
+                    );
+                    listaRistoranti.add(ristorante);
+                } catch (Exception e) {
+                    System.err.println("Errore nella riga: " + Arrays.toString(riga) + " - " + e.getMessage());
                 }
-                System.out.println("Totale ristoranti caricati: " + listaRistoranti.size());
             }
-        } catch (Exception e) {
-            System.err.println("Errore nel caricamento del CSV: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Errore di I/O nel caricamento del CSV: " + e.getMessage());
             e.printStackTrace();
+        } catch (CsvValidationException e) {
+            throw new RuntimeException(e);
         }
     }
 
