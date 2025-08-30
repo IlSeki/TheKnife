@@ -1,9 +1,6 @@
 package com.example.theknife;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -203,38 +200,53 @@ public class LoginController {
      * @return Lista degli utenti caricati dal file CSV.
      * @throws IOException Se si verifica un errore durante la lettura del file.
      */
-    private List<Utente> caricaUtentiDaCSV() throws IOException {
+    public List<Utente> caricaUtentiDaCSV() throws IOException {
         List<Utente> utenti = new ArrayList<>();
 
-        try (InputStream inputStream = getClass().getResourceAsStream("/data/utenti.csv");
-             BufferedReader lettore = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+        // Percorso del file CSV esterno, nella cartella 'data'
+        String filePath = "data/utenti.csv";
+        File csvFile = new File(filePath);
 
-            if (inputStream == null) {
-                throw new IOException("File utenti.csv non trovato in /data/");
+        // Controlla se la cartella 'data' esiste, se no la crea
+        File parentDir = csvFile.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+            System.out.println("DEBUG: Cartella 'data' creata.");
+        }
+
+        // Controlla se il file utenti.csv esiste
+        if (!csvFile.exists()) {
+            System.err.println("File utenti.csv non trovato. Creazione di un nuovo file.");
+            // Se non esiste, lo crea e aggiunge l'header
+            try (FileWriter writer = new FileWriter(csvFile, StandardCharsets.UTF_8)) {
+                writer.append("nome,cognome,username,passwordHash,dataNascita,luogoDomicilio,ruolo\n");
+                System.out.println("DEBUG: Nuovo file utenti.csv creato con header.");
             }
+            return utenti; // Restituisce una lista vuota dopo aver creato il file
+        }
+
+        // Se il file esiste, procedi con la lettura come prima
+        try (FileReader reader = new FileReader(csvFile, StandardCharsets.UTF_8);
+             BufferedReader lettore = new BufferedReader(reader)) {
 
             String riga = lettore.readLine(); // Salta l'header
             System.out.println("DEBUG: Header CSV: " + riga);
 
             while ((riga = lettore.readLine()) != null) {
+                // ... (il tuo codice di parsing rimane invariato) ...
                 if (!riga.trim().isEmpty()) {
                     String[] parti = riga.split(",");
-                    System.out.println("DEBUG: Parsing riga: " + riga);
-                    System.out.println("DEBUG: Parti trovate: " + parti.length);
-
                     if (parti.length >= 7) {
-                        // Costruttore: nome, cognome, username, passwordHash, dataNascita, luogoDomicilio, ruolo
                         Utente utente = new Utente(
-                                parti[0].trim(),  // Nome
-                                parti[1].trim(),  // Cognome
-                                parti[2].trim(),  // Username
-                                parti[3].trim(),  // Password (già cifrata nel CSV)
-                                parti[4].trim(),  // DataNascita
-                                parti[5].trim(),  // LuogoDomicilio
-                                parti[6].trim()   // Ruolo
+                                parti[0].trim(),
+                                parti[1].trim(),
+                                parti[2].trim(),
+                                parti[3].trim(),
+                                parti[4].trim(),
+                                parti[5].trim(),
+                                parti[6].trim()
                         );
                         utenti.add(utente);
-                        System.out.println("DEBUG: Utente aggiunto: " + utente.toString());
                     } else {
                         System.out.println("DEBUG: Riga ignorata (parti insufficienti): " + riga);
                     }

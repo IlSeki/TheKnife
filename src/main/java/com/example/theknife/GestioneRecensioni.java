@@ -1,11 +1,6 @@
 package com.example.theknife;
 
-import java.io.BufferedReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -73,36 +68,55 @@ public class GestioneRecensioni {
      * Aggiorna la mappa e la lista osservabile.
      * </p>
      */
+
     private void caricaRecensioni() {
         recensioniMap.clear();
         allRecensioni.clear();
-        try (InputStream is = getClass().getResourceAsStream("/data/recensioni.csv")) {
-            if (is == null) {
-                System.err.println("File recensioni.csv non trovato");
-                return;
+
+        // Definisci il percorso del file esterno
+        String filePath = "data/recensioni.csv";
+        File csvFile = new File(filePath);
+
+        // Controlla e crea la cartella 'data' se non esiste.
+        File parentDir = csvFile.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+            System.out.println("DEBUG: Cartella 'data' creata.");
+        }
+
+        // Se il file non esiste, lo crea con l'header
+        if (!csvFile.exists()) {
+            System.err.println("File recensioni.csv non trovato. Creazione di un nuovo file.");
+            try (FileWriter writer = new FileWriter(csvFile, StandardCharsets.UTF_8)) {
+                writer.append("username,ristorante,stelle,testo,data,risposta\n");
+                System.out.println("DEBUG: Nuovo file recensioni.csv creato con header.");
+            } catch (IOException e) {
+                System.err.println("Errore durante la creazione del file recensioni.csv: " + e.getMessage());
             }
+            return; // Restituisce una lista vuota dopo aver creato il file
+        }
 
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                String line = reader.readLine(); // Skip header
-                while ((line = reader.readLine()) != null) {
-                    String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
-                    if (parts.length >= 5) {
-                        String username = parts[0].trim();
-                        String ristoranteId = parts[1].trim();
-                        int stelle = Integer.parseInt(parts[2].trim());
-                        String testo = parts[3].replace("\"", "").trim();
-                        String data = parts[4].trim();
-                        String risposta = parts.length > 5 ? parts[5].replace("\"", "").trim() : "";
+        // Se il file esiste, procedi con la lettura.
+        try (BufferedReader reader = new BufferedReader(new FileReader(csvFile, StandardCharsets.UTF_8))) {
+            String line = reader.readLine(); // Salta l'header
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                if (parts.length >= 5) {
+                    String username = parts[0].trim();
+                    String ristoranteId = parts[1].trim();
+                    int stelle = Integer.parseInt(parts[2].trim());
+                    String testo = parts[3].replace("\"", "").trim();
+                    String data = parts[4].trim();
+                    String risposta = parts.length > 5 ? parts[5].replace("\"", "").trim() : "";
 
-                        Recensione recensione = new Recensione(stelle, testo, ristoranteId, username);
-                        recensione.setData(data);
-                        if (!risposta.isEmpty()) {
-                            recensione.setRisposta(risposta);
-                        }
-
-                        recensioniMap.computeIfAbsent(ristoranteId, _ -> new ArrayList<>()).add(recensione);
-                        allRecensioni.add(recensione);
+                    Recensione recensione = new Recensione(stelle, testo, ristoranteId, username);
+                    recensione.setData(data);
+                    if (!risposta.isEmpty()) {
+                        recensione.setRisposta(risposta);
                     }
+
+                    recensioniMap.computeIfAbsent(ristoranteId, _ -> new ArrayList<>()).add(recensione);
+                    allRecensioni.add(recensione);
                 }
             }
         } catch (IOException e) {
@@ -117,18 +131,25 @@ public class GestioneRecensioni {
      * </p>
      */
     private void salvaRecensioni() {
-        String filePath = "src/main/resources/data/recensioni.csv";
+        // Usa un percorso esterno invece del percorso di sviluppo
+        String filePath = "data/recensioni.csv";
+
         try (PrintWriter writer = new PrintWriter(new FileWriter(filePath))) {
             writer.println("username,ristoranteId,stelle,testo,data,risposta");
+
+            // La logica di scrittura dei dati rimane invariata
             recensioniMap.values().stream()
-                .flatMap(List::stream)
-                .forEach(r -> writer.println(String.format("%s,%s,%d,\"%s\",%s,\"%s\"",
-                    r.getUsername(),
-                    r.getRistoranteId(),
-                    r.getStelle(),
-                    r.getTesto(),
-                    r.getData(),
-                    r.getRisposta())));
+                    .flatMap(List::stream)
+                    .forEach(r -> writer.println(String.format("%s,%s,%d,\"%s\",%s,\"%s\"",
+                            r.getUsername(),
+                            r.getRistoranteId(),
+                            r.getStelle(),
+                            r.getTesto(),
+                            r.getData(),
+                            r.getRisposta())));
+
+            System.out.println("Recensioni salvate con successo nel file: " + filePath);
+
         } catch (IOException e) {
             System.err.println("Errore nel salvataggio delle recensioni: " + e.getMessage());
         }

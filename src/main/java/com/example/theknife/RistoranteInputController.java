@@ -178,8 +178,6 @@ public class RistoranteInputController implements Initializable {
 
         } catch (NumberFormatException e) {
             mostraErrore("Errore", "Le coordinate devono essere numeri validi");
-        } catch (IOException e) {
-            mostraErrore("Errore", "Impossibile salvare il ristorante: " + e.getMessage());
         }
     }
 

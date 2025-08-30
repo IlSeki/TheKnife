@@ -110,27 +110,41 @@ public class RistorantiController implements Initializable {
      * @throws Nessuno - Tutte le eccezioni vengono gestite internamente e non vengono propagate.
      */
     private void caricaDatiCSV() {
-        // Definisci il percorso del file esterno, ad esempio nella stessa cartella del JAR
         String filePath = "data/michelin_my_maps.csv";
-
-        // Controlla se il file esiste sul file system
         File csvFile = new File(filePath);
-        if (!csvFile.exists()) {
-            System.err.println("File CSV non trovato: " + csvFile.getAbsolutePath());
-            // Potresti voler gestire questo caso, ad esempio uscendo o creando un file vuoto
-            return;
+
+        // Controlla e crea la cartella 'data' se non esiste.
+        File parentDir = csvFile.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+            System.out.println("DEBUG: Cartella 'data' creata.");
         }
 
+        // Controlla se il file CSV esiste.
+        if (!csvFile.exists()) {
+            System.err.println("File CSV non trovato. Creazione di un nuovo file.");
+            try (FileWriter writer = new FileWriter(csvFile)) {
+                // Aggiungi l'intestazione corretta per i tuoi dati.
+                // Assicurati che l'ordine e il numero delle colonne siano esatti.
+                writer.append("nome,indirizzo,localita,prezzo,cucina,longitudine,latitudine,numeroTelefono,url,sitoWeb,premio,stellaVerde,servizi,descrizione\n");
+                System.out.println("DEBUG: Nuovo file CSV creato con header.");
+            } catch (IOException e) {
+                System.err.println("Errore durante la creazione del file CSV: " + e.getMessage());
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        // Se il file esiste (o è stato appena creato), prosegui con la lettura.
         try (FileReader reader = new FileReader(csvFile);
              CSVReader csvReader = new CSVReader(reader)) {
 
-            // Salta l'intestazione
-            String[] header = csvReader.readNext();
+            String[] header = csvReader.readNext(); // Salta l'intestazione.
 
             String[] riga;
             while ((riga = csvReader.readNext()) != null) {
                 try {
-                    // ... il tuo codice di parsing rimane invariato ...
+                    // Il tuo codice di parsing rimane invariato.
                     String nome = riga[0];
                     String indirizzo = riga[1];
                     String localita = riga[2];

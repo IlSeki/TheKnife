@@ -28,7 +28,7 @@ import java.util.Set;
  * @since 2025-05-20
  */
 public class GestionePreferiti {
-    private static final String CSV_FILE = "src/main/resources/data/preferiti.csv";
+    private static final String CSV_FILE = "data/preferiti.csv";
     private static final String CSV_HEADER = "username,ristoranteId";
     private static GestionePreferiti instance;
     private final Map<String, Set<String>> preferitiPerUtente;

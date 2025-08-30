@@ -1,9 +1,6 @@
 package com.example.theknife;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -304,10 +301,18 @@ public class RegistrazioneController {
      * @param utente L'utente da salvare.
      * @return true se il salvataggio è riuscito, false altrimenti.
      */
+
     private boolean salvaUtenteNelCSV(Utente utente) {
         try {
-            // Percorso del file CSV
-            String percorsoFile = "src/main/resources/data/utenti.csv";
+            // Usa un percorso esterno, che si trova nella stessa directory del JAR
+            String percorsoFile = "data/utenti.csv";
+
+            // Controlla e crea la cartella 'data' se non esiste.
+            File file = new File(percorsoFile);
+            File parentDir = file.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
+            }
 
             // Crea la stringa CSV per il nuovo utente
             String rigaCSV = String.format("%s,%s,%s,%s,%s,%s,%s%n",
@@ -320,9 +325,9 @@ public class RegistrazioneController {
                     utente.getRuolo()
             );
 
-            // Aggiungi la riga al file CSV
+            // Aggiungi la riga al file CSV. Usa StandardOpenOption.APPEND per non sovrascrivere
             Files.write(Paths.get(percorsoFile), rigaCSV.getBytes(StandardCharsets.UTF_8),
-                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                    StandardOpenOption.APPEND);
 
             System.out.println("DEBUG: Utente salvato nel CSV: " + utente.toString());
             return true;

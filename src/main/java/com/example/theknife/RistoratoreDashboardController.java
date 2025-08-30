@@ -71,11 +71,18 @@ public class RistoratoreDashboardController implements Initializable {
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // 1. Carica prima i dati di tutti i ristoranti
+        gestioneRistorante.initializeData();
+
+        // 2. Poi inizializza il servizio di possesso
+        ownershipService.initialize();
+
+        // 3. Poi prosegui con il setup della UI e il caricamento dei dati
         setupRistorantiTable();
         setupRecensioniList();
         detailsContainer.setVisible(false);
 
-        // Carica i dati una sola volta all'inizializzazione
+        // Carica i ristoranti posseduti dall'utente corrente
         loadRistoranti();
     }
 
@@ -156,14 +163,11 @@ public class RistoratoreDashboardController implements Initializable {
             return;
         }
 
-        // Forza il ricaricamento dei dati di proprietà
-        ownershipService.refreshOwnershipData();
-
-        // Ottieni tutti i ristoranti di proprietà del ristoratore corrente
+        // Rimuovi la chiamata a refreshOwnershipData()
+        // Il servizio è già stato inizializzato
         List<String> ownedRestaurants = ownershipService.getOwnedRestaurants(currentUser);
 
         if (ownedRestaurants.isEmpty()) {
-            // Debug ridotto - solo un messaggio informativo
             System.out.println("Nessun ristorante trovato per l'utente: " + currentUser);
             ristorantiTable.setItems(FXCollections.observableArrayList());
             detailsContainer.setVisible(false);
@@ -183,7 +187,6 @@ public class RistoratoreDashboardController implements Initializable {
 
         ristorantiTable.setItems(FXCollections.observableArrayList(ristoranti));
 
-        // Debug ridotto - solo un messaggio di conferma
         if (ristoranti.isEmpty()) {
             detailsContainer.setVisible(false);
             selectedRistorante = null;
