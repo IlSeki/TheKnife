@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -60,12 +61,26 @@ public class RistoratoreDashboardController implements Initializable {
         loadRistoranti();
     }
 
+
     public void refreshData() {
-        // La logica di aggiornamento è ora nel onAggiungiRistoranteClick
+        System.out.println("Debug: Inizio refreshData");
+
+        // Forza il refresh completo di entrambi i servizi
+        gestioneRistorante.forceRefresh();
+        ownershipService.refreshOwnershipData();
+
+        // Ricarica i ristoranti nella tabella
         loadRistoranti();
+        System.out.println("Debug: Ristoranti ricaricati");
+
+        // Aggiorna i dettagli se c'è un ristorante selezionato
         if (selectedRistorante != null) {
-            updateStatistiche();
-            loadRecensioni();
+            selectedRistorante = gestioneRistorante.getRistorante(selectedRistorante.getNome());
+            if (selectedRistorante != null) {
+                updateStatistiche();
+                loadRecensioni();
+                System.out.println("Debug: Statistiche e recensioni aggiornate");
+            }
         }
     }
 
@@ -264,6 +279,7 @@ public class RistoratoreDashboardController implements Initializable {
         }
     }
 
+
     @FXML
     private void onAggiungiRistoranteClick(ActionEvent event) {
         try {
@@ -272,19 +288,26 @@ public class RistoratoreDashboardController implements Initializable {
 
             RistoranteInputController controller = loader.getController();
             Scene currentScene = ristorantiTable.getScene();
-
             Parent dashboardRoot = currentScene.getRoot();
 
-            controller.setAggiornaDatabaseRistorantiCallback(() -> gestioneRistorante.initializeData());
+            // Creiamo una reference alla dashboard per il refresh
+            final RistoratoreDashboardController dashboard = this;
+
+            controller.setAggiornaDatabaseRistorantiCallback(() -> {
+                System.out.println("Debug: Inizia aggiornamento database");
+                gestioneRistorante.initializeData();
+            });
 
             controller.setTornaAllaDashboardCallback(() -> {
+                System.out.println("Debug: Inizia ritorno alla dashboard");
                 currentScene.setRoot(dashboardRoot);
-                ownershipService.refreshOwnershipData();
-                loadRistoranti();
+                Platform.runLater(() -> {
+                    System.out.println("Debug: Esecuzione refresh data");
+                    dashboard.refreshData();
+                });
             });
 
             currentScene.setRoot(root);
-
             Stage stage = (Stage) currentScene.getWindow();
             stage.setTitle("Aggiungi ristorante");
 

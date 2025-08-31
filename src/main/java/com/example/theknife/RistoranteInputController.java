@@ -132,19 +132,28 @@ public class RistoranteInputController implements Initializable {
             successAlert.setContentText("Il ristorante è stato aggiunto con successo!");
             successAlert.showAndWait();
 
-            // Passo cruciale: notifica alla dashboard di aggiornare il database principale
+            System.out.println("Debug: Salvataggio ristorante completato");
+
+            GestioneRistorante.getInstance().forceRefresh();
+
             if (aggiornaDatabaseRistorantiCallback != null) {
                 aggiornaDatabaseRistorantiCallback.run();
             }
 
-            // Torna alla dashboard
+            // Forza il refresh dei dati di proprietà
+            GestionePossessoRistorante.getInstance().refreshOwnershipData();
+
             if (tornaAllaDashboardCallback != null) {
                 tornaAllaDashboardCallback.run();
             }
 
-        } catch (NumberFormatException e) {
-            mostraErrore("Errore", "Le coordinate devono essere numeri validi");
+        } catch (Exception e) {
+            System.err.println("Errore durante il salvataggio: " + e.getMessage());
+            e.printStackTrace();
+            mostraErrore("Errore", e.getMessage());
         }
+
+
     }
 
     private boolean validaInput() {

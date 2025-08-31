@@ -44,14 +44,33 @@ public class GestioneRistorante {
 
     /**
      * Metodo pubblico per inizializzare il caricamento dei dati.
+     * Ora ricarica sempre i dati per garantire la sincronizzazione.
      */
     public void initializeData() {
-        if (!isInitialized) {
-            caricaRistoranti();
-            caricaProprietari();
-            isInitialized = true;
-        }
+        // Rimuove il controllo di isInitialized per forzare sempre il caricamento
+        caricaRistoranti();
+        caricaProprietari();
+        isInitialized = true;
     }
+
+    /**
+     * Forza il ricaricamento completo dei dati dai file.
+     * Da usare quando si vuole essere sicuri di avere i dati più aggiornati.
+     */
+    public void forceRefresh() {
+        // Svuota le mappe prima di ricaricare
+        ristoranti.clear();
+        proprietariRistoranti.clear();
+
+        // Ricarica tutti i dati
+        caricaRistoranti();
+        caricaProprietari();
+
+        // Aggiorna lo stato di inizializzazione
+        isInitialized = true;
+    }
+
+
 
     /**
      * Carica i ristoranti dal file CSV esterno.
