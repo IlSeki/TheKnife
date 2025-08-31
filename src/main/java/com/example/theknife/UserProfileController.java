@@ -2,8 +2,10 @@ package com.example.theknife;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -93,7 +95,7 @@ public class UserProfileController implements Initializable {
 
         if (isCliente) {
             aggiornaListaPreferiti();
-        } 
+        }
 
         // Setup pulsante logout
         logoutButton.setOnAction(event -> handleLogout());
@@ -200,6 +202,7 @@ public class UserProfileController implements Initializable {
             showError("Errore", "Impossibile tornare alla schermata di login");
         }
     }
+
     /**
      * Apre i dettagli di un ristorante a partire dal suo nome.
      * Se il ristorante non è più disponibile, mostra un messaggio di errore.
@@ -207,15 +210,86 @@ public class UserProfileController implements Initializable {
      * @param nomeRistorante identificativo o nome del ristorante da mostrare
      */
     private void openRistoranteDetail(String nomeRistorante) {
+        System.out.println("DEBUG: Cercando ristorante con nome: '" + nomeRistorante + "'");
+
+        // FORZARE IL CARICAMENTO DEI RISTORANTI
+        // Questo potrebbe essere necessario se GestioneRistorante ha un lazy loading
+        try {
+            // Prova a chiamare un metodo che forza il caricamento
+            gestioneRistorante.caricaRistoranti(); // Se questo metodo esiste
+        } catch (Exception e) {
+            System.out.println("DEBUG: Metodo caricaRistoranti() non disponibile: " + e.getMessage());
+        }
+
+        // Primo tentativo: usa il metodo diretto
         Ristorante ristorante = gestioneRistorante.getRistorante(nomeRistorante);
+        System.out.println("DEBUG: getRistorante() returned: " + (ristorante != null ? ristorante.getNome() : "null"));
+
+        // Se non trova il ristorante con il metodo diretto, prova con getRistorantiByNomi
         if (ristorante == null) {
+            Set<String> nomiSet = new HashSet<>();
+            nomiSet.add(nomeRistorante);
+            List<Ristorante> ristoranti = gestioneRistorante.getRistorantiByNomi(nomiSet);
+            System.out.println("DEBUG: getRistorantiByNomi() returned " + ristoranti.size() + " risultati");
+            if (!ristoranti.isEmpty()) {
+                ristorante = ristoranti.get(0);
+                System.out.println("DEBUG: Trovato ristorante: " + ristorante.getNome());
+            }
+        }
+
+        // Prova anche a cercare in tutti i ristoranti disponibili
+        if (ristorante == null) {
+            System.out.println("DEBUG: Tentativo di ricerca in tutti i ristoranti...");
+            List<Ristorante> tuttiRistoranti = gestioneRistorante.getTuttiRistoranti();
+            System.out.println("DEBUG: Totale ristoranti disponibili: " + tuttiRistoranti.size());
+
+            if (tuttiRistoranti.isEmpty()) {
+                // Se non ci sono ristoranti, proviamo approcci alternativi
+                System.out.println("DEBUG: Nessun ristorante caricato, usando approccio alternativo...");
+
+                // Usa lo stesso approccio del PreferitiController
+                Set<String> preferiti = gestionePreferiti.getPreferiti(SessioneUtente.getUsernameUtente());
+                System.out.println("DEBUG: Preferiti utente: " + preferiti);
+
+                if (preferiti.contains(nomeRistorante)) {
+                    List<Ristorante> ristoranti = gestioneRistorante.getRistorantiByNomi(preferiti);
+                    System.out.println("DEBUG: getRistorantiByNomi con tutti i preferiti returned: " + ristoranti.size());
+
+                    for (Ristorante r : ristoranti) {
+                        System.out.println("DEBUG: Ristorante nei preferiti: '" + r.getNome() + "'");
+                        if (r.getNome().equals(nomeRistorante)) {
+                            ristorante = r;
+                            System.out.println("DEBUG: Match trovato!");
+                            break;
+                        }
+                    }
+                }
+            } else {
+                for (Ristorante r : tuttiRistoranti) {
+                    System.out.println("DEBUG: Ristorante disponibile: '" + r.getNome() + "'");
+                    if (r.getNome().equals(nomeRistorante)) {
+                        ristorante = r;
+                        System.out.println("DEBUG: Trovato match esatto!");
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Se ancora non lo trova, mostra errore con più dettagli
+        if (ristorante == null) {
+            String debugMessage = "Ristorante cercato: '" + nomeRistorante + "'\n";
+            debugMessage += "Username corrente: " + SessioneUtente.getUsernameUtente() + "\n";
+            debugMessage += "Preferiti dell'utente: " + gestionePreferiti.getPreferiti(SessioneUtente.getUsernameUtente());
+
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Errore");
+            alert.setTitle("Errore Debug");
             alert.setHeaderText("Ristorante non trovato");
-            alert.setContentText("Il ristorante selezionato non è più disponibile.");
+            alert.setContentText(debugMessage);
             alert.showAndWait();
             return;
         }
+
         try {
             URL resourceUrl = getClass().getResource("/com/example/theknife/ristorante-detail.fxml");
             if (resourceUrl == null) {
@@ -250,8 +324,6 @@ public class UserProfileController implements Initializable {
             System.err.println("Error loading restaurant details: " + e.getMessage());
             showError("Errore", "Impossibile aprire i dettagli del ristorante: " + e.getMessage());
         }
-
-
     }
 
     /**

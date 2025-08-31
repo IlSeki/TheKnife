@@ -22,76 +22,37 @@ import javafx.stage.Stage;
 
 /**
  * Controller per la gestione del login degli utenti.
- * Gestisce l'autenticazione degli utenti e il reindirizzamento alla schermata
- * appropriata in base al ruolo dell'utente.
- *
- * @author Samuele Secchi, 761031, Sede CO
- * @author Flavio Marin, 759910, Sede CO
- * @author Matilde Lecchi, 759875, Sede CO
- * @author Davide Caccia, 760742, Sede CO
- * @version 1.0
- * @since 2025-05-20
+ * Gestisce l'autenticazione degli utenti e il reindirizzamento alla schermata principale.
  */
 public class LoginController {
+    private static final String USERS_FILE = "data/utenti.csv";
+    private static final String CSS_PATH = "/data/stile.css";
 
-    @FXML
-    private TextField campoUsername;
-
-    @FXML
-    private PasswordField campoPassword;
+    @FXML private TextField campoUsername;
+    @FXML private PasswordField campoPassword;
 
     private Runnable onLoginSuccess;
 
-    /**
-     * Imposta il callback da eseguire al login avvenuto con successo
-     * @param callback il callback da eseguire
-     */
     public void setOnLoginSuccess(Runnable callback) {
         this.onLoginSuccess = callback;
     }
 
     /**
-     * Metodo invocato alla pressione del pulsante "Accedi".
-     * Verifica le credenziali inserite dall'utente confrontandole con il file CSV.
-     * In caso di successo, reindirizza l'utente all'interfaccia appropriata in base al ruolo.
-     *
-     * @param evento L'evento generato dal clic sul pulsante di login.
+     * Gestisce il processo di login.
      */
     @FXML
     private void gestisciAccesso(ActionEvent evento) {
         String username = campoUsername.getText().trim();
         String password = campoPassword.getText();
 
-        // Validazione input
-        if (username.isEmpty() || password.isEmpty()) {
-            mostraAvviso("Errore", "Inserisci username e password!", Alert.AlertType.WARNING);
+        if (!validaInput(username, password)) {
             return;
         }
 
         try {
-            // Carica gli utenti dal file CSV
-            List<Utente> utenti = caricaUtentiDaCSV();
-
-            System.out.println("DEBUG: Utenti caricati: " + utenti.size());
-
-            // Cifra la password inserita per il confronto
-            String passwordCifrata = cifraPassword(password);
-            System.out.println("DEBUG: Password cifrata: " + passwordCifrata);
-
-            // Cerca l'utente con username e password corrispondenti
-            Utente utenteAutenticato = null;
-            for (Utente utente : utenti) {
-                System.out.println("DEBUG: Confronto con utente: " + utente.getUsername() +
-                        " - Password nel file: " + utente.getPasswordHash());
-
-                if (utente.getUsername().equals(username) && utente.getPasswordHash().equals(passwordCifrata)) {
-                    utenteAutenticato = utente;
-                    break;
-                }
-            }
+            Utente utenteAutenticato = autenticaUtente(username, password);
 
             if (utenteAutenticato != null) {
-                // Autenticazione riuscita - salva i dati utente e reindirizza
                 SessioneUtente.impostaUtenteCorrente(
                         utenteAutenticato.getNome(),
                         utenteAutenticato.getCognome(),
@@ -99,171 +60,136 @@ public class LoginController {
                         utenteAutenticato.getRuolo()
                 );
 
-                System.out.println("DEBUG: Utente autenticato: " + utenteAutenticato.toString());
-
                 if (onLoginSuccess != null) {
                     onLoginSuccess.run();
                 }
 
-                reindirizzaAllInterfacciaPrincipale(evento, utenteAutenticato.getRuolo());
+                reindirizzaAllInterfacciaPrincipale(evento);
             } else {
-                // Credenziali errate
-                mostraAvviso("Errore di Autenticazione", "Username o password non corretti!", Alert.AlertType.ERROR);
-                campoPassword.clear(); // Pulisce il campo password per sicurezza
+                mostraAvviso("Errore di Autenticazione",
+                        "Username o password non corretti!", Alert.AlertType.ERROR);
+                campoPassword.clear();
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            mostraAvviso("Errore", "Errore durante l'autenticazione: " + e.getMessage(), Alert.AlertType.ERROR);
+            mostraAvviso("Errore", "Errore durante l'autenticazione: " + e.getMessage(),
+                    Alert.AlertType.ERROR);
         }
     }
 
     /**
-     * Metodo invocato alla pressione del pulsante "Accedi senza login".
-     * Permette l'accesso come utente non registrato con funzionalità limitate.
-     *
-     * @param evento L'evento generato dal clic sul pulsante.
+     * Gestisce l'accesso come ospite.
      */
     @FXML
     private void gestisciAccessoSenzaLogin(ActionEvent evento) {
         try {
-            // Imposta la sessione come utente non registrato
             SessioneUtente.impostaUtenteCorrente("Ospite", "", "", "ospite");
-            reindirizzaAllInterfacciaPrincipale(evento, "ospite");
+            reindirizzaAllInterfacciaPrincipale(evento);
         } catch (Exception e) {
             e.printStackTrace();
-            mostraAvviso("Errore", "Errore durante l'accesso: " + e.getMessage(), Alert.AlertType.ERROR);
+            mostraAvviso("Errore", "Errore durante l'accesso: " + e.getMessage(),
+                    Alert.AlertType.ERROR);
         }
     }
 
     /**
-     * Metodo invocato alla pressione del pulsante "Registrati".
-     * Reindirizza l'utente alla schermata di registrazione.
-     *
-     * @param evento L'evento generato dal clic sul pulsante di registrazione.
+     * Gestisce la navigazione alla registrazione.
      */
     @FXML
     private void gestisciRegistrazione(ActionEvent evento) {
         try {
-            // Debug: verifica se il file esiste
-            System.out.println("DEBUG: Tentativo di caricare registrazione.fxml");
-            if (getClass().getResource("registrazione.fxml") == null) {
-                System.out.println("ERROR: File registrazione.fxml non trovato nel classpath");
-                mostraAvviso("Errore", "File registrazione.fxml non trovato!\n" +
-                        "Verifica che il file sia presente nella directory src/main/resources/", Alert.AlertType.ERROR);
-                return;
-            }
-
-            // Carica il file FXML della registrazione
-            FXMLLoader caricatore = new FXMLLoader(getClass().getResource("registrazione.fxml"));
-            Parent radice = caricatore.load();
-
-            // Calcola le dimensioni della finestra
-            Rectangle2D limitiSchermo = Screen.getPrimary().getVisualBounds();
-            double larghezza = Math.min(700, limitiSchermo.getWidth() * 0.6);
-            double altezza = Math.min(600, limitiSchermo.getHeight() * 0.8);
-
-            // Crea la scena
-            Scene scena = new Scene(radice, larghezza, altezza);
-
-            // Applica il CSS se disponibile
-            try {
-                String cssPath = "/data/stile.css";
-                if (getClass().getResource(cssPath) != null) {
-                    scena.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
-                } else {
-                    System.out.println("WARNING: File CSS non trovato: " + cssPath);
-                }
-            } catch (Exception e) {
-                System.out.println("WARNING: Errore nel caricamento CSS: " + e.getMessage());
-            }
-
-            // Imposta la nuova scena
-            Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-            palcoscenico.setTitle("TheKnife - Registrazione");
-            palcoscenico.setScene(scena);
-            palcoscenico.show();
-
-            System.out.println("DEBUG: Schermata di registrazione caricata con successo");
-
+            caricaScena(evento, "registrazione.fxml", "TheKnife - Registrazione", 700, 600);
         } catch (IOException e) {
-            System.out.println("ERROR: Impossibile caricare registrazione.fxml - " + e.getMessage());
+            System.err.println("Errore nel caricamento della registrazione: " + e.getMessage());
             e.printStackTrace();
-            mostraAvviso("Errore", "Impossibile caricare la schermata di registrazione.\n" +
-                    "Dettagli: " + e.getMessage(), Alert.AlertType.ERROR);
+            mostraAvviso("Errore", "Impossibile caricare la schermata di registrazione.",
+                    Alert.AlertType.ERROR);
         }
     }
 
     /**
-     * Carica la lista degli utenti dal file CSV "utenti.csv".
-     *
-     * @return Lista degli utenti caricati dal file CSV.
-     * @throws IOException Se si verifica un errore durante la lettura del file.
+     * Valida l'input dell'utente.
      */
-    public List<Utente> caricaUtentiDaCSV() throws IOException {
+    private boolean validaInput(String username, String password) {
+        if (username.isEmpty() || password.isEmpty()) {
+            mostraAvviso("Errore", "Inserisci username e password!", Alert.AlertType.WARNING);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Autentica un utente verificando username e password.
+     */
+    private Utente autenticaUtente(String username, String password) throws Exception {
+        List<Utente> utenti = caricaUtentiDaCSV();
+        String passwordCifrata = cifraPassword(password);
+
+        return utenti.stream()
+                .filter(utente -> utente.getUsername().equals(username) &&
+                        utente.getPasswordHash().equals(passwordCifrata))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Carica la lista degli utenti dal file CSV.
+     */
+    private List<Utente> caricaUtentiDaCSV() throws IOException {
         List<Utente> utenti = new ArrayList<>();
+        File csvFile = new File(USERS_FILE);
 
-        // Percorso del file CSV esterno, nella cartella 'data'
-        String filePath = "data/utenti.csv";
-        File csvFile = new File(filePath);
-
-        // Controlla se la cartella 'data' esiste, se no la crea
-        File parentDir = csvFile.getParentFile();
-        if (parentDir != null && !parentDir.exists()) {
-            parentDir.mkdirs();
-            System.out.println("DEBUG: Cartella 'data' creata.");
-        }
-
-        // Controlla se il file utenti.csv esiste
         if (!csvFile.exists()) {
-            System.err.println("File utenti.csv non trovato. Creazione di un nuovo file.");
-            // Se non esiste, lo crea e aggiunge l'header
-            try (FileWriter writer = new FileWriter(csvFile, StandardCharsets.UTF_8)) {
-                writer.append("nome,cognome,username,passwordHash,dataNascita,luogoDomicilio,ruolo\n");
-                System.out.println("DEBUG: Nuovo file utenti.csv creato con header.");
-            }
-            return utenti; // Restituisce una lista vuota dopo aver creato il file
+            createUsersFile(csvFile);
+            return utenti;
         }
 
-        // Se il file esiste, procedi con la lettura come prima
-        try (FileReader reader = new FileReader(csvFile, StandardCharsets.UTF_8);
-             BufferedReader lettore = new BufferedReader(reader)) {
+        try (BufferedReader lettore = new BufferedReader(
+                new FileReader(csvFile, StandardCharsets.UTF_8))) {
 
-            String riga = lettore.readLine(); // Salta l'header
-            System.out.println("DEBUG: Header CSV: " + riga);
-
+            String riga = lettore.readLine(); // Skip header
             while ((riga = lettore.readLine()) != null) {
-                // ... (il tuo codice di parsing rimane invariato) ...
                 if (!riga.trim().isEmpty()) {
-                    String[] parti = riga.split(",");
-                    if (parti.length >= 7) {
-                        Utente utente = new Utente(
-                                parti[0].trim(),
-                                parti[1].trim(),
-                                parti[2].trim(),
-                                parti[3].trim(),
-                                parti[4].trim(),
-                                parti[5].trim(),
-                                parti[6].trim()
-                        );
+                    Utente utente = parseUserFromCsv(riga);
+                    if (utente != null) {
                         utenti.add(utente);
-                    } else {
-                        System.out.println("DEBUG: Riga ignorata (parti insufficienti): " + riga);
                     }
                 }
             }
         }
-
-        System.out.println("DEBUG: Totale utenti caricati: " + utenti.size());
         return utenti;
     }
 
     /**
-     * Calcola l'hash SHA-256 di una password.
-     *
-     * @param password La password in chiaro da cifrare.
-     * @return L'hash SHA-256 della password in formato esadecimale.
-     * @throws NoSuchAlgorithmException Se l'algoritmo SHA-256 non è disponibile.
+     * Crea il file utenti con header se non esiste.
+     */
+    private void createUsersFile(File file) throws IOException {
+        File parentDir = file.getParentFile();
+        if (parentDir != null && !parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+
+        try (FileWriter writer = new FileWriter(file, StandardCharsets.UTF_8)) {
+            writer.append("nome,cognome,username,passwordHash,dataNascita,luogoDomicilio,ruolo\n");
+        }
+    }
+
+    /**
+     * Parsa una riga CSV e crea un oggetto Utente.
+     */
+    private Utente parseUserFromCsv(String riga) {
+        String[] parti = riga.split(",");
+        if (parti.length >= 7) {
+            return new Utente(
+                    parti[0].trim(), parti[1].trim(), parti[2].trim(),
+                    parti[3].trim(), parti[4].trim(), parti[5].trim(), parti[6].trim()
+            );
+        }
+        return null;
+    }
+
+    /**
+     * Cifra la password usando SHA-256.
      */
     private String cifraPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -277,57 +203,48 @@ public class LoginController {
             }
             stringaEsadecimale.append(hex);
         }
-
         return stringaEsadecimale.toString();
     }
 
     /**
-     * Reindirizza l'utente all'interfaccia principale appropriata in base al ruolo.
-     *
-     * @param evento L'evento ActionEvent per ottenere lo stage corrente.
-     * @param ruolo Il ruolo dell'utente ("cliente", "ristoratore", "ospite").
-     * @throws IOException Se si verifica un errore durante il caricamento dell'interfaccia.
+     * Reindirizza all'interfaccia principale.
      */
-    private void reindirizzaAllInterfacciaPrincipale(ActionEvent evento, String ruolo) throws IOException {
-        // Tutti gli utenti vengono portati alla schermata di ricerca
-        String fileFxml = "lista.fxml";
-        String titoloFinestra = "TheKnife - Ricerca Ristoranti";
+    private void reindirizzaAllInterfacciaPrincipale(ActionEvent evento) throws IOException {
+        caricaScena(evento, "lista.fxml", "TheKnife - Ricerca Ristoranti", 1024, 768);
+    }
 
-        // Carica l'interfaccia
-        FXMLLoader caricatore = new FXMLLoader(getClass().getResource(fileFxml));
+    /**
+     * Metodo helper per caricare una nuova scena.
+     */
+    private void caricaScena(ActionEvent evento, String fxml, String titolo,
+                             int defaultWidth, int defaultHeight) throws IOException {
+
+        FXMLLoader caricatore = new FXMLLoader(getClass().getResource(fxml));
         Parent radice = caricatore.load();
 
-        // Calcola le dimensioni della finestra
         Rectangle2D limitiSchermo = Screen.getPrimary().getVisualBounds();
-        double larghezza = Math.min(1024, limitiSchermo.getWidth() * 0.8);
-        double altezza = Math.min(768, limitiSchermo.getHeight() * 0.8);
+        double larghezza = Math.min(defaultWidth, limitiSchermo.getWidth() * 0.8);
+        double altezza = Math.min(defaultHeight, limitiSchermo.getHeight() * 0.8);
 
-        // Crea la scena
         Scene scena = new Scene(radice, larghezza, altezza);
 
-        // Applica il CSS se disponibile
+        // Applica CSS se disponibile
         try {
-            String cssPath = "/data/stile.css";
-            if (getClass().getResource(cssPath) != null) {
-                scena.getStylesheets().add(getClass().getResource(cssPath).toExternalForm());
+            if (getClass().getResource(CSS_PATH) != null) {
+                scena.getStylesheets().add(getClass().getResource(CSS_PATH).toExternalForm());
             }
         } catch (Exception e) {
             System.out.println("WARNING: Errore nel caricamento CSS: " + e.getMessage());
         }
 
-        // Imposta la nuova scena
         Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-        palcoscenico.setTitle(titoloFinestra);
+        palcoscenico.setTitle(titolo);
         palcoscenico.setScene(scena);
         palcoscenico.show();
     }
 
     /**
-     * Mostra un dialog di avviso all'utente.
-     *
-     * @param titolo Il titolo del dialog.
-     * @param messaggio Il messaggio da visualizzare.
-     * @param tipoAvviso Il tipo di alert (INFO, WARNING, ERROR).
+     * Mostra un dialog di avviso.
      */
     private void mostraAvviso(String titolo, String messaggio, Alert.AlertType tipoAvviso) {
         Alert avviso = new Alert(tipoAvviso);

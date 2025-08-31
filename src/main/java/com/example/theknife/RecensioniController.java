@@ -71,7 +71,6 @@ public class RecensioniController {
     private RistoratoreDashboardController parentController;
     private Parent rootToRestore;
     private Runnable tornaAlMenuPrincipaleCallback;
-    private Runnable refreshParentCallback;
 
     /**
      * Imposta il controller della dashboard del ristoratore come parent.
@@ -96,9 +95,6 @@ public class RecensioniController {
     }
     public void setTornaAlMenuPrincipaleCallback(Runnable callback) {
         this.tornaAlMenuPrincipaleCallback = callback;
-    }
-    public void setRefreshParentCallback(Runnable callback) {
-        this.refreshParentCallback = callback;
     }
 
     /**
