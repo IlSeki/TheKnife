@@ -62,6 +62,7 @@ public class RecensioniController {
     @FXML private VBox rispostaBox;
     @FXML private TextArea rispostaTextArea;
     @FXML private Label totaleRecensioniLabel;
+    @FXML private Button modificaRispostaButton;
 
     private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
     private final GestionePossessoRistorante ownershipService = GestionePossessoRistorante.getInstance();
@@ -71,6 +72,7 @@ public class RecensioniController {
     private RistoratoreDashboardController parentController;
     private Parent rootToRestore;
     private Runnable tornaAlMenuPrincipaleCallback;
+
 
     /**
      * Imposta il controller della dashboard del ristoratore come parent.
@@ -111,16 +113,27 @@ public class RecensioniController {
         boolean isUtenteLoggato = SessioneUtente.isUtenteLoggato();
         boolean isRistoratore = SessioneUtente.isRistoratore();
 
-        // Nasconde o mostra i bottoni in base al ruolo dell'utente
-        inviaButton.setVisible(isUtenteLoggato && !isRistoratore);
-        modificaButton.setVisible(false); // Inizialmente nascosto
-        eliminaButton.setVisible(false); // Inizialmente nascosto
-        rispondiButton.setVisible(isRistoratore);
-        rispostaBox.setVisible(isRistoratore);
+        // Verifica se il ristoratore possiede questo ristorante
+        boolean isProprietario = false;
+        if (isRistoratore && ristoranteId != null) {
+            String currentUser = SessioneUtente.getUsernameUtente();
+            List<String> ownedRestaurants = ownershipService.getOwnedRestaurants(currentUser);
+            isProprietario = ownedRestaurants.contains(ristoranteId);
+        }
 
-        // I campi di input per le recensioni sono visibili solo per i clienti
-        recensioneTextArea.setVisible(isUtenteLoggato && !isRistoratore);
-        stelleSlider.setVisible(isUtenteLoggato && !isRistoratore);
+        boolean puo_recensire = isUtenteLoggato && (!isRistoratore || !isProprietario);
+
+        // Nasconde o mostra i bottoni in base al ruolo dell'utente
+        inviaButton.setVisible(puo_recensire);
+        modificaButton.setVisible(false);
+        eliminaButton.setVisible(false);
+        rispondiButton.setVisible(isRistoratore && isProprietario);
+        modificaRispostaButton.setVisible(false); // Inizialmente nascosto
+        rispostaBox.setVisible(isRistoratore && isProprietario);
+
+        // I campi di input per le recensioni sono visibili per chi può recensire
+        recensioneTextArea.setVisible(puo_recensire);
+        stelleSlider.setVisible(puo_recensire);
     }
 
     private void setupTable() {
@@ -136,51 +149,58 @@ public class RecensioniController {
     }
 
     private void setupListeners() {
-        comboBox.setItems(FXCollections.observableArrayList(1, 2, 3, 4, 5));
-
-        stelleSlider.setMin(1);
-        stelleSlider.setMax(5);
-        stelleSlider.setBlockIncrement(1);
-        stelleSlider.setSnapToTicks(true);
-        stelleSlider.setShowTickLabels(true);
-        stelleSlider.setShowTickMarks(true);
-
-        comboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-            if (newVal != null) {
-                filteredList.setPredicate(recensione -> recensione.getStelle() == newVal);
-            } else {
-                filteredList.setPredicate(recensione -> true);
-            }
-            aggiornaPieChart();
-        });
+        // ... codice esistente ...
 
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             boolean isRistoratore = SessioneUtente.isRistoratore();
+            String currentUser = SessioneUtente.getUsernameUtente();
+
+            // Verifica se il ristoratore possiede questo ristorante
+            boolean isProprietario = false;
+            if (isRistoratore && ristoranteId != null && currentUser != null) {
+                List<String> ownedRestaurants = ownershipService.getOwnedRestaurants(currentUser);
+                isProprietario = ownedRestaurants.contains(ristoranteId);
+            }
+
+            boolean puo_recensire = SessioneUtente.isUtenteLoggato() && (!isRistoratore || !isProprietario);
+
             if (newVal != null) {
-                boolean isAutore = newVal.getUsername().equals(SessioneUtente.getUsernameUtente());
+                boolean isAutore = newVal.getUsername().equals(currentUser);
+                boolean hasRisposta = !newVal.getRisposta().isEmpty();
 
-                // Visibilità per cliente
-                modificaButton.setVisible(isAutore && !isRistoratore);
-                eliminaButton.setVisible(isAutore && !isRistoratore);
-                inviaButton.setVisible(false); // Invia non è possibile quando una recensione è selezionata
+                // Visibilità per utenti che possono recensire
+                modificaButton.setVisible(isAutore && puo_recensire);
+                eliminaButton.setVisible(isAutore && puo_recensire);
+                inviaButton.setVisible(false);
 
-                // Visibilità per ristoratore
-                rispondiButton.setVisible(isRistoratore && newVal.getRisposta().isEmpty());
-                rispostaBox.setVisible(isRistoratore);
+                // Visibilità per ristoratore proprietario
+                rispondiButton.setVisible(isRistoratore && isProprietario && !hasRisposta);
+                modificaRispostaButton.setVisible(isRistoratore && isProprietario && hasRisposta);
+                rispostaBox.setVisible(isRistoratore && isProprietario);
 
-                if (isAutore) {
+                // Precompila i campi se è l'autore della recensione
+                if (isAutore && puo_recensire) {
                     recensioneTextArea.setText(newVal.getTesto());
                     stelleSlider.setValue(newVal.getStelle());
                 } else {
                     recensioneTextArea.clear();
                     stelleSlider.setValue(3);
                 }
+
+                // Precompila la risposta se il ristoratore proprietario ha già risposto
+                if (isRistoratore && isProprietario && hasRisposta) {
+                    rispostaTextArea.setText(newVal.getRisposta());
+                } else if (isRistoratore && isProprietario) {
+                    rispostaTextArea.clear();
+                }
+
             } else {
                 pulisciCampi();
                 modificaButton.setVisible(false);
                 eliminaButton.setVisible(false);
                 rispondiButton.setVisible(false);
-                inviaButton.setVisible(SessioneUtente.isUtenteLoggato() && !SessioneUtente.isRistoratore());
+                modificaRispostaButton.setVisible(false);
+                inviaButton.setVisible(puo_recensire);
             }
         });
     }
@@ -205,8 +225,10 @@ public class RecensioniController {
         this.ristoranteId = id;
         refreshData();
         aggiornaPieChart();
-    }
 
+        // Ri-configura l'UI con il nuovo ristorante
+        setupUI();
+    }
     /**
      * Torna al menu principale.
      */
@@ -362,6 +384,41 @@ public class RecensioniController {
         alert.setTitle(titolo);
         alert.setHeaderText(null);
         alert.setContentText(messaggio);
+        alert.showAndWait();
+    }
+
+    @FXML
+    private void handleModificaRisposta() {
+        Recensione selected = tableView.getSelectionModel().getSelectedItem();
+        if (selected == null || !SessioneUtente.isRistoratore()) {
+            mostraErrore("Errore", "Non puoi modificare questa risposta.");
+            return;
+        }
+
+        // Verifica che il ristoratore sia proprietario del ristorante
+        String currentUser = SessioneUtente.getUsernameUtente();
+        List<String> ownedRestaurants = ownershipService.getOwnedRestaurants(currentUser);
+        if (!ownedRestaurants.contains(ristoranteId)) {
+            mostraErrore("Errore", "Puoi modificare le risposte solo nei tuoi ristoranti.");
+            return;
+        }
+
+        if (rispostaTextArea.getText().trim().isEmpty()) {
+            mostraErrore("Errore", "Il testo della risposta non può essere vuoto.");
+            return;
+        }
+
+        // Aggiorna la risposta
+        selected.setRisposta(rispostaTextArea.getText().trim());
+        gestioneRecensioni.salvaRispostaRecensione(selected);
+        refreshData();
+        notificaAggiornamentoRecensioni();
+
+        // Mostra conferma
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Successo");
+        alert.setHeaderText(null);
+        alert.setContentText("Risposta modificata con successo!");
         alert.showAndWait();
     }
 }

@@ -221,7 +221,9 @@ public class RistoratoreDashboardController implements Initializable {
         Stage dialogStage = new Stage();
         dialogStage.initModality(Modality.WINDOW_MODAL);
         dialogStage.initOwner(recensioniList.getScene().getWindow());
-        dialogStage.setTitle("Rispondi alla recensione");
+
+        boolean hasRisposta = !recensione.getRisposta().isEmpty();
+        dialogStage.setTitle(hasRisposta ? "Modifica risposta alla recensione" : "Rispondi alla recensione");
 
         VBox dialogContent = new VBox(10);
         dialogContent.setStyle("-fx-padding: 10;");
@@ -233,11 +235,14 @@ public class RistoratoreDashboardController implements Initializable {
         javafx.scene.control.TextArea rispostaArea = new javafx.scene.control.TextArea();
         rispostaArea.setPromptText("Scrivi qui la tua risposta...");
         rispostaArea.setWrapText(true);
-        if (!recensione.getRisposta().isEmpty()) {
+
+        // Precompila con la risposta esistente se presente
+        if (hasRisposta) {
             rispostaArea.setText(recensione.getRisposta());
         }
 
-        javafx.scene.control.Button salvaButton = new javafx.scene.control.Button("Salva Risposta");
+        javafx.scene.control.Button salvaButton = new javafx.scene.control.Button(
+                hasRisposta ? "Modifica Risposta" : "Salva Risposta");
         salvaButton.setOnAction(e -> {
             String risposta = rispostaArea.getText().trim();
             if (!risposta.isEmpty()) {
@@ -245,8 +250,24 @@ public class RistoratoreDashboardController implements Initializable {
                 gestioneRecensioni.salvaRispostaRecensione(recensione);
                 loadRecensioni();
                 dialogStage.close();
+
+                // Mostra conferma
+                Platform.runLater(() -> {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Successo");
+                    alert.setHeaderText(null);
+                    alert.setContentText(hasRisposta ? "Risposta modificata con successo!" : "Risposta salvata con successo!");
+                    alert.showAndWait();
+                });
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Errore");
+                alert.setHeaderText(null);
+                alert.setContentText("Il testo della risposta non può essere vuoto.");
+                alert.showAndWait();
             }
         });
+
 
         javafx.scene.control.Button annullaButton = new javafx.scene.control.Button("Annulla");
         annullaButton.setOnAction(e -> dialogStage.close());
