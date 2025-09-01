@@ -65,11 +65,11 @@
                 <TextField fx:id="telefonoField" promptText="Numero di telefono" GridPane.columnIndex="1" GridPane.rowIndex="8" />
 
                 <!-- URL -->
-                <Label text="URL:" GridPane.rowIndex="9" />
-                <TextField fx:id="urlField" promptText="URL della pagina web" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <Label prefHeight="17.0" prefWidth="143.0" text="Sito nella Guida Michelin" GridPane.rowIndex="9" />
+                <TextField fx:id="urlField" promptText="URL della pagina web nella Guida Michelin" GridPane.columnIndex="1" GridPane.rowIndex="9" />
 
                 <!-- Sito Web -->
-                <Label text="Sito Web:" GridPane.rowIndex="10" />
+                <Label text="Sito Web del Ristorante:" GridPane.rowIndex="10" />
                 <TextField fx:id="sitoWebField" promptText="Sito web del ristorante" GridPane.columnIndex="1" GridPane.rowIndex="10" />
             <rowConstraints>
                <RowConstraints />

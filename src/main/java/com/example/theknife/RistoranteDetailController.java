@@ -339,7 +339,7 @@ public class RistoranteDetailController implements Initializable {
                 if (sitoWebLink != null) {
                     String sitoWeb = ristorante.getSitoWeb();
                     if (sitoWeb != null && !sitoWeb.trim().isEmpty()) {
-                        sitoWebLink.setText("Visita il sito web");
+                        sitoWebLink.setText("Visita il sito web nella Guida Michelin");
                         sitoWebLink.setVisible(true);
                     } else {
                         sitoWebLink.setVisible(false);
@@ -600,7 +600,7 @@ public class RistoranteDetailController implements Initializable {
      * Aggiunge un protocollo HTTPS se mancante e tenta di aprire l'URL esterno.
      */
     @FXML
-    private void handleSitoWebClick() {
+    private void handleSitoWebClick1() {
         if (ristorante == null || ristorante.getSitoWeb() == null ||
                 ristorante.getSitoWeb().trim().isEmpty()) {
             System.out.println("Nessun sito web disponibile");
@@ -609,6 +609,31 @@ public class RistoranteDetailController implements Initializable {
         }
 
         String url = ristorante.getSitoWeb().trim();
+
+        // Assicurati che l'URL abbia il protocollo
+        if (!url.startsWith("http://") && !url.startsWith("https://")) {
+            url = "https://" + url;
+        }
+
+        System.out.println("Tentativo di apertura URL: " + url);
+        openExternalUrl(url);
+    }
+
+    /**
+     * Gestisce l'evento di click sull'hyperlink del sito web.
+     * Aggiunge un protocollo HTTPS se mancante e tenta di aprire l'URL esterno.
+     */
+
+    @FXML
+    private void handleSitoWebClick() {
+        if (ristorante == null || ristorante.getUrl() == null ||
+                ristorante.getUrl().trim().isEmpty()) {
+            System.out.println("Nessun sito web disponibile");
+            showAlert("Attenzione", "Nessun sito web disponibile per questo ristorante.");
+            return;
+        }
+
+        String url = ristorante.getUrl().trim();
 
         // Assicurati che l'URL abbia il protocollo
         if (!url.startsWith("http://") && !url.startsWith("https://")) {

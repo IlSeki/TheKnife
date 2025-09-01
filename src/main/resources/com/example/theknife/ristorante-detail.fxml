@@ -93,7 +93,8 @@
                         </Label>
                         <VBox spacing="8.0">
                             <Label fx:id="telefonoLabel" onMouseClicked="#handleTelefonoClick" styleClass="contact-link" text="+39 02 1234567" />
-                            <Hyperlink fx:id="sitoWebLink" onAction="#handleSitoWebClick" styleClass="website-link" text="Visita il sito web" />
+                            <Hyperlink fx:id="sitoWebLink" onAction="#handleSitoWebClick" styleClass="website-link" text="Visita il sito web nella Guida Michelin" />
+                     <Hyperlink fx:id="sitoWebLink1" onAction="#handleSitoWebClick1" styleClass="website-link" text="Visita il sito web del Ristorante" />
                         </VBox>
                     </VBox>
 
