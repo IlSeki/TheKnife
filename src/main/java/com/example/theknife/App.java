@@ -98,11 +98,6 @@ public class  App extends Application {
         // Mostra la finestra
         stage.show();
 
-        // Opzionale: avvia direttamente in modalità massimizzata
-        // stage.setMaximized(true);
-
-        // Opzionale: avvia direttamente a schermo intero
-        // stage.setFullScreen(true);
     }
 
     /**

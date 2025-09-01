@@ -57,7 +57,8 @@
                                     <children>
                                         <Label style="-fx-font-weight: bold; -fx-font-size: 12px;" text="Password *" />
                                         <PasswordField fx:id="campoPassword" maxWidth="350" promptText="Inserisci una password sicura" styleClass="login-textfield" />
-                                        <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="La password deve avere almeno 8 caratteri, contenere lettere maiuscole e minuscole, " />
+                                        <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="La password deve avere almeno 8 caratteri," />
+                              <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="contenere lettere maiuscole e minuscole, " />
                               <Label style="-fx-font-size: 10px; -fx-text-fill: #888888;" text="un numero e un carattere speciale." />
                                     </children>
                                 </VBox>
