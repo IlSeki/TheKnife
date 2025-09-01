@@ -34,6 +34,10 @@ public class SessioneUtente {
      */
     private String cognome;
     /**
+     * Il domicilio dell'utente corrente.
+     */
+    private String domicilio;
+    /**
      * Lo username dell'utente corrente.
      */
     private String username;
@@ -79,15 +83,16 @@ public class SessioneUtente {
      * @param username Lo username univoco dell'utente.
      * @param ruolo    Il ruolo dell'utente ("cliente", "ristoratore", "ospite").
      */
-    public static void impostaUtenteCorrente(String nome, String cognome, String username, String ruolo) {
+    public static void impostaUtenteCorrente(String nome, String cognome, String username, String ruolo, String domicilio) {
         SessioneUtente sessione = getIstanza();
         sessione.nome = nome;
         sessione.cognome = cognome;
         sessione.username = username;
         sessione.ruolo = ruolo;
+        sessione.domicilio = domicilio;
         sessione.isLoggato = true;
 
-        System.out.println("DEBUG: Sessione utente impostata - " + nome + " " + cognome + " (" + ruolo + ")");
+        System.out.println("DEBUG: Sessione utente impostata - " + nome + " " + cognome + " (" + ruolo + ") " + domicilio);
     }
 
     /**
@@ -133,15 +138,6 @@ public class SessioneUtente {
     }
 
     /**
-     * Alias per {@link #getNomeCompleto()}. Fornisce il nome completo dell'utente corrente.
-     *
-     * @return Il nome completo dell'utente.
-     */
-    public static String getNomeCompletoUtente() {
-        return getNomeCompleto();
-    }
-
-    /**
      * Restituisce il ruolo dell'utente corrente.
      *
      * @return Il ruolo dell'utente, oppure {@code null} se nessun utente è autenticato.
@@ -151,6 +147,15 @@ public class SessioneUtente {
         return sessione.isLoggato ? sessione.ruolo : null;
     }
 
+    /**
+     * Restituisce il domicilio dell'utente corrente.
+     *
+     * @return Il domicilio dell'utente.
+     */
+    public static String getDomicilio() {
+        SessioneUtente sessione = getIstanza();
+        return sessione.domicilio;  // Correzione: uso sessione.domicilio invece di this.domicilio
+    }
     /**
      * Verifica se l'utente corrente ha il ruolo di "cliente".
      *

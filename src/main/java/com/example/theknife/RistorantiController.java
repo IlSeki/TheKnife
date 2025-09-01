@@ -96,6 +96,7 @@ public class RistorantiController implements Initializable {
      * Configura le colonne della tabella, imposta i listener per gli eventi utente
      * e carica i dati iniziali dei ristoranti. Adatta anche la visibilità dei
      * pulsanti in base al ruolo dell'utente corrente.
+     * Infine carica inizialmente i ristoranti vicini al domicilio dell'utente, se loggato.
      *
      * @param location  L'URL di localizzazione della risorsa FXML, o null se non noto.
      * @param resources Le risorse utilizzate per localizzare l'oggetto root, o null se non localizzato.
@@ -117,6 +118,7 @@ public class RistorantiController implements Initializable {
                     apriDettagliRistorante(ristorante);
                 }
             }
+
         });
 
         // Configura il listener per il menu della fascia di prezzo
@@ -138,6 +140,12 @@ public class RistorantiController implements Initializable {
         }
         dashboardButton.setVisible("ristoratore".equals(ruoloUtente));
         dashboardButton.setManaged("ristoratore".equals(ruoloUtente));
+
+        if("ristoratore".equals(ruoloUtente) || "cliente".equals(ruoloUtente)){
+            campoRicerca1.setText(SessioneUtente.getDomicilio());
+        }
+        this.onCercaClick(null);
+
     }
 
     /**
