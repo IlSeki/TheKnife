@@ -597,7 +597,6 @@
 .stats-value {
     -fx-font-size: 24px;
     -fx-font-weight: bold;
-    -fx-text-fill: #FF6B35;
 }
 
 .reviews-section {
@@ -612,10 +611,6 @@
     -fx-border-color: #ddd;
     -fx-border-radius: 5;
     -fx-background-radius: 5;
-}
-
-.list-cell:filled:selected {
-    -fx-background-color: #FF6B35;
 }
 
 .list-cell:filled:hover {
@@ -688,7 +683,8 @@
 }
 
 .list-view .list-cell:selected {
-    -fx-background-color: #c8e6c9;
+    -fx-background-color: #aceaae;
+    -fx-text-fill: black;
 }
 
 /* Override specifico per il titolo del login */
