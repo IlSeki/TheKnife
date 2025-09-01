@@ -119,24 +119,26 @@ public class RistoranteInputController implements Initializable {
 
         cucinaListView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         cucinaListView.setItems(FXCollections.observableArrayList(
-                "Creative", "Contemporary", "Korean", "French", "Italian",
-                "Japanese", "Chinese", "Indian", "Mediterranean", "Fusion",
-                "American", "Mexican", "Thai", "Vegetarian", "Vegan",
-                "Seafood", "Steakhouse", "Traditional", "Modern", "International"
+                "Creativa", "Contemporanea", "Coreana", "Francese", "Italiana",
+                "Giapponese", "Cinese", "Indiana", "Mediterranea", "Fusion",
+                "Americana", "Messicana", "Thailandese", "Vegetariana", "Vegana",
+                "Frutti di mare", "Steakhouse", "Tradizionale", "Moderna", "Internazionale",
+                "Di Mare", "Contadina", "Alpina", "Siciliana", "Toscana", "Innovativa",
+                "Di Stagione", "Classica"
         ));
 
         premiComboBox.setItems(FXCollections.observableArrayList(
-                "Nessun premio", "1 Star", "2 Stars",
-                "3 Stars", "Bib Gourmand"
+                "Nessun premio", "1 Stella", "2 Stelle",
+                "3 Stelle", "Bib Gourmand"
         ));
         premiComboBox.setValue("Nessun premio");
 
         checkBoxServizi.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         checkBoxServizi.setItems(FXCollections.observableArrayList(
-                "Air conditioning", "Garden or park", "Interesting wine list",
-                "Terrace", "Wheelchair access", "Great view",
-                "Restaurant offering vegetarian menus", "Private dining room",
-                "Valet parking", "Bar", "Notable wine list", "Outdoor seating"
+                "Aria condizionata", "Giardino o parco", "Interessante carta dei vini",
+                "Terrazza", "Accesso per sedie a rotelle", "Vista magnifica",
+                "Ristorante con menu vegetariani", "Delivery", "Prenotazione on-line", "Cena al bancone",
+                "Parcheggio"
         ));
     }
 
