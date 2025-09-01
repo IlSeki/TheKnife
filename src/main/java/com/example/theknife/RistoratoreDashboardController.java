@@ -19,6 +19,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TableColumn;
@@ -28,22 +29,80 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+/**
+ * Controller per la dashboard del ristoratore.
+ * <p>
+ * Questa classe gestisce l'interfaccia utente dedicata ai ristoratori, consentendo loro
+ * di visualizzare e gestire i ristoranti di loro proprietà, esaminare le recensioni
+ * ricevute, rispondere ad esse e visualizzare statistiche di base. Fornisce inoltre
+ * funzionalità per aggiungere nuovi ristoranti e navigare verso altre sezioni dell'applicazione.
+ * </p>
+ *
+ * @author Samuele Secchi, 761031, Sede CO
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
+ * @version 1.0
+ * @since 2025-05-20
+ */
 public class RistoratoreDashboardController implements Initializable {
 
+    /**
+     * La tabella che visualizza l'elenco dei ristoranti di proprietà del ristoratore.
+     */
     @FXML private TableView<Ristorante> ristorantiTable;
+    /**
+     * Colonna della tabella per il nome del ristorante.
+     */
     @FXML private TableColumn<Ristorante, String> nomeColumn;
+    /**
+     * Colonna della tabella per l'indirizzo del ristorante.
+     */
     @FXML private TableColumn<Ristorante, String> indirizzoColumn;
+    /**
+     * Colonna della tabella per la località del ristorante.
+     */
     @FXML private TableColumn<Ristorante, String> localitaColumn;
+    /**
+     * Colonna della tabella per il tipo di cucina.
+     */
     @FXML private TableColumn<Ristorante, String> cucinaColumn;
+    /**
+     * Colonna della tabella per la fascia di prezzo.
+     */
     @FXML private TableColumn<Ristorante, String> prezzoColumn;
 
+    /**
+     * Contenitore per i dettagli e le statistiche del ristorante selezionato.
+     */
     @FXML private VBox detailsContainer;
+    /**
+     * Etichetta che mostra il nome del ristorante selezionato.
+     */
     @FXML private Label nomeLabel;
+    /**
+     * Etichetta che mostra l'indirizzo del ristorante.
+     */
     @FXML private Label indirizzoLabel;
+    /**
+     * Etichetta che mostra il tipo di cucina del ristorante.
+     */
     @FXML private Label cucinaLabel;
+    /**
+     * Etichetta che mostra la media delle stelle delle recensioni.
+     */
     @FXML private Label mediaLabel;
+    /**
+     * Etichetta che mostra il numero totale di recensioni.
+     */
     @FXML private Label totaleRecensioniLabel;
+    /**
+     * Grafico a torta che visualizza la distribuzione delle recensioni per stelle.
+     */
     @FXML private PieChart recensioniChart;
+    /**
+     * Lista che visualizza le recensioni più recenti.
+     */
     @FXML private ListView<Recensione> recensioniList;
 
     private final GestioneRistorante gestioneRistorante = GestioneRistorante.getInstance();
@@ -53,43 +112,41 @@ public class RistoratoreDashboardController implements Initializable {
 
     /**
      * Inizializza il controller della dashboard del ristoratore.
-     * Configura le tabelle, carica i dati iniziali e imposta i listener.
+     * Questo metodo viene chiamato automaticamente dal framework JavaFX dopo che il file FXML è stato caricato.
+     * Configura le tabelle, i listener e carica i dati iniziali per i ristoranti.
      *
-     * @param location  l'URL utilizzato per risolvere percorsi relativi per l'oggetto root, o null se non noto
-     * @param resources i ResourceBundle utilizzati per localizzare l'oggetto root, o null se non localizzato
-     * @author Samuele Secchi, 761031, Sede CO
-     * @author Flavio Marin, 759910, Sede CO
-     * @author Matilde Lecchi, 759875, Sede CO
-     * @author Davide Caccia, 760742, Sede CO
-     * @version 1.0
-     * @since 2025-05-20
+     * @param location  L'URL utilizzato per risolvere percorsi relativi per l'oggetto root, o {@code null} se non noto.
+     * @param resources Le risorse utilizzate per localizzare l'oggetto root, o {@code null} se non localizzato.
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Inizializza i dati dei servizi di gestione
         gestioneRistorante.initializeData();
         ownershipService.initialize();
+        // Configura le viste (tabelle, liste)
         setupRistorantiTable();
         setupRecensioniList();
+        // Nasconde il pannello dei dettagli finché un ristorante non viene selezionato
         detailsContainer.setVisible(false);
+        // Carica i ristoranti di proprietà dell'utente
         loadRistoranti();
     }
 
     /**
-     * Aggiorna tutti i dati della dashboard forzando il refresh completo.
-     * Ricarica la lista dei ristoranti e aggiorna le statistiche del ristorante selezionato.
+     * Aggiorna tutti i dati della dashboard forzando il ricaricamento completo.
+     * Questo metodo è utile per riflettere immediatamente le modifiche apportate
+     * in altre sezioni dell'applicazione (es. dopo aver aggiunto un nuovo ristorante).
+     * Ricarica la lista dei ristoranti e aggiorna le statistiche del ristorante selezionato, se presente.
      */
     public void refreshData() {
         System.out.println("Debug: Inizio refreshData");
 
-        // Forza il refresh completo di entrambi i servizi
         gestioneRistorante.forceRefresh();
         ownershipService.refreshOwnershipData();
 
-        // Ricarica i ristoranti nella tabella
         loadRistoranti();
         System.out.println("Debug: Ristoranti ricaricati");
 
-        // Aggiorna i dettagli se c'è un ristorante selezionato
         if (selectedRistorante != null) {
             selectedRistorante = gestioneRistorante.getRistorante(selectedRistorante.getNome());
             if (selectedRistorante != null) {
@@ -100,9 +157,9 @@ public class RistoratoreDashboardController implements Initializable {
         }
     }
 
-
     /**
-     * Configura la tabella dei ristoranti impostando le colonne e i listener per la selezione.
+     * Configura le colonne della tabella dei ristoranti e aggiunge un listener per
+     * rilevare la selezione di un elemento.
      */
     private void setupRistorantiTable() {
         nomeColumn.setCellValueFactory(new PropertyValueFactory<>("nome"));
@@ -111,12 +168,15 @@ public class RistoratoreDashboardController implements Initializable {
         cucinaColumn.setCellValueFactory(new PropertyValueFactory<>("cucina"));
         prezzoColumn.setCellValueFactory(new PropertyValueFactory<>("prezzo"));
 
+        // Aggiunge un listener alla selezione della tabella
         ristorantiTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> onRistoranteSelected(newValue));
     }
+
     /**
-     * Configura la lista delle recensioni impostando il cell factory personalizzato
-     * e il doppio click per aprire il dialogo di risposta.
+     * Configura la lista delle recensioni, impostando un `cell factory` personalizzato
+     * per la visualizzazione delle recensioni e un listener per il doppio click che apre
+     * il dialogo di risposta.
      */
     private void setupRecensioniList() {
         recensioniList.setCellFactory(__ -> new javafx.scene.control.ListCell<>() {
@@ -146,9 +206,10 @@ public class RistoratoreDashboardController implements Initializable {
             }
         });
     }
+
     /**
-     * Carica la lista dei ristoranti di proprietà dell'utente corrente nella tabella.
-     * Filtra solo i ristoranti effettivamente posseduti dal ristoratore loggato.
+     * Carica i ristoranti di proprietà dell'utente corrente e li visualizza nella tabella.
+     * Utilizza il servizio di gestione della proprietà per filtrare i ristoranti.
      */
     private void loadRistoranti() {
         String currentUser = SessioneUtente.getUsernameUtente();
@@ -192,10 +253,11 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
-     * Gestisce la selezione di un ristorante nella tabella.
-     * Aggiorna il pannello dei dettagli con le informazioni e statistiche del ristorante selezionato.
+     * Gestisce l'evento di selezione di un ristorante dalla tabella.
+     * Quando un ristorante viene selezionato, aggiorna il pannello dei dettagli con
+     * le sue informazioni e statistiche.
      *
-     * @param ristorante il ristorante selezionato, o null se nessun ristorante è selezionato
+     * @param ristorante Il ristorante selezionato; {@code null} se la selezione viene annullata.
      */
     private void onRistoranteSelected(Ristorante ristorante) {
         if (ristorante == null) {
@@ -213,9 +275,11 @@ public class RistoratoreDashboardController implements Initializable {
         updateStatistiche();
         loadRecensioni();
     }
+
     /**
-     * Aggiorna le statistiche del ristorante selezionato.
-     * Calcola la media delle stelle, il totale delle recensioni e aggiorna il grafico a torta.
+     * Calcola e aggiorna le statistiche del ristorante attualmente selezionato.
+     * Le statistiche includono la media delle stelle, il numero totale di recensioni
+     * e un grafico a torta che mostra la distribuzione delle valutazioni.
      */
     private void updateStatistiche() {
         if (selectedRistorante == null) return;
@@ -240,8 +304,8 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
-     * Carica le recensioni più recenti del ristorante selezionato.
-     * Mostra al massimo le 5 recensioni più recenti ordinate per data.
+     * Carica le recensioni più recenti del ristorante selezionato e le visualizza.
+     * La lista è limitata alle 5 recensioni più recenti per mantenere l'interfaccia compatta.
      */
     private void loadRecensioni() {
         if (selectedRistorante == null) return;
@@ -257,9 +321,10 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
-     * Mostra un dialogo per permettere al ristoratore di rispondere o modificare una risposta a una recensione.
+     * Apre un dialogo modale per consentire al ristoratore di scrivere una risposta a una recensione
+     * o di modificarne una già esistente.
      *
-     * @param recensione la recensione a cui rispondere o di cui modificare la risposta
+     * @param recensione La recensione a cui il ristoratore vuole rispondere.
      */
     private void mostraDialogoRisposta(Recensione recensione) {
         Stage dialogStage = new Stage();
@@ -280,7 +345,6 @@ public class RistoratoreDashboardController implements Initializable {
         rispostaArea.setPromptText("Scrivi qui la tua risposta...");
         rispostaArea.setWrapText(true);
 
-        // Precompila con la risposta esistente se presente
         if (hasRisposta) {
             rispostaArea.setText(recensione.getRisposta());
         }
@@ -295,7 +359,6 @@ public class RistoratoreDashboardController implements Initializable {
                 loadRecensioni();
                 dialogStage.close();
 
-                // Mostra conferma
                 Platform.runLater(() -> {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Successo");
@@ -328,20 +391,18 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
-     * Gestisce il click sul menu di ricerca.
-     * Naviga alla schermata principale di ricerca ristoranti.
+     * Gestisce l'evento di click sul pulsante "Menu di ricerca".
+     * Reindirizza l'utente alla schermata principale di ricerca dei ristoranti (lista.fxml).
      *
-     * @param event l'evento di click del pulsante
+     * @param event L'evento di click del pulsante.
      */
     @FXML
     private void onMenuRicercaClick(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("lista.fxml"));
             Parent root = loader.load();
-
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource("/data/stile.css").toExternalForm());
-
             Stage stage = (Stage) ristorantiTable.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
@@ -351,10 +412,11 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
-     * Gestisce il click sul pulsante "Aggiungi Ristorante".
-     * Apre la schermata per l'inserimento di un nuovo ristorante.
+     * Gestisce l'evento di click sul pulsante "Aggiungi Ristorante".
+     * Apre la schermata per l'inserimento di un nuovo ristorante (ristorante-input.fxml).
+     * Imposta un callback per tornare alla dashboard e aggiornare i dati dopo il salvataggio.
      *
-     * @param event l'evento di click del pulsante
+     * @param event L'evento di click del pulsante.
      */
     @FXML
     private void onAggiungiRistoranteClick(ActionEvent event) {
@@ -366,7 +428,6 @@ public class RistoratoreDashboardController implements Initializable {
             Scene currentScene = ristorantiTable.getScene();
             Parent dashboardRoot = currentScene.getRoot();
 
-            // Creiamo una reference alla dashboard per il refresh
             final RistoratoreDashboardController dashboard = this;
 
             controller.setAggiornaDatabaseRistorantiCallback(() -> {
@@ -393,8 +454,8 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
-     * Callback chiamato quando una recensione viene aggiornata.
-     * Aggiorna le statistiche e la lista delle recensioni.
+     * Callback utilizzato per aggiornare la dashboard quando una recensione viene modificata
+     * dalla schermata di gestione completa delle recensioni.
      */
     public void onRecensioneUpdated() {
         updateStatistiche();
@@ -402,10 +463,10 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
-     * Gestisce il click sul pulsante per aprire tutte le recensioni.
-     * Apre la schermata dettagliata delle recensioni del ristorante selezionato.
+     * Gestisce l'evento di click sul pulsante "Apri Recensioni".
+     * Apre una nuova schermata per visualizzare tutte le recensioni del ristorante selezionato.
      *
-     * @param event l'evento di click del pulsante
+     * @param event L'evento di click del pulsante.
      */
     @FXML
     private void onApriRecensioniClick(ActionEvent event) {
@@ -438,10 +499,10 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
-     * Mostra un messaggio di errore tramite finestra di dialogo.
+     * Mostra una finestra di dialogo di errore con un messaggio personalizzato.
      *
-     * @param header il titolo dell'errore
-     * @param e      l'eccezione che ha causato l'errore
+     * @param header Il testo dell'intestazione dell'errore.
+     * @param e      L'eccezione che ha causato l'errore, il cui messaggio sarà mostrato nel contenuto.
      */
     private void showError(String header, Exception e) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

@@ -2,14 +2,14 @@ package com.example.theknife;
 
 /**
  * La classe {@code Utente} rappresenta un utente del sistema TheKnife.
- * Contiene tutte le informazioni personali e di accesso dell'utente.
+ * Contiene tutte le informazioni personali e di accesso necessarie per gestire le interazioni con l'applicazione.
  *
  * <p>
- * Un utente può avere diversi ruoli:
+ * Un utente può avere diversi ruoli, ciascuno con permessi specifici:
  * <ul>
- *   <li><b>cliente</b>: può visualizzare ristoranti, lasciare recensioni e gestire preferiti</li>
- *   <li><b>ristoratore</b>: può gestire i propri ristoranti e rispondere alle recensioni</li>
- *   <li><b>ospite</b>: può solo visualizzare informazioni pubbliche</li>
+ * <li><b>cliente</b>: può visualizzare i ristoranti, lasciare recensioni, e gestire la lista dei preferiti.</li>
+ * <li><b>ristoratore</b>: può aggiungere e modificare i propri ristoranti e rispondere alle recensioni ricevute.</li>
+ * <li><b>ospite</b>: può solo visualizzare le informazioni pubbliche dei ristoranti senza poter interagire.</li>
  * </ul>
  * </p>
  *
@@ -31,15 +31,16 @@ public class Utente {
     private String ruolo;
 
     /**
-     * Costruttore per creare un nuovo utente con tutti i parametri.
+     * Costruttore completo per inizializzare un nuovo utente con tutti i parametri necessari.
+     * Questo costruttore è utilizzato per la registrazione e il caricamento dei dati da database.
      *
-     * @param nome Il nome dell'utente
-     * @param cognome Il cognome dell'utente
-     * @param username Lo username univoco per l'accesso
-     * @param passwordHash La password cifrata con hash SHA-256
-     * @param dataNascita La data di nascita in formato YYYY-MM-DD (può essere null)
-     * @param luogoDomicilio Il luogo di domicilio dell'utente
-     * @param ruolo Il ruolo dell'utente ("cliente", "ristoratore", "ospite")
+     * @param nome Il nome di battesimo dell'utente.
+     * @param cognome Il cognome dell'utente.
+     * @param username Lo username univoco utilizzato per l'accesso e l'identificazione.
+     * @param passwordHash L'hash della password dell'utente, generato tramite algoritmo di hashing sicuro.
+     * @param dataNascita La data di nascita dell'utente in formato YYYY-MM-DD. Può essere una stringa vuota se non fornita.
+     * @param luogoDomicilio La città o il luogo di domicilio dell'utente.
+     * @param ruolo Il ruolo assegnato all'utente, che definisce i suoi permessi all'interno del sistema (es. "cliente", "ristoratore", "ospite").
      */
     public Utente(String nome, String cognome, String username, String passwordHash,
                   String dataNascita, String luogoDomicilio, String ruolo) {
@@ -53,67 +54,83 @@ public class Utente {
     }
 
     /**
-     * Costruttore vuoto per inizializzazione senza parametri.
+     * Costruttore vuoto, utile per la deserializzazione o l'inizializzazione di un oggetto Utente
+     * prima di impostarne i valori tramite i metodi setter.
      */
     public Utente() {
     }
 
-    // Getter methods
+    // Metodi Getter
 
     /**
-     * @return Il nome dell'utente
+     * Restituisce il nome di battesimo dell'utente.
+     *
+     * @return Il nome dell'utente.
      */
     public String getNome() {
         return nome;
     }
 
     /**
-     * @return Il cognome dell'utente
+     * Restituisce il cognome dell'utente.
+     *
+     * @return Il cognome dell'utente.
      */
     public String getCognome() {
         return cognome;
     }
 
     /**
-     * @return Lo username dell'utente
+     * Restituisce lo username dell'utente.
+     *
+     * @return Lo username dell'utente.
      */
     public String getUsername() {
         return username;
     }
 
     /**
-     * @return L'hash della password dell'utente
+     * Restituisce l'hash della password dell'utente.
+     *
+     * @return La stringa che rappresenta l'hash della password.
      */
     public String getPasswordHash() {
         return passwordHash;
     }
 
     /**
-     * @return La data di nascita dell'utente
+     * Restituisce la data di nascita dell'utente.
+     *
+     * @return La data di nascita in formato YYYY-MM-DD.
      */
     public String getDataNascita() {
         return dataNascita;
     }
 
     /**
-     * @return Il luogo di domicilio dell'utente
+     * Restituisce il luogo di domicilio dell'utente.
+     *
+     * @return Il luogo di domicilio.
      */
     public String getLuogoDomicilio() {
         return luogoDomicilio;
     }
 
     /**
-     * @return Il ruolo dell'utente
+     * Restituisce il ruolo dell'utente.
+     *
+     * @return La stringa che rappresenta il ruolo (es. "cliente", "ristoratore", "ospite").
      */
     public String getRuolo() {
         return ruolo;
     }
 
-    // Setter methods
+    // Metodi Setter
 
     /**
-     * Imposta il nome dell'utente.
-     * @param nome Il nuovo nome
+     * Imposta il nome di battesimo dell'utente.
+     *
+     * @param nome Il nuovo nome di battesimo.
      */
     public void setNome(String nome) {
         this.nome = nome;
@@ -121,7 +138,8 @@ public class Utente {
 
     /**
      * Imposta il cognome dell'utente.
-     * @param cognome Il nuovo cognome
+     *
+     * @param cognome Il nuovo cognome.
      */
     public void setCognome(String cognome) {
         this.cognome = cognome;
@@ -129,7 +147,8 @@ public class Utente {
 
     /**
      * Imposta lo username dell'utente.
-     * @param username Il nuovo username
+     *
+     * @param username Il nuovo username.
      */
     public void setUsername(String username) {
         this.username = username;
@@ -137,7 +156,8 @@ public class Utente {
 
     /**
      * Imposta l'hash della password dell'utente.
-     * @param passwordHash Il nuovo hash della password
+     *
+     * @param passwordHash Il nuovo hash della password.
      */
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
@@ -145,7 +165,8 @@ public class Utente {
 
     /**
      * Imposta la data di nascita dell'utente.
-     * @param dataNascita La nuova data di nascita
+     *
+     * @param dataNascita La nuova data di nascita in formato YYYY-MM-DD.
      */
     public void setDataNascita(String dataNascita) {
         this.dataNascita = dataNascita;
@@ -153,7 +174,8 @@ public class Utente {
 
     /**
      * Imposta il luogo di domicilio dell'utente.
-     * @param luogoDomicilio Il nuovo luogo di domicilio
+     *
+     * @param luogoDomicilio Il nuovo luogo di domicilio.
      */
     public void setLuogoDomicilio(String luogoDomicilio) {
         this.luogoDomicilio = luogoDomicilio;
@@ -161,53 +183,58 @@ public class Utente {
 
     /**
      * Imposta il ruolo dell'utente.
-     * @param ruolo Il nuovo ruolo ("cliente", "ristoratore", "ospite")
+     *
+     * @param ruolo Il nuovo ruolo da assegnare (es. "cliente", "ristoratore", "ospite").
      */
     public void setRuolo(String ruolo) {
         this.ruolo = ruolo;
     }
 
-    // Metodi utility
+    // Metodi Utility
 
     /**
-     * Restituisce il nome completo dell'utente.
-     * @return Il nome completo (nome + cognome)
+     * Combina il nome e il cognome per restituire il nome completo dell'utente.
+     *
+     * @return Una stringa che contiene il nome e il cognome, separati da uno spazio.
      */
     public String getNomeCompleto() {
         return nome + " " + cognome;
     }
 
     /**
-     * Verifica se l'utente è un cliente.
-     * @return true se il ruolo è "cliente"
+     * Verifica se il ruolo dell'utente è "cliente".
+     *
+     * @return {@code true} se il ruolo dell'utente è "cliente", ignorando la distinzione tra maiuscole e minuscole; {@code false} altrimenti.
      */
     public boolean isCliente() {
         return "cliente".equalsIgnoreCase(ruolo);
     }
 
     /**
-     * Verifica se l'utente è un ristoratore.
-     * @return true se il ruolo è "ristoratore"
+     * Verifica se il ruolo dell'utente è "ristoratore".
+     *
+     * @return {@code true} se il ruolo dell'utente è "ristoratore", ignorando la distinzione tra maiuscole e minuscole; {@code false} altrimenti.
      */
     public boolean isRistoratore() {
         return "ristoratore".equalsIgnoreCase(ruolo);
     }
 
     /**
-     * Verifica se l'utente è un ospite.
-     * @return true se il ruolo è "ospite"
+     * Verifica se il ruolo dell'utente è "ospite".
+     *
+     * @return {@code true} se il ruolo dell'utente è "ospite", ignorando la distinzione tra maiuscole e minuscole; {@code false} altrimenti.
      */
     public boolean isOspite() {
         return "ospite".equalsIgnoreCase(ruolo);
     }
 
+    // Override dei metodi Object
+
     /**
-     * Restituisce una rappresentazione testuale dell'oggetto Utente.
-     * La stringa include tutti i campi principali dell'utente formattati
-     * in modo leggibile.
+     * Restituisce una rappresentazione in formato stringa dell'oggetto {@code Utente}.
+     * Questa stringa è utile per il debug e la visualizzazione delle informazioni chiave dell'utente.
      *
-     * @return una stringa che rappresenta l'utente nel formato
-     *         "Utente{nome='...', cognome='...', username='...', ruolo='...', luogo='...'}"
+     * @return Una stringa formattata che include nome, cognome, username, ruolo e luogo di domicilio.
      */
     @Override
     public String toString() {
@@ -216,12 +243,11 @@ public class Utente {
     }
 
     /**
-     * Confronta questo utente con l'oggetto specificato per verificare l'uguaglianza.
-     * Due utenti sono considerati uguali se hanno lo stesso username.
+     * Confronta questo oggetto {@code Utente} con un altro per verificarne l'uguaglianza.
+     * L'uguaglianza è basata sull'unicità dello username. Se entrambi gli oggetti hanno lo stesso username, sono considerati uguali.
      *
-     * @param obj l'oggetto con cui confrontare questo utente
-     * @return {@code true} se l'oggetto specificato è uguale a questo utente,
-     *         {@code false} altrimenti
+     * @param obj L'oggetto con cui confrontare l'istanza corrente.
+     * @return {@code true} se l'oggetto specificato è un'istanza di {@code Utente} e ha lo stesso username di questo oggetto; {@code false} altrimenti.
      */
     @Override
     public boolean equals(Object obj) {
@@ -233,10 +259,10 @@ public class Utente {
     }
 
     /**
-     * Restituisce il valore hash code per questo utente.
-     * Il hash code è basato sull'username dell'utente.
+     * Calcola l'hash code per questo oggetto {@code Utente}.
+     * L'hash code è basato unicamente sull'username, in coerenza con il metodo {@code equals}.
      *
-     * @return il valore hash code per questo utente, o 0 se l'username è null
+     * @return L'hash code intero basato sullo username. Restituisce {@code 0} se lo username è null.
      */
     @Override
     public int hashCode() {
