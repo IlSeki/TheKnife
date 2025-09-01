@@ -32,10 +32,19 @@ public class GestioneRecensioni {
     private final Map<String, List<Recensione>> recensioniMap = new HashMap<>();
     private final ObservableList<Recensione> allRecensioni = FXCollections.observableArrayList();
 
+    /**
+     * Costruttore privato per implementare il pattern Singleton.
+     * Carica le recensioni dal file CSV.
+     */
     private GestioneRecensioni() {
         caricaRecensioni();
     }
 
+    /**
+     * Restituisce l'istanza Singleton di {@code GestioneRecensioni}.
+     *
+     * @return istanza unica della classe
+     */
     public static GestioneRecensioni getInstance() {
         if (instance == null) {
             instance = new GestioneRecensioni();
@@ -44,7 +53,8 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Carica tutte le recensioni dal file CSV.
+     * Carica tutte le recensioni dal file CSV e le memorizza in
+     * {@link #recensioniMap} e {@link #allRecensioni}.
      */
     private void caricaRecensioni() {
         recensioniMap.clear();
@@ -68,7 +78,9 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Crea il file delle recensioni con header se non esiste.
+     * Crea il file CSV delle recensioni con header se non esiste.
+     *
+     * @param file file CSV da creare
      */
     private void createReviewsFile(File file) {
         File parentDir = file.getParentFile();
@@ -84,7 +96,9 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Processa una singola riga del CSV delle recensioni.
+     * Processa una singola riga del CSV e la trasforma in un oggetto {@link Recensione}.
+     *
+     * @param line riga del file CSV contenente i dati di una recensione
      */
     private void processReviewLine(String line) {
         String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
@@ -112,7 +126,10 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Pulisce un valore CSV rimuovendo virgolette.
+     * Pulisce un valore CSV rimuovendo le virgolette.
+     *
+     * @param value valore da pulire
+     * @return stringa senza virgolette
      */
     private String cleanCsvValue(String value) {
         return value.replace("\"", "").trim();
@@ -137,7 +154,9 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Aggiunge una nuova recensione.
+     * Aggiunge una nuova recensione e la salva su file.
+     *
+     * @param recensione recensione da aggiungere
      */
     public void aggiungiRecensione(Recensione recensione) {
         recensione.setData(LocalDateTime.now().format(DATE_FORMATTER));
@@ -147,7 +166,12 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Modifica una recensione esistente.
+     * Modifica una recensione esistente identificata da utente e ristorante.
+     *
+     * @param username     nome dell’utente autore della recensione
+     * @param ristoranteId identificativo del ristorante
+     * @param nuovoTesto   nuovo testo della recensione
+     * @param nuoveStelle  nuovo numero di stelle
      */
     public void modificaRecensione(String username, String ristoranteId, String nuovoTesto, int nuoveStelle) {
         List<Recensione> recensioni = recensioniMap.get(ristoranteId);
@@ -165,7 +189,10 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Elimina una recensione.
+     * Elimina una recensione di un utente per un determinato ristorante.
+     *
+     * @param username     nome dell’utente autore della recensione
+     * @param ristoranteId identificativo del ristorante
      */
     public void eliminaRecensione(String username, String ristoranteId) {
         List<Recensione> recensioni = recensioniMap.get(ristoranteId);
@@ -175,16 +202,19 @@ public class GestioneRecensioni {
             salvaRecensioni();
         }
     }
-
     /**
-     * Salva la risposta a una recensione.
+     * Salva una risposta a una recensione esistente.
+     *
+     * @param recensione recensione con risposta aggiornata
      */
     public void salvaRispostaRecensione(Recensione recensione) {
         salvaRecensioni();
     }
-
     /**
      * Restituisce tutte le recensioni di un ristorante.
+     *
+     * @param nomeRistorante nome del ristorante
+     * @return lista di recensioni relative al ristorante
      */
     public List<Recensione> getRecensioniRistorante(String nomeRistorante) {
         caricaRecensioni(); // Ricarica per avere dati aggiornati
@@ -192,7 +222,10 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Restituisce tutte le recensioni fatte da un utente.
+     * Restituisce tutte le recensioni scritte da un utente.
+     *
+     * @param username nome dell’utente
+     * @return lista di recensioni scritte dall’utente
      */
     public List<Recensione> getRecensioniUtente(String username) {
         caricaRecensioni();

@@ -47,6 +47,11 @@ public class GestionePossessoRistorante {
 
     /**
      * Carica i dati di proprietà dal file CSV.
+     * <p>
+     * Se il file non esiste, viene creato con l'header predefinito.
+     * I dati vengono memorizzati nella mappa {@code ownershipMap},
+     * associando ciascun utente alla lista di ristoranti posseduti.
+     * </p>
      */
     private void loadOwnershipData() {
         File file = new File(OWNERSHIP_FILE_PATH);
@@ -69,6 +74,7 @@ public class GestionePossessoRistorante {
 
     /**
      * Crea il file di proprietà con header se non esiste.
+     *@param file file CSV da creare
      */
     private void createOwnershipFile(File file) {
         File parentDir = file.getParentFile();
@@ -85,6 +91,12 @@ public class GestionePossessoRistorante {
 
     /**
      * Processa una singola riga del file di proprietà.
+     * <p>
+     * La riga deve contenere almeno due campi: username e ID del ristorante.
+     * Se il ristorante non esiste nel database, l'associazione viene ignorata.
+     * </p>
+     *
+     * @param line riga del file CSV da processare
      */
     private void processOwnershipLine(String line) {
         String[] parts = line.split(",");
@@ -112,7 +124,11 @@ public class GestionePossessoRistorante {
         return ownershipMap.getOrDefault(username, new ArrayList<>());
     }
     /**
-     * Associa un ristorante a un proprietario.
+     * Associa un ristorante a un proprietario, salvando l'associazione
+     * sia nel file CSV che nella mappa {@code ownershipMap}.
+     *
+     * @param ristoranteNome nome o ID del ristorante da associare
+     * @param username       nome utente del proprietario
      */
     public void associaRistoranteAProprietario(String ristoranteNome, String username) {
         try (FileWriter writer = new FileWriter(OWNERSHIP_FILE_PATH, true)) {
@@ -123,6 +139,10 @@ public class GestionePossessoRistorante {
         }
     }
 
+    /**
+     * Aggiorna la mappa {@code ownershipMap} rileggendo i dati
+     * dal file CSV {@code OWNERSHIP_FILE_PATH}.
+     */
     public void refreshOwnershipData() {
         loadOwnershipData();
     }

@@ -6,9 +6,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
 /**
  * Servizio per la gestione dei ristoranti.
  * Implementa il pattern Singleton e gestisce tutte le operazioni CRUD sui ristoranti,
@@ -31,6 +28,11 @@ public class GestioneRistorante {
 
     private GestioneRistorante() {}
 
+    /**
+     * Restituisce l'istanza Singleton di {@code GestioneRistorante}.
+     *
+     * @return istanza unica della classe
+     */
     public static GestioneRistorante getInstance() {
         if (instance == null) {
             instance = new GestioneRistorante();
@@ -47,7 +49,8 @@ public class GestioneRistorante {
     }
 
     /**
-     * Forza il ricaricamento completo dei dati dai file.
+     * Forza un ricaricamento completo dei dati dai file CSV.
+     * Pulisce le strutture dati locali prima del caricamento.
      */
     public void forceRefresh() {
         ristoranti.clear();
@@ -56,7 +59,7 @@ public class GestioneRistorante {
     }
 
     /**
-     * Carica i ristoranti dal file CSV.
+     * Carica i ristoranti dal file CSV e li inserisce nella mappa {@link #ristoranti}.
      */
     public void caricaRistoranti() {
         File file = new File(CSV_FILE);
@@ -78,7 +81,9 @@ public class GestioneRistorante {
     }
 
     /**
-     * Processa una singola riga del CSV dei ristoranti.
+     * Processa una singola riga del CSV e la trasforma in un oggetto {@link Ristorante}.
+     *
+     * @param line riga del file CSV contenente i dati di un ristorante
      */
     private void processRistoranteLine(String line) {
         List<String> values = parseCsvLine(line);
@@ -98,8 +103,12 @@ public class GestioneRistorante {
         }
     }
 
+
     /**
-     * Parser CSV migliorato per gestire virgole all'interno delle virgolette.
+     * Parser CSV che gestisce correttamente valori con virgole tra virgolette.
+     *
+     * @param line riga del file CSV
+     * @return lista dei valori estratti
      */
     private List<String> parseCsvLine(String line) {
         List<String> result = new ArrayList<>();
@@ -122,13 +131,16 @@ public class GestioneRistorante {
 
     /**
      * Pulisce un valore CSV rimuovendo spazi e virgolette.
+     *
+     * @param value valore CSV da pulire
+     * @return valore pulito
      */
     private String cleanValue(String value) {
         return value.trim().replaceAll("^\"|\"$", "");
     }
 
     /**
-     * Carica i proprietari dal file CSV.
+     * Carica l'associazione tra proprietari e ristoranti dal file CSV.
      */
     private void caricaProprietari() {
         File file = new File(PROPRIETARI_FILE);
@@ -156,7 +168,10 @@ public class GestioneRistorante {
     }
 
     /**
-     * Crea un file con header se non esiste.
+     * Crea un nuovo file CSV con intestazione.
+     *
+     * @param file   file da creare
+     * @param header intestazione da scrivere
      */
     private void createFileWithHeader(File file, String header) {
         try {
@@ -170,33 +185,38 @@ public class GestioneRistorante {
     }
 
     // Metodi di accesso pubblici
+
+    /**
+     * Restituisce un ristorante dato il nome.
+     *
+     * @param nome nome del ristorante
+     * @return ristorante corrispondente o {@code null} se non trovato
+     */
     public Ristorante getRistorante(String nome) {
         return ristoranti.get(nome);
     }
 
+
+    /**
+     * Restituisce la lista di tutti i ristoranti caricati.
+     *
+     * @return lista di {@link Ristorante}
+     */
     public List<Ristorante> getTuttiRistoranti() {
         return new ArrayList<>(ristoranti.values());
     }
 
+    /**
+     * Restituisce un sottoinsieme di ristoranti dato un insieme di nomi.
+     *
+     * @param nomi collezione di nomi di ristoranti
+     * @return lista di {@link Ristorante} corrispondenti
+     */
     public List<Ristorante> getRistorantiByNomi(Collection<String> nomi) {
         return nomi.stream()
                 .map(this::getRistorante)
                 .filter(Objects::nonNull)
                 .toList();
-    }
-
-    public ObservableList<Ristorante> getRistorantiByRistoratore(String username) {
-        Set<String> ristorantiIds = proprietariRistoranti.getOrDefault(username, Collections.emptySet());
-        List<Ristorante> ristoranti = ristorantiIds.stream()
-                .map(this::getRistorante)
-                .filter(Objects::nonNull)
-                .toList();
-        return FXCollections.observableArrayList(ristoranti);
-    }
-
-    public boolean isProprietario(String username, String nomeRistorante) {
-        return proprietariRistoranti.containsKey(username) &&
-                proprietariRistoranti.get(username).contains(nomeRistorante);
     }
 
     /**
@@ -217,7 +237,10 @@ public class GestioneRistorante {
     }
 
     /**
-     * Appende un ristorante al file CSV.
+     * Appende un ristorante al file CSV dei ristoranti.
+     *
+     * @param ristorante ristorante da salvare
+     * @return {@code true} se il salvataggio è riuscito, {@code false} altrimenti
      */
     private boolean appendRistoranteToFile(Ristorante ristorante) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(CSV_FILE, true))) {
@@ -236,7 +259,9 @@ public class GestioneRistorante {
     }
 
     /**
-     * Salva tutti i proprietari nel file CSV.
+     * Salva l'associazione proprietari-ristoranti nel file CSV.
+     *
+     * @return {@code true} se il salvataggio è riuscito, {@code false} altrimenti
      */
     private boolean salvaProprietari() {
         File file = new File(PROPRIETARI_FILE);

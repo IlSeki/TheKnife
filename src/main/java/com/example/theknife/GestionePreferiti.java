@@ -29,6 +29,11 @@ public class GestionePreferiti {
         caricaPreferiti();
     }
 
+    /**
+     * Restituisce l'istanza unica della classe (pattern Singleton).
+     *
+     * @return istanza unica di {@code GestionePreferiti}
+     */
     public static GestionePreferiti getInstance() {
         if (instance == null) {
             instance = new GestionePreferiti();
@@ -37,7 +42,11 @@ public class GestionePreferiti {
     }
 
     /**
-     * Carica i preferiti dal file CSV.
+     * Carica i ristoranti preferiti dal file CSV {@code CSV_FILE}.
+     * <p>
+     * Se il file non esiste, ne crea uno nuovo con l'header predefinito.
+     * I dati vengono salvati in {@code preferitiPerUtente}.
+     * </p>
      */
     private void caricaPreferiti() {
         preferitiPerUtente.clear();
@@ -59,7 +68,9 @@ public class GestionePreferiti {
     }
 
     /**
-     * Crea il file dei preferiti con header se non esiste.
+     * Crea il file CSV dei preferiti con l'header, se non esiste.
+     *
+     * @param file file da creare
      */
     private void createPreferitiFile(File file) {
         try {
@@ -72,9 +83,10 @@ public class GestionePreferiti {
             System.err.println("Errore nella creazione del file preferiti: " + e.getMessage());
         }
     }
-
     /**
-     * Processa una singola riga del file preferiti.
+     * Elabora una singola riga del file CSV e aggiorna la mappa {@code preferitiPerUtente}.
+     *
+     * @param line riga del file CSV nel formato {@code username,ristoranteId}
      */
     private void processPreferitiLine(String line) {
         String[] values = line.split(",");
@@ -86,7 +98,7 @@ public class GestionePreferiti {
     }
 
     /**
-     * Salva i preferiti correnti su file CSV.
+     * Salva su file CSV lo stato corrente della mappa {@code preferitiPerUtente}.
      */
     private void salvaPreferiti() {
         try (FileWriter writer = new FileWriter(CSV_FILE)) {
@@ -107,7 +119,13 @@ public class GestionePreferiti {
     }
 
     /**
-     * Aggiunge un ristorante ai preferiti di un utente.
+     * Aggiunge un ristorante all'elenco dei preferiti di un utente.
+     * <p>
+     * L'operazione viene persiste nel file CSV.
+     * </p>
+     *
+     * @param username     nome dell'utente
+     * @param ristoranteId identificativo del ristorante
      */
     public void aggiungiPreferito(String username, String ristoranteId) {
         preferitiPerUtente.computeIfAbsent(username, k -> new HashSet<>()).add(ristoranteId);
@@ -116,6 +134,13 @@ public class GestionePreferiti {
 
     /**
      * Rimuove un ristorante dai preferiti di un utente.
+     * <p>
+     * Se l'utente non ha preferiti o il ristorante non è presente,
+     * l'operazione non ha effetto. Le modifiche vengono salvate su CSV.
+     * </p>
+     *
+     * @param username     nome dell'utente
+     * @param ristoranteId identificativo del ristorante
      */
     public void rimuoviPreferito(String username, String ristoranteId) {
         Set<String> preferiti = preferitiPerUtente.get(username);
@@ -124,9 +149,12 @@ public class GestionePreferiti {
             salvaPreferiti();
         }
     }
-
     /**
-     * Recupera tutti i ristoranti preferiti di un utente.
+     * Restituisce l'insieme dei ristoranti preferiti di un utente.
+     *
+     * @param username nome dell'utente
+     * @return insieme di ID dei ristoranti preferiti,
+     *         oppure un set vuoto se l'utente non ha preferiti
      */
     public Set<String> getPreferiti(String username) {
         caricaPreferiti(); // Ricarica per avere dati aggiornati
@@ -134,7 +162,12 @@ public class GestionePreferiti {
     }
 
     /**
-     * Verifica se un ristorante è tra i preferiti di un utente.
+     * Verifica se un ristorante è presente tra i preferiti di un utente.
+     *
+     * @param username     nome dell'utente
+     * @param ristoranteId identificativo del ristorante
+     * @return {@code true} se il ristorante è nei preferiti dell'utente,
+     *         {@code false} altrimenti
      */
     public boolean isPreferito(String username, String ristoranteId) {
         caricaPreferiti();

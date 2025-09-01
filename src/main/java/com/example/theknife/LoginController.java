@@ -44,7 +44,9 @@ public class LoginController {
     }
 
     /**
-     * Gestisce il processo di login.
+     * Gestisce il processo di login verificando username e password.
+     *
+     * @param evento evento generato dal click sul pulsante di login
      */
     @FXML
     private void gestisciAccesso(ActionEvent evento) {
@@ -84,7 +86,9 @@ public class LoginController {
     }
 
     /**
-     * Gestisce l'accesso come ospite.
+     * Gestisce l’accesso come ospite senza credenziali.
+     *
+     * @param evento evento generato dal click sul pulsante di accesso ospite
      */
     @FXML
     private void gestisciAccessoSenzaLogin(ActionEvent evento) {
@@ -99,7 +103,9 @@ public class LoginController {
     }
 
     /**
-     * Gestisce la navigazione alla registrazione.
+     * Gestisce la navigazione alla schermata di registrazione.
+     *
+     * @param evento evento generato dal click sul pulsante di registrazione
      */
     @FXML
     private void gestisciRegistrazione(ActionEvent evento) {
@@ -114,7 +120,11 @@ public class LoginController {
     }
 
     /**
-     * Valida l'input dell'utente.
+     * Valida i dati di input dell’utente.
+     *
+     * @param username nome utente inserito
+     * @param password password inserita
+     * @return {@code true} se i campi sono validi, {@code false} altrimenti
      */
     private boolean validaInput(String username, String password) {
         if (username.isEmpty() || password.isEmpty()) {
@@ -125,7 +135,12 @@ public class LoginController {
     }
 
     /**
-     * Autentica un utente verificando username e password.
+     * Autentica un utente verificando le credenziali rispetto al file CSV.
+     *
+     * @param username nome utente
+     * @param password password in chiaro
+     * @return oggetto {@link Utente} se autenticato, altrimenti {@code null}
+     * @throws Exception se si verifica un errore di lettura o cifratura
      */
     private Utente autenticaUtente(String username, String password) throws Exception {
         List<Utente> utenti = caricaUtentiDaCSV();
@@ -140,6 +155,9 @@ public class LoginController {
 
     /**
      * Carica la lista degli utenti dal file CSV.
+     *
+     * @return lista di {@link Utente}
+     * @throws IOException se si verifica un errore di lettura del file
      */
     private List<Utente> caricaUtentiDaCSV() throws IOException {
         List<Utente> utenti = new ArrayList<>();
@@ -167,7 +185,10 @@ public class LoginController {
     }
 
     /**
-     * Crea il file utenti con header se non esiste.
+     * Crea il file utenti con l’header se non esiste.
+     *
+     * @param file file CSV da creare
+     * @throws IOException se si verifica un errore in scrittura
      */
     private void createUsersFile(File file) throws IOException {
         File parentDir = file.getParentFile();
@@ -181,7 +202,10 @@ public class LoginController {
     }
 
     /**
-     * Parsa una riga CSV e crea un oggetto Utente.
+     * Converte una riga CSV in un oggetto {@link Utente}.
+     *
+     * @param riga stringa CSV contenente i dati di un utente
+     * @return oggetto {@link Utente} oppure {@code null} se i dati non sono validi
      */
     private Utente parseUserFromCsv(String riga) {
         String[] parti = riga.split(",");
@@ -195,7 +219,11 @@ public class LoginController {
     }
 
     /**
-     * Cifra la password usando SHA-256.
+     * Cifra una password in SHA-256.
+     *
+     * @param password password in chiaro
+     * @return hash SHA-256 della password
+     * @throws NoSuchAlgorithmException se l’algoritmo non è disponibile
      */
     private String cifraPassword(String password) throws NoSuchAlgorithmException {
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -213,14 +241,25 @@ public class LoginController {
     }
 
     /**
-     * Reindirizza all'interfaccia principale.
+     * Reindirizza l’utente all’interfaccia principale.
+     *
+     * @param evento evento che ha generato il cambio scena
+     * @throws IOException se si verifica un errore nel caricamento della scena
      */
     private void reindirizzaAllInterfacciaPrincipale(ActionEvent evento) throws IOException {
         caricaScena(evento, "lista.fxml", "TheKnife - Ricerca Ristoranti", 1024, 768);
     }
 
+
     /**
      * Metodo helper per caricare una nuova scena.
+     *
+     * @param evento evento che ha generato il cambio scena
+     * @param fxml file FXML da caricare
+     * @param titolo titolo della finestra
+     * @param defaultWidth larghezza di default
+     * @param defaultHeight altezza di default
+     * @throws IOException se si verifica un errore di caricamento
      */
     private void caricaScena(ActionEvent evento, String fxml, String titolo,
                              int defaultWidth, int defaultHeight) throws IOException {
@@ -249,8 +288,11 @@ public class LoginController {
     }
 
     /**
-     * Mostra un dialog di avviso.
-     * Mostra un dialog di avviso.
+     * Mostra un dialogo di avviso all’utente.
+     *
+     * @param titolo titolo della finestra di dialogo
+     * @param messaggio testo del messaggio da mostrare
+     * @param tipoAvviso tipo di {@link Alert}
      */
     private void mostraAvviso(String titolo, String messaggio, Alert.AlertType tipoAvviso) {
         Alert avviso = new Alert(tipoAvviso);
