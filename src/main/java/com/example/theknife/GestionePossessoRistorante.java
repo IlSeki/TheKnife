@@ -15,7 +15,6 @@ import java.util.Map;
  * NOTA: Questa classe è ora deprecata in favore di GestioneRistorante
  * che gestisce anche la proprietà dei ristoranti in modo più efficiente.
  */
-@Deprecated
 public class GestionePossessoRistorante {
     private static final String OWNERSHIP_FILE_PATH = "data/proprietari_ristoranti.csv";
     private static final String CSV_HEADER = "username,ristorante";
