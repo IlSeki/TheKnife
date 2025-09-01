@@ -12,8 +12,6 @@ import java.util.Map;
  * Implementa il pattern Singleton e gestisce le associazioni tra ristoratori
  * e i loro ristoranti, mantenendo la persistenza su file CSV.
  *
- * NOTA: Questa classe è ora deprecata in favore di GestioneRistorante
- * che gestisce anche la proprietà dei ristoranti in modo più efficiente.
  *
  * @author Samuele Secchi, 761031, Sede CO
  * @author Flavio Marin, 759910, Sede CO
