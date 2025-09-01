@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="com.example.theknife.RistoranteInputController">
+<ScrollPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.theknife.RistoranteInputController">
     <content>
         <VBox spacing="15" style="-fx-padding: 20;">
             <Label style="-fx-font-size: 24; -fx-font-weight: bold;" text="Aggiungi Nuovo Ristorante" />
@@ -44,34 +44,35 @@
                 <!-- Cucina -->
                 <Label text="Tipi di Cucina*:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
                 <ListView fx:id="cucinaListView" prefHeight="100" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <Label style="-fx-font-size: 10;" text="(Seleziona uno o più tipi tenendo premuto Ctrl/Cmd)" GridPane.columnIndex="1" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
+                <Label style="-fx-font-size: 10;" text="(Seleziona uno o più tipi tenendo premuto Ctrl/Cmd)" GridPane.columnIndex="1" GridPane.rowIndex="5" GridPane.valignment="BOTTOM" />
 
                 <!-- Premi -->
-                <Label text="Premi:" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                <Label text="Premi:" GridPane.rowIndex="6" />
+                <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="6">
                     <ComboBox fx:id="premiComboBox" promptText="Seleziona premi" />
                     <CheckBox fx:id="stellaVerdeCheckBox" text="Stella Verde Michelin" />
                 </VBox>
 
                 <!-- Coordinate -->
-                <Label text="Coordinate:" GridPane.columnIndex="0" GridPane.rowIndex="6" />
-                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                    <TextField fx:id="longitudineField" promptText="Longitudine" />
-                    <TextField fx:id="latitudineField" promptText="Latitudine" />
+                <Label text="Coordinate:" GridPane.rowIndex="7" />
+                <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                    <TextField fx:id="longitudineField" prefHeight="26.0" prefWidth="175.0" promptText="Longitudine" />
+                    <TextField fx:id="latitudineField" prefHeight="26.0" prefWidth="166.0" promptText="Latitudine" />
                 </HBox>
 
                 <!-- Telefono -->
-                <Label text="Telefono:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
-                <TextField fx:id="telefonoField" promptText="Numero di telefono" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                <Label text="Telefono:" GridPane.rowIndex="8" />
+                <TextField fx:id="telefonoField" promptText="Numero di telefono" GridPane.columnIndex="1" GridPane.rowIndex="8" />
 
                 <!-- URL -->
-                <Label text="URL:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-                <TextField fx:id="urlField" promptText="URL della pagina web" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <Label text="URL:" GridPane.rowIndex="9" />
+                <TextField fx:id="urlField" promptText="URL della pagina web" GridPane.columnIndex="1" GridPane.rowIndex="9" />
 
                 <!-- Sito Web -->
-                <Label text="Sito Web:" GridPane.columnIndex="0" GridPane.rowIndex="9" />
-                <TextField fx:id="sitoWebField" promptText="Sito web del ristorante" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                <Label text="Sito Web:" GridPane.rowIndex="10" />
+                <TextField fx:id="sitoWebField" promptText="Sito web del ristorante" GridPane.columnIndex="1" GridPane.rowIndex="10" />
             <rowConstraints>
+               <RowConstraints />
                <RowConstraints />
                <RowConstraints />
                <RowConstraints />
