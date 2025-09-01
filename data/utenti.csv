@@ -1,3 +1,4 @@
 nome,cognome,username,passwordHash,dataNascita,luogoDomicilio,ruolo
 Samuele,Secchi,Seki,b5ba1ee4b6cbe1d8685948ff1ed77c6d42226e50c7cfde1694eea4e2131d9a4c,2005-09-20,Como,ristoratore
 utnetin,twate,utente,b133a0c0e9bee3be20163d2ad31d6248db292aa6dcb1ee087a2aa50e0fc75ae2,2007-09-07,Napoli,cliente
+seki,seki,seki,b5ba1ee4b6cbe1d8685948ff1ed77c6d42226e50c7cfde1694eea4e2131d9a4c,2004-09-17,Como,ristoratore
