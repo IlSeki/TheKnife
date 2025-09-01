@@ -79,8 +79,8 @@ public class RegistrazioneController {
     @FXML
     private void initialize() {
         // Popola la ComboBox con i ruoli disponibili
-        comboRuolo.getItems().addAll("cliente", "ristoratore");
-        comboRuolo.setValue("cliente"); // Valore di default
+        comboRuolo.getItems().addAll("Cliente", "Ristoratore");
+        comboRuolo.setValue("Cliente"); // Valore di default
     }
 
     /**
@@ -106,7 +106,7 @@ public class RegistrazioneController {
             String password = campoPassword.getText();
             LocalDate dataNascita = campoDataNascita.getValue();
             String luogoDomicilio = campoLuogoDomicilio.getText().trim();
-            String ruolo = comboRuolo.getValue();
+            String ruolo = comboRuolo.getValue().toLowerCase();
 
             // Verifica che l'username non esista già
             if (verificaUsernameEsistente(username)) {
