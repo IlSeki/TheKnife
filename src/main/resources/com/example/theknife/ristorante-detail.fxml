@@ -18,7 +18,7 @@
         <VBox spacing="0.0" styleClass="main-container" VBox.vgrow="ALWAYS">
             <!-- Pulsante Torna al menu principale -->
             <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-padding: 10 0 0 0;" HBox.hgrow="ALWAYS">
-                <Button onAction="#handleTornaAlMenuPrincipale" styleClass="secondary-button" text="← Torna al menu principale" />
+                <Button onAction="#handleTornaAlMenuPrincipale" styleClass="secondary-button" text="← Torna indietro" />
             </HBox>
 
             <!-- Header con immagine hero -->
