@@ -25,8 +25,12 @@ import javafx.stage.Stage;
 
 /**
  * Controller per la gestione del profilo utente.
- * Gestisce l'interfaccia che mostra le informazioni dell'utente,
- * i suoi ristoranti preferiti e le sue recensioni.
+ * <p>
+ * Questa classe gestisce l'interfaccia utente dedicata al profilo personale,
+ * mostrando informazioni dell'utente, i ristoranti preferiti e le recensioni
+ * scritte. Fornisce inoltre i meccanismi per il logout, la navigazione
+ * verso altre schermate e l'accesso alla dashboard del ristoratore.
+ * </p>
  *
  * @author Samuele Secchi, 761031, Sede CO
  * @author Flavio Marin, 759910, Sede CO
@@ -35,19 +39,54 @@ import javafx.stage.Stage;
  * @version 1.0
  * @since 2025-05-20
  */
-
 public class UserProfileController implements Initializable {
+    /**
+     * Etichetta che visualizza il nome completo dell'utente.
+     */
     @FXML private Label nomeLabel;
+    /**
+     * Etichetta che mostra il ruolo dell'utente.
+     */
     @FXML private Label ruoloLabel;
+    /**
+     * Tabella per visualizzare le recensioni scritte dall'utente.
+     */
     @FXML private TableView<Recensione> recensioniTable;
+    /**
+     * Colonna della tabella delle recensioni per il nome del ristorante.
+     */
     @FXML private TableColumn<Recensione, String> ristoranteColumn;
+    /**
+     * Colonna della tabella delle recensioni per il numero di stelle.
+     */
     @FXML private TableColumn<Recensione, Integer> stelleColumn;
+    /**
+     * Colonna della tabella delle recensioni per il testo della recensione.
+     */
     @FXML private TableColumn<Recensione, String> testoColumn;
+    /**
+     * Colonna della tabella delle recensioni per la data della recensione.
+     */
     @FXML private TableColumn<Recensione, String> dataColumn;
+    /**
+     * Contenitore per la sezione dei ristoranti preferiti, visibile solo per i clienti.
+     */
     @FXML private VBox preferitiBox;
+    /**
+     * Lista per visualizzare i nomi dei ristoranti preferiti.
+     */
     @FXML private ListView<String> preferitiList;
+    /**
+     * Pulsante per eseguire il logout dall'applicazione.
+     */
     @FXML private Button logoutButton;
+    /**
+     * Pulsante per tornare alla schermata del menu principale.
+     */
     @FXML private Button tornaalMenuButton;
+    /**
+     * Pulsante per accedere alla dashboard del ristoratore, visibile solo per gli utenti con ruolo "ristoratore".
+     */
     @FXML private Button dashboardButton;
 
     private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
@@ -55,9 +94,10 @@ public class UserProfileController implements Initializable {
     private final GestioneRistorante gestioneRistorante = GestioneRistorante.getInstance();
 
     /**
-     * Aggiunge lo stylesheet CSS principale alla scena, se non già presente.
+     * Applica il foglio di stile CSS principale alla scena per uniformare l'aspetto dell'interfaccia utente.
+     * Questo metodo verifica prima se lo stile è già stato applicato per evitare duplicazioni.
      *
-     * @param scene scena JavaFX a cui applicare lo stile
+     * @param scene La scena JavaFX alla quale applicare lo stile.
      */
     private void addStylesheet(Scene scene) {
         try {
@@ -69,31 +109,33 @@ public class UserProfileController implements Initializable {
             System.err.println("Impossibile caricare il CSS: " + e.getMessage());
         }
     }
+
     /**
      * Inizializza il controller dopo che il file FXML è stato caricato.
-     * Configura l'interfaccia utente, imposta i dati dell'utente corrente,
-     * configura le tabelle e gestisce la visibilità dei componenti in base al ruolo.
+     * Questo metodo viene chiamato automaticamente dal framework JavaFX.
+     * Configura le informazioni e le viste del profilo utente in base al ruolo dell'utente,
+     * imposta i gestori degli eventi per i pulsanti e le tabelle, e carica i dati iniziali.
      *
-     * @param location  l'URL utilizzato per risolvere percorsi relativi per l'oggetto root, o null se non noto
-     * @param resources i ResourceBundle utilizzati per localizzare l'oggetto root, o null se non localizzato
+     * @param location L'URL utilizzato per risolvere percorsi relativi per l'oggetto root, o {@code null} se non noto.
+     * @param resources Le risorse utilizzate per localizzare l'oggetto root, o {@code null} se l'oggetto root non è stato localizzato.
      */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Setup informazioni utente
+        // Imposta le informazioni personali dell'utente nelle etichette.
         nomeLabel.setText(SessioneUtente.getNomeCompleto());
         ruoloLabel.setText("Ruolo: " + SessioneUtente.getRuolo());
 
-        // Setup colonne tabella recensioni
+        // Configura le colonne della tabella delle recensioni associandole ai campi della classe Recensione.
         ristoranteColumn.setCellValueFactory(new PropertyValueFactory<>("ristoranteId"));
         stelleColumn.setCellValueFactory(new PropertyValueFactory<>("stelle"));
         testoColumn.setCellValueFactory(new PropertyValueFactory<>("testo"));
         dataColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
 
-        // Carica recensioni utente
+        // Carica e visualizza le recensioni dell'utente corrente.
         List<Recensione> recensioniUtente = gestioneRecensioni.getRecensioniUtente(SessioneUtente.getUsernameUtente());
         recensioniTable.setItems(FXCollections.observableArrayList(recensioniUtente));
 
-        // Configura vista in base al ruolo
+        // Gestisce la visibilità delle sezioni in base al ruolo dell'utente.
         boolean isCliente = SessioneUtente.isCliente();
         boolean isRistoratore = SessioneUtente.isRistoratore();
 
@@ -104,13 +146,11 @@ public class UserProfileController implements Initializable {
             aggiornaListaPreferiti();
         }
 
-        // Setup pulsante logout
+        // Imposta i gestori degli eventi per i pulsanti.
         logoutButton.setOnAction(event -> handleLogout());
-
-        // Setup pulsante torna al menu
         tornaalMenuButton.setOnAction(event -> handleTornaAlMenu());
 
-        // Configura il click sui preferiti
+        // Aggiunge un gestore per gli eventi di doppio click sulle liste.
         preferitiList.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 String selectedRistoranteId = preferitiList.getSelectionModel().getSelectedItem();
@@ -120,7 +160,6 @@ public class UserProfileController implements Initializable {
             }
         });
 
-        // Configura il click sulle recensioni
         recensioniTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 Recensione selectedRecensione = recensioniTable.getSelectionModel().getSelectedItem();
@@ -130,7 +169,7 @@ public class UserProfileController implements Initializable {
             }
         });
 
-        // Aggiungi handler per il pulsante dashboard
+        // Configura l'azione per il pulsante Dashboard.
         dashboardButton.setOnAction(event -> {
             try {
                 URL resourceUrl = getClass().getResource("/com/example/theknife/ristoratore-dashboard.fxml");
@@ -150,17 +189,22 @@ public class UserProfileController implements Initializable {
             }
         });
     }
+
     /**
      * Aggiorna la lista dei ristoranti preferiti dell'utente corrente.
+     * Recupera i preferiti dalla classe di gestione e aggiorna la {@link ListView}.
      */
     private void aggiornaListaPreferiti() {
         preferitiList.setItems(FXCollections.observableArrayList(
-            gestionePreferiti.getPreferiti(SessioneUtente.getUsernameUtente())
+                gestionePreferiti.getPreferiti(SessioneUtente.getUsernameUtente())
         ));
     }
+
     /**
-     * Gestisce il click sul pulsante "Torna al menu principale".
-     * Riporta l'utente alla schermata principale dell'applicazione.
+     * Gestisce l'evento di click sul pulsante "Torna al menu principale".
+     * Riporta l'utente alla schermata iniziale di visualizzazione dei ristoranti ({@code lista.fxml}).
+     *
+     * @throws IOException se il file FXML della schermata principale non viene trovato.
      */
     @FXML
     private void handleTornaAlMenu() {
@@ -183,11 +227,10 @@ public class UserProfileController implements Initializable {
     }
 
     /**
-     * Gestisce l'operazione di logout dell'utente:
-     * <ul>
-     *   <li>Termina la sessione utente</li>
-     *   <li>Mostra la schermata di login</li>
-     * </ul>
+     * Gestisce l'operazione di logout dell'utente.
+     * Resetta la sessione utente e riporta l'applicazione alla schermata di login ({@code login.fxml}).
+     *
+     * @throws IOException se il file FXML della schermata di login non viene trovato.
      */
     @FXML
     private void handleLogout() {
@@ -211,77 +254,40 @@ public class UserProfileController implements Initializable {
     }
 
     /**
-     * Apre i dettagli di un ristorante a partire dal suo nome.
-     * Se il ristorante non è più disponibile, mostra un messaggio di errore.
-     * Implementa diversi tentativi di ricerca per garantire la massima compatibilità.
+     * Apre la schermata dei dettagli di un ristorante.
+     * Questo metodo tenta di trovare il ristorante tramite diversi approcci,
+     * partendo dal nome, per garantire la massima robustezza anche in caso
+     * di mancato caricamento iniziale dei dati.
      *
-     * @param nomeRistorante identificativo o nome del ristorante da mostrare
+     * @param nomeRistorante Il nome del ristorante da visualizzare.
      */
     private void openRistoranteDetail(String nomeRistorante) {
         System.out.println("DEBUG: Cercando ristorante con nome: '" + nomeRistorante + "'");
 
         try {
-            // Prova a chiamare un metodo che forza il caricamento
-            gestioneRistorante.caricaRistoranti(); // Se questo metodo esiste
+            // Tentativo 1: Forza il ricaricamento dei ristoranti (se il metodo è disponibile).
+            gestioneRistorante.caricaRistoranti();
         } catch (Exception e) {
             System.out.println("DEBUG: Metodo caricaRistoranti() non disponibile: " + e.getMessage());
         }
 
-        // Primo tentativo: usa il metodo diretto
         Ristorante ristorante = gestioneRistorante.getRistorante(nomeRistorante);
-        System.out.println("DEBUG: getRistorante() returned: " + (ristorante != null ? ristorante.getNome() : "null"));
 
-        // Se non trova il ristorante con il metodo diretto, prova con getRistorantiByNomi
+        // Tentativo 2: Se il primo tentativo fallisce, cerca in tutti i ristoranti caricati.
         if (ristorante == null) {
-            Set<String> nomiSet = new HashSet<>();
-            nomiSet.add(nomeRistorante);
-            List<Ristorante> ristoranti = gestioneRistorante.getRistorantiByNomi(nomiSet);
-            System.out.println("DEBUG: getRistorantiByNomi() returned " + ristoranti.size() + " risultati");
-            if (!ristoranti.isEmpty()) {
-                ristorante = ristoranti.get(0);
-                System.out.println("DEBUG: Trovato ristorante: " + ristorante.getNome());
-            }
-        }
-
-        // Prova anche a cercare in tutti i ristoranti disponibili
-        if (ristorante == null) {
-            System.out.println("DEBUG: Tentativo di ricerca in tutti i ristoranti...");
+            System.out.println("DEBUG: getRistorante() ha restituito null. Ricerca in tutti i ristoranti...");
             List<Ristorante> tuttiRistoranti = gestioneRistorante.getTuttiRistoranti();
             System.out.println("DEBUG: Totale ristoranti disponibili: " + tuttiRistoranti.size());
-
-            if (tuttiRistoranti.isEmpty()) {
-                System.out.println("DEBUG: Nessun ristorante caricato, usando approccio alternativo...");
-
-                // Usa lo stesso approccio del PreferitiController
-                Set<String> preferiti = gestionePreferiti.getPreferiti(SessioneUtente.getUsernameUtente());
-                System.out.println("DEBUG: Preferiti utente: " + preferiti);
-
-                if (preferiti.contains(nomeRistorante)) {
-                    List<Ristorante> ristoranti = gestioneRistorante.getRistorantiByNomi(preferiti);
-                    System.out.println("DEBUG: getRistorantiByNomi con tutti i preferiti returned: " + ristoranti.size());
-
-                    for (Ristorante r : ristoranti) {
-                        System.out.println("DEBUG: Ristorante nei preferiti: '" + r.getNome() + "'");
-                        if (r.getNome().equals(nomeRistorante)) {
-                            ristorante = r;
-                            System.out.println("DEBUG: Match trovato!");
-                            break;
-                        }
-                    }
-                }
-            } else {
-                for (Ristorante r : tuttiRistoranti) {
-                    System.out.println("DEBUG: Ristorante disponibile: '" + r.getNome() + "'");
-                    if (r.getNome().equals(nomeRistorante)) {
-                        ristorante = r;
-                        System.out.println("DEBUG: Trovato match esatto!");
-                        break;
-                    }
+            for (Ristorante r : tuttiRistoranti) {
+                if (r.getNome().equals(nomeRistorante)) {
+                    ristorante = r;
+                    System.out.println("DEBUG: Trovato match esatto!");
+                    break;
                 }
             }
         }
 
-        // Se ancora non lo trova, mostra errore con più dettagli
+        // Se il ristorante non viene trovato in nessun modo, mostra un errore e interrompe l'esecuzione.
         if (ristorante == null) {
             String debugMessage = "Ristorante cercato: '" + nomeRistorante + "'\n";
             debugMessage += "Username corrente: " + SessioneUtente.getUsernameUtente() + "\n";
@@ -295,6 +301,7 @@ public class UserProfileController implements Initializable {
             return;
         }
 
+        // Se il ristorante è stato trovato, carica e visualizza la schermata dei dettagli.
         try {
             URL resourceUrl = getClass().getResource("/com/example/theknife/ristorante-detail.fxml");
             if (resourceUrl == null) {
@@ -307,19 +314,16 @@ public class UserProfileController implements Initializable {
             controller.setRistorante(ristorante);
 
             Stage currentStage = (Stage) nomeLabel.getScene().getWindow();
-
-            // Salvo la scena originale
             Scene originalScene = currentStage.getScene();
 
-            // Callback: ripristina la scena originale
+            // Imposta un callback per tornare a questa schermata dopo la chiusura dei dettagli.
             controller.setTornaAlMenuPrincipaleCallback(() -> {
-                System.out.println("DEBUG: Callback eseguita, torno al menu principale");
+                System.out.println("DEBUG: Callback eseguita, torno al profilo utente");
                 currentStage.setScene(originalScene);
                 currentStage.show();
                 this.refreshData();
             });
 
-            // Creo e setto la nuova scena dei dettagli
             Scene newScene = new Scene(root);
             addStylesheet(newScene);
             currentStage.setScene(newScene);
@@ -332,22 +336,24 @@ public class UserProfileController implements Initializable {
     }
 
     /**
-     * Aggiorna dinamicamente la lista delle recensioni e dei preferiti utente.
-     * Questo metodo viene chiamato quando si torna dalla visualizzazione
-     * dei dettagli di un ristorante per riflettere eventuali modifiche.
+     * Aggiorna le liste di recensioni e preferiti mostrate nel profilo.
+     * Questo metodo è utile per riflettere le modifiche apportate dall'utente in altre parti dell'applicazione
+     * (es. aggiunta di un preferito dalla schermata dei dettagli del ristorante).
      */
     public void refreshData() {
-        // Aggiorna recensioni
+        // Aggiorna la tabella delle recensioni.
         List<Recensione> recensioniUtente = gestioneRecensioni.getRecensioniUtente(SessioneUtente.getUsernameUtente());
         recensioniTable.setItems(FXCollections.observableArrayList(recensioniUtente));
-        // Aggiorna preferiti
+
+        // Aggiorna la lista dei preferiti.
         aggiornaListaPreferiti();
     }
+
     /**
-     * Mostra un messaggio di errore tramite finestra di dialogo.
+     * Mostra una finestra di dialogo di errore all'utente.
      *
-     * @param header  titolo dell'errore
-     * @param content messaggio descrittivo dell'errore
+     * @param header Il titolo dell'errore.
+     * @param content Il messaggio descrittivo dell'errore.
      */
     private void showError(String header, String content) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

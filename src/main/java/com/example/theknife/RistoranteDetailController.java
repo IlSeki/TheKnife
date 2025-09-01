@@ -32,9 +32,12 @@ import javafx.scene.layout.VBox;
 
 /**
  * Controller per la visualizzazione dei dettagli di un ristorante.
- * Gestisce l'interfaccia che mostra tutte le informazioni di un ristorante,
+ * <p>
+ * Questa classe gestisce l'interfaccia utente che mostra tutte le informazioni di un ristorante,
  * incluse le recensioni, e permette di aggiungere il ristorante ai preferiti
- * o di lasciare una recensione.
+ * o di lasciare una recensione. Si occupa di popolare i campi dell'interfaccia
+ * con i dati del ristorante selezionato e di gestire le interazioni dell'utente.
+ * </p>
  *
  * @author Samuele Secchi, 761031, Sede CO
  * @author Flavio Marin, 759910, Sede CO
@@ -45,58 +48,99 @@ import javafx.scene.layout.VBox;
  */
 public class RistoranteDetailController implements Initializable {
 
+    /** Etichetta per visualizzare il nome del ristorante. */
     @FXML private Label nomeLabel;
+    /** Etichetta per visualizzare l'indirizzo completo del ristorante. */
     @FXML private Label indirizzoLabel;
+    /** Etichetta per visualizzare la località del ristorante. */
     @FXML private Label localitaLabel;
+    /** Etichetta per visualizzare la fascia di prezzo del ristorante. */
     @FXML private Label prezzoLabel;
+    /** Etichetta per visualizzare il tipo di cucina offerta dal ristorante. */
     @FXML private Label cucinaLabel;
+    /** Etichetta per visualizzare il numero di telefono del ristorante. */
     @FXML private Label telefonoLabel;
+    /** Hyperlink per navigare al sito web ufficiale del ristorante. */
     @FXML private Hyperlink sitoWebLink;
-    @FXML private Button posizioneButton; // Nuovo bottone per Google Maps
+    /** Pulsante per aprire la posizione del ristorante su Google Maps. */
+    @FXML private Button posizioneButton;
+    /** Etichetta per visualizzare l'eventuale premio Michelin del ristorante. */
     @FXML private Label premioLabel;
+    /** ImageView per visualizzare l'icona della stella verde Michelin. */
     @FXML private ImageView stellaVerdeIcon;
+    /** Etichetta per accompagnare l'icona della stella verde Michelin. */
     @FXML private Label stellaVerdeLabel;
+    /** Area di testo per visualizzare un elenco dei servizi offerti dal ristorante. */
     @FXML private TextArea serviziTextArea;
+    /** Area di testo per visualizzare una descrizione dettagliata del ristorante. */
     @FXML private TextArea descrizioneTextArea;
+    /** Contenitore HBox per la fascia di prezzo. Utilizzato per la visibilità condizionale. */
     @FXML private HBox prezzoContainer;
+    /** Contenitore HBox per il premio Michelin. Utilizzato per la visibilità condizionale. */
     @FXML private HBox premioContainer;
+    /** Contenitore VBox per la stella verde. Utilizzato per la visibilità condizionale. */
     @FXML private VBox stellaVerdeContainer;
+    /** Pulsante per aggiungere o rimuovere il ristorante dai preferiti dell'utente. */
     @FXML private Button preferitoButton;
+    /** ListView per visualizzare le recensioni più recenti del ristorante. */
     @FXML private ListView<Recensione> recensioniRecentList;
+    /** Pulsante per navigare alla schermata completa di tutte le recensioni. */
     @FXML private Button mostraRecensioniButton;
 
+    /** L'oggetto Ristorante di cui vengono visualizzati i dettagli. */
     private Ristorante ristorante;
+    /** Servizi host forniti dal framework JavaFX per l'apertura di link esterni. */
     private HostServices hostServices;
+    /** Istanza singleton per la gestione delle operazioni sui preferiti. */
     private final GestionePreferiti gestionePreferiti = com.example.theknife.GestionePreferiti.getInstance();
+    /** Istanza singleton per la gestione delle operazioni sulle recensioni. */
     private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
+    /** Callback opzionale per tornare al menu principale. */
     private Runnable returnToMenuCallback;
+    /** Callback per tornare alla schermata precedente. */
     private Runnable tornaAlMenuPrincipaleCallback;
+    /** Il nodo radice della scena precedente da ripristinare per la navigazione all'indietro. */
     private Parent rootToRestore;
 
     /**
-     * Imposta i servizi host per aprire link esterni
-     * @param hostServices servizi host dell'applicazione
+     * Imposta i servizi host per aprire link esterni.
+     * @param hostServices L'istanza di {@link HostServices} dell'applicazione.
      */
     public void setHostServices(HostServices hostServices) {
         this.hostServices = hostServices;
     }
 
     /**
-     * Imposta la callback per tornare al menu principale.
-     * @param cb callback da eseguire
+     * Imposta la callback da eseguire per tornare al menu principale.
+     * @param cb La callback {@link Runnable} da eseguire.
      */
     public void setReturnToMenuCallback(Runnable cb) {
         this.returnToMenuCallback = cb;
     }
 
+    /**
+     * Imposta il nodo radice della scena precedente per la navigazione all'indietro.
+     * @param root Il {@link Parent} da ripristinare.
+     */
     public void setRootToRestore(Parent root) {
         this.rootToRestore = root;
     }
 
+    /**
+     * Imposta la callback da eseguire per tornare al menu principale.
+     * @param callback La callback {@link Runnable} da eseguire.
+     */
     public void setTornaAlMenuPrincipaleCallback(Runnable callback) {
         this.tornaAlMenuPrincipaleCallback = callback;
     }
 
+    /**
+     * Metodo di inizializzazione del controller.
+     * Viene chiamato automaticamente dopo che il file FXML è stato caricato.
+     * Configura i componenti dell'interfaccia, come le TextAreas, i pulsanti e la ListView delle recensioni.
+     * @param location L'URL di localizzazione della risorsa.
+     * @param resources Le risorse utilizzate per la localizzazione.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Inizializzazione dei componenti
@@ -109,6 +153,11 @@ public class RistoranteDetailController implements Initializable {
 
         // Setup recensioni list cell factory
         recensioniRecentList.setCellFactory(_ -> new ListCell<>() {
+            /**
+             * Aggiorna la cella con i dati di una recensione.
+             * @param item L'oggetto {@link Recensione} da visualizzare.
+             * @param empty Flag che indica se la cella è vuota.
+             */
             @Override
             protected void updateItem(Recensione item, boolean empty) {
                 super.updateItem(item, empty);
@@ -147,25 +196,21 @@ public class RistoranteDetailController implements Initializable {
                 }
             }
         });
-
-        // Show/hide write review button based on user role
-        // scriviRecensioneButton.setVisible(SessioneUtente.isCliente()); // RIMOSSO: il bottone non esiste più
     }
 
     /**
-     * Configura il bottone posizione
+     * Configura l'aspetto del pulsante per la posizione su Google Maps.
      */
     private void setupPosizioneButton() {
         if (posizioneButton != null) {
-            // Imposta lo stile del bottone (opzionale, dipende dal tuo CSS)
             posizioneButton.getStyleClass().add("maps-button");
-            // Imposta il testo del bottone
             posizioneButton.setText("📍 Vedi su Maps");
         }
     }
 
     /**
-     * Configura il bottone preferito
+     * Configura la visibilità del pulsante per i preferiti in base al ruolo dell'utente.
+     * Il pulsante è visibile solo se l'utente è un cliente.
      */
     private void setupPreferitoButton() {
         if (preferitoButton != null) {
@@ -174,7 +219,8 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Inizializza i componenti con valori di default
+     * Inizializza i componenti dell'interfaccia con valori predefiniti
+     * per visualizzare un'indicazione di caricamento all'utente.
      */
     private void initializeDefaultValues() {
         if (nomeLabel != null) nomeLabel.setText("Caricamento...");
@@ -188,7 +234,8 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Configura le text area per una migliore visualizzazione
+     * Configura le aree di testo per una migliore visualizzazione dei dati,
+     * impostando il wrapping del testo e rendendole non modificabili.
      */
     private void setupTextAreas() {
         if (serviziTextArea != null) {
@@ -203,13 +250,13 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Imposta il ristorante da visualizzare e aggiorna l'interfaccia
-     * @param ristorante il ristorante da visualizzare
+     * Imposta il ristorante da visualizzare e avvia l'aggiornamento dell'interfaccia.
+     * Questo è il metodo principale utilizzato per passare i dati al controller.
+     * @param ristorante L'oggetto {@link Ristorante} da visualizzare.
      */
     public void setRistorante(Ristorante ristorante) {
         this.ristorante = ristorante;
 
-        // Debug per verificare i dati ricevuti
         if (ristorante != null) {
             System.out.println("=== DEBUG RISTORANTE ===");
             System.out.println("Nome: " + ristorante.getNome());
@@ -226,21 +273,21 @@ public class RistoranteDetailController implements Initializable {
             System.out.println("========================");
         }
 
-        // Aggiorna lo stato del bottone preferiti
         if (preferitoButton != null && SessioneUtente.getUsernameUtente() != null) {
             boolean isPreferito = gestionePreferiti.isPreferito(
-                SessioneUtente.getUsernameUtente(),
-                ristorante.getNome()
+                    SessioneUtente.getUsernameUtente(),
+                    ristorante.getNome()
             );
             preferitoButton.setText(isPreferito ? "❤️ Rimuovi dai preferiti" : "🤍 Aggiungi ai preferiti");
         }
 
         updateUI();
-        loadRecensioni(); // Load reviews after setting the restaurant
+        loadRecensioni();
     }
 
     /**
-     * Aggiorna tutti i componenti dell'interfaccia con i dati del ristorante
+     * Aggiorna tutti i componenti dell'interfaccia utente con i dati del ristorante.
+     * L'aggiornamento viene eseguito sul thread della UI per evitare problemi di concorrenza.
      */
     private void updateUI() {
         if (ristorante == null) {
@@ -310,7 +357,7 @@ public class RistoranteDetailController implements Initializable {
                 // Stella Verde
                 updateStellaVerdeDisplay();
 
-                // Servizi - CORREZIONE IMPORTANTE
+                // Servizi
                 if (serviziTextArea != null) {
                     String servizi = ristorante.getServizi();
                     System.out.println("Servizi dal ristorante: '" + servizi + "'"); // Debug
@@ -342,8 +389,8 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Verifica se il ristorante ha informazioni di posizione valide
-     * @return true se ha almeno indirizzo o località
+     * Verifica se il ristorante ha informazioni di posizione valide.
+     * @return {@code true} se il ristorante ha almeno un indirizzo o una località valida, {@code false} altrimenti.
      */
     private boolean hasValidLocation() {
         if (ristorante == null) return false;
@@ -356,8 +403,8 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Costruisce l'indirizzo completo per Google Maps
-     * @return stringa con l'indirizzo formattato per la ricerca
+     * Costruisce una stringa con l'indirizzo completo del ristorante, formattata per essere usata nelle ricerche.
+     * @return Una {@link String} con l'indirizzo formattato per la ricerca, ad es. "Nome Ristorante, Via di Prova 123, Città".
      */
     private String buildFullAddress() {
         StringBuilder address = new StringBuilder();
@@ -388,7 +435,9 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Gestisce il click sul bottone posizione - apre Google Maps
+     * Gestisce l'evento di click sul pulsante "Posizione".
+     * Costruisce un URL per Google Maps e tenta di aprirlo nel browser predefinito.
+     * Se la posizione non è disponibile o l'apertura fallisce, mostra un avviso all'utente.
      */
     @FXML
     private void handlePosizioneClick() {
@@ -426,8 +475,10 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Apre un URL esterno usando diversi metodi come fallback
-     * @param url URL da aprire
+     * Apre un URL esterno utilizzando diversi metodi come fallback per garantire la compatibilità.
+     * Prova prima con {@link HostServices}, poi con {@link Desktop} (se supportato)
+     * e infine con {@link ProcessBuilder} per l'apertura del comando specifico del sistema operativo.
+     * @param url La {@link String} dell'URL da aprire.
      */
     private void openExternalUrl(String url) {
         // Metodo 1: Prova con HostServices (JavaFX)
@@ -479,7 +530,8 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Aggiorna la visualizzazione della stella verde
+     * Aggiorna la visibilità dell'icona e dell'etichetta relative alla stella verde Michelin.
+     * Vengono mostrate solo se il ristorante ha la stella verde, altrimenti il container viene nascosto.
      */
     private void updateStellaVerdeDisplay() {
         if (stellaVerdeLabel == null) return;
@@ -513,9 +565,10 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Formatta la stringa dei servizi per una migliore leggibilità
-     * @param servizi stringa grezza dei servizi
-     * @return stringa formattata
+     * Formatta una stringa di servizi in un formato più leggibile,
+     * aggiungendo un bullet point e un a capo per ogni servizio separato da virgola o punto e virgola.
+     * @param servizi La {@link String} grezza dei servizi.
+     * @return Una {@link String} formattata con bullet points, ad es. "• Servizio 1\n• Servizio 2".
      */
     private String formatServizi(String servizi) {
         if (servizi == null || servizi.trim().isEmpty()) {
@@ -534,8 +587,8 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Gestisce il click sul link del sito web - VERSIONE MIGLIORATA
-     * Utilizza sia HostServices che Desktop come fallback
+     * Gestisce l'evento di click sull'hyperlink del sito web.
+     * Aggiunge un protocollo HTTPS se mancante e tenta di aprire l'URL esterno.
      */
     @FXML
     private void handleSitoWebClick() {
@@ -558,7 +611,8 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Gestisce il click sul numero di telefono
+     * Gestisce l'evento di click sul numero di telefono.
+     * Copia il numero di telefono del ristorante negli appunti di sistema e notifica l'utente con un {@link Alert}.
      */
     @FXML
     private void handleTelefonoClick() {
@@ -583,7 +637,9 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Gestisce il click per mostrare tutte le recensioni
+     * Gestisce l'evento di click sul pulsante per mostrare tutte le recensioni.
+     * Carica una nuova scena ({@code recensioni.fxml}) e passa i dati del ristorante al nuovo controller.
+     * Imposta una callback per tornare a questa scena dopo l'interazione.
      */
     @FXML
     private void handleMostraRecensioni() {
@@ -610,10 +666,10 @@ public class RistoranteDetailController implements Initializable {
         }
     }
 
-
-
     /**
-     * Gestisce il click sul bottone preferito
+     * Gestisce l'evento di click sul pulsante "Preferito".
+     * Aggiunge o rimuove il ristorante dai preferiti dell'utente loggato, aggiornando
+     * il testo del pulsante di conseguenza.
      */
     @FXML
     private void handlePreferitoClick() {
@@ -637,7 +693,8 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Carica le recensioni recenti per il ristorante
+     * Carica le recensioni più recenti per il ristorante.
+     * Recupera tutte le recensioni, le ordina per data (dalla più recente) e visualizza solo le prime tre nella {@link ListView}.
      */
     private void loadRecensioni() {
         if (ristorante == null || recensioniRecentList == null) return;
@@ -655,22 +712,25 @@ public class RistoranteDetailController implements Initializable {
     }
 
     /**
-     * Restituisce il ristorante attualmente visualizzato
-     * @return il ristorante corrente
+     * Restituisce l'oggetto ristorante attualmente visualizzato dal controller.
+     * @return L'oggetto {@link Ristorante} corrente.
      */
     public Ristorante getRistorante() {
         return ristorante;
     }
 
     /**
-     * Aggiorna la lista delle recensioni recenti (da chiamare dopo modifiche)
+     * Aggiorna la lista delle recensioni recenti.
+     * Questo metodo è utile per ricaricare le recensioni quando si torna da un'altra schermata (es. aggiunta recensione).
      */
     public void refreshRecensioni() {
         loadRecensioni();
     }
 
     /**
-     * Gestisce il click sul pulsante "Torna al menu principale".
+     * Gestisce l'evento di click sul pulsante "Torna al menu principale".
+     * Esegue la callback di ritorno se impostata, altrimenti tenta di ripristinare il nodo radice
+     * della scena precedente o di caricare la schermata della lista dei ristoranti.
      */
     @FXML
     private void handleTornaAlMenuPrincipale() {
@@ -699,6 +759,11 @@ public class RistoranteDetailController implements Initializable {
         }
     }
 
+    /**
+     * Mostra una finestra di dialogo di tipo {@link Alert} all'utente.
+     * @param title Il titolo della finestra di dialogo.
+     * @param message Il messaggio da visualizzare nel corpo della finestra.
+     */
     private void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
