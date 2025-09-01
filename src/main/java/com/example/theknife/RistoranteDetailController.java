@@ -329,7 +329,7 @@ public class RistoranteDetailController implements Initializable {
                 if (prezzoLabel != null) {
                     String prezzo = ristorante.getPrezzo();
                     if (prezzo != null && !prezzo.trim().isEmpty()) {
-                        telefonoLabel.setText(prezzo);
+                        prezzoLabel.setText(prezzo);
                     } else {
                         prezzoLabel.setText("Non disponibile");
                     }
