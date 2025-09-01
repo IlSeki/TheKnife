@@ -179,7 +179,6 @@ public class RegistrazioneController {
 
             // Imposta la nuova scena
             Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-            palcoscenico.setTitle("TheKnife - Login");
             palcoscenico.setScene(scena);
             palcoscenico.show();
 
