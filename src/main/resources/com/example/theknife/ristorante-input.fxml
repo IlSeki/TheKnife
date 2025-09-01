@@ -56,8 +56,8 @@
                 <!-- Coordinate -->
                 <Label text="Coordinate:" GridPane.rowIndex="7" />
                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                    <TextField fx:id="longitudineField" prefHeight="26.0" prefWidth="175.0" promptText="Longitudine" />
-                    <TextField fx:id="latitudineField" prefHeight="26.0" prefWidth="166.0" promptText="Latitudine" />
+                    <TextField fx:id="longitudineField" prefHeight="26.0" prefWidth="171.0" promptText="Longitudine" />
+                    <TextField fx:id="latitudineField" prefHeight="26.0" prefWidth="170.0" promptText="Latitudine" />
                 </HBox>
 
                 <!-- Telefono -->
