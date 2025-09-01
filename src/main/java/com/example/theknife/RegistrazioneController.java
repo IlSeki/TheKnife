@@ -79,8 +79,8 @@ public class RegistrazioneController {
     @FXML
     private void initialize() {
         // Popola la ComboBox con i ruoli disponibili
-        comboRuolo.getItems().addAll("cliente", "ristoratore");
-        comboRuolo.setValue("cliente"); // Valore di default
+        comboRuolo.getItems().addAll("Cliente", "Ristoratore");
+        comboRuolo.setValue("Cliente"); // Valore di default
     }
 
     /**
@@ -106,7 +106,7 @@ public class RegistrazioneController {
             String password = campoPassword.getText();
             LocalDate dataNascita = campoDataNascita.getValue();
             String luogoDomicilio = campoLuogoDomicilio.getText().trim();
-            String ruolo = comboRuolo.getValue();
+            String ruolo = comboRuolo.getValue().toLowerCase();
 
             // Verifica che l'username non esista già
             if (verificaUsernameEsistente(username)) {
@@ -179,7 +179,6 @@ public class RegistrazioneController {
 
             // Imposta la nuova scena
             Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-            palcoscenico.setTitle("TheKnife - Login");
             palcoscenico.setScene(scena);
             palcoscenico.show();
 
@@ -224,12 +223,28 @@ public class RegistrazioneController {
             errori.add("L'username può contenere solo lettere, numeri, punti, underscore e trattini");
         }
 
-        // Valida password
-        if (campoPassword.getText().isEmpty()) {
+        String password = campoPassword.getText();
+
+        if (password.isEmpty()) {
             errori.add("La password è obbligatoria");
-        } else if (campoPassword.getText().length() < 5) {
-            errori.add("La password deve avere almeno 5 caratteri");
+        } else if (password.length() < 8) {
+            errori.add("La password deve avere almeno 8 caratteri");
+        } else {
+            // Controllo complessità
+            if (!password.matches(".*[A-Z].*")) {
+                errori.add("La password deve contenere almeno una lettera maiuscola");
+            }
+            if (!password.matches(".*[a-z].*")) {
+                errori.add("La password deve contenere almeno una lettera minuscola");
+            }
+            if (!password.matches(".*\\d.*")) {
+                errori.add("La password deve contenere almeno un numero");
+            }
+            if (!password.matches(".*[^a-zA-Z0-9].*")) {
+                errori.add("La password deve contenere almeno un carattere speciale");
+            }
         }
+
 
         // Valida conferma password
         if (!campoPassword.getText().equals(campoConfermaPassword.getText())) {

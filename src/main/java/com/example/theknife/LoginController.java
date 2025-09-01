@@ -244,12 +244,12 @@ public class LoginController {
         }
 
         Stage palcoscenico = (Stage) ((Node) evento.getSource()).getScene().getWindow();
-        palcoscenico.setTitle(titolo);
         palcoscenico.setScene(scena);
         palcoscenico.show();
     }
 
     /**
+     * Mostra un dialog di avviso.
      * Mostra un dialog di avviso.
      */
     private void mostraAvviso(String titolo, String messaggio, Alert.AlertType tipoAvviso) {
