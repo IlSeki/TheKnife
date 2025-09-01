@@ -178,7 +178,6 @@ import javafx.scene.layout.VBox;
      * </p>
      */
     private void setupListeners() {
-        // ... codice esistente ...
 
         tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             boolean isRistoratore = SessioneUtente.isRistoratore();
