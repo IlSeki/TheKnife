@@ -110,6 +110,13 @@ public class RistorantiController implements Initializable {
         colonnaPrezzo.setCellValueFactory(new PropertyValueFactory<>("prezzo"));
         colonnaCucina.setCellValueFactory(new PropertyValueFactory<>("cucina"));
 
+        // Imposta la proprietà reorderable su false per ogni colonna
+        colonnaNome.setReorderable(false);
+        colonnaIndirizzo.setReorderable(false);
+        colonnaLocalita.setReorderable(false);
+        colonnaPrezzo.setReorderable(false);
+        colonnaCucina.setReorderable(false);
+
         // Configura le colonne per larghezza uguale e non ridimensionabili dall'utente
         tabellaRistoranti.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 

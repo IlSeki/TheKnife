@@ -25,139 +25,147 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 
 /**
- * Controller per la gestione delle recensioni di un ristorante.
- * <p>
- * Permette di:
- * <ul>
- * <li>Visualizzare le recensioni in una TableView</li>
- * <li>Aggiungere, modificare o eliminare recensioni da parte degli utenti</li>
- * <li>Rispondere alle recensioni da parte dei ristoratori</li>
- * <li>Filtrare recensioni per numero di stelle</li>
- * <li>Mostrare un grafico a torta con la distribuzione delle stelle</li>
- * </ul>
- * </p>
- *
- * @author Samuele Secchi
- * @author Flavio Marin
- * @author Matilde Lecchi
- * @author Davide Caccia
- * @version 1.0
- * @since 2025-05-20
- */
-public class RecensioniController {
-    @FXML private PieChart pieChart;
-    @FXML private ComboBox<Integer> comboBox;
-    @FXML private TableView<Recensione> tableView;
-    @FXML private TableColumn<Recensione, Integer> colStelle;
-    @FXML private TableColumn<Recensione, String> colTesto;
-    @FXML private TableColumn<Recensione, String> colData;
-    @FXML private TableColumn<Recensione, String> colUtente;
-    @FXML private TableColumn<Recensione, String> colRisposta;
-    @FXML private TextArea recensioneTextArea;
-    @FXML private Slider stelleSlider;
-    @FXML private Button inviaButton;
-    @FXML private Button modificaButton;
-    @FXML private Button eliminaButton;
-    @FXML private Button rispondiButton;
-    @FXML private VBox rispostaBox;
-    @FXML private TextArea rispostaTextArea;
-    @FXML private Label totaleRecensioniLabel;
-    @FXML private Button modificaRispostaButton;
+         * Controller per la gestione delle recensioni di un ristorante.
+         * <p>
+         * Permette di:
+         * <ul>
+         * <li>Visualizzare le recensioni in una TableView</li>
+         * <li>Aggiungere, modificare o eliminare recensioni da parte degli utenti</li>
+         * <li>Rispondere alle recensioni da parte dei ristoratori</li>
+         * <li>Filtrare recensioni per numero di stelle</li>
+         * <li>Mostrare un grafico a torta con la distribuzione delle stelle</li>
+         * </ul>
+         * </p>
+         *
+         * @author Samuele Secchi
+         * @author Flavio Marin
+         * @author Matilde Lecchi
+         * @author Davide Caccia
+         * @version 1.0
+         * @since 2025-05-20
+         */
+        public class RecensioniController {
+            @FXML private PieChart pieChart;
+            @FXML private ComboBox<Integer> comboBox;
+            @FXML private TableView<Recensione> tableView;
+            @FXML private TableColumn<Recensione, Integer> colStelle;
+            @FXML private TableColumn<Recensione, String> colTesto;
+            @FXML private TableColumn<Recensione, String> colData;
+            @FXML private TableColumn<Recensione, String> colUtente;
+            @FXML private TableColumn<Recensione, String> colRisposta;
+            @FXML private TextArea recensioneTextArea;
+            @FXML private Slider stelleSlider;
+            @FXML private Button inviaButton;
+            @FXML private Button modificaButton;
+            @FXML private Button eliminaButton;
+            @FXML private Button rispondiButton;
+            @FXML private VBox rispostaBox;
+            @FXML private TextArea rispostaTextArea;
+            @FXML private Label totaleRecensioniLabel;
+            @FXML private Button modificaRispostaButton;
 
-    private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
-    private final GestionePossessoRistorante ownershipService = GestionePossessoRistorante.getInstance();
-    private String ristoranteId;
-    private ObservableList<Recensione> masterRecensioniList;
-    private FilteredList<Recensione> filteredList;
-    private RistoratoreDashboardController parentController;
-    private Parent rootToRestore;
-    private Runnable tornaAlMenuPrincipaleCallback;
+            private final GestioneRecensioni gestioneRecensioni = GestioneRecensioni.getInstance();
+            private final GestionePossessoRistorante ownershipService = GestionePossessoRistorante.getInstance();
+            private String ristoranteId;
+            private ObservableList<Recensione> masterRecensioniList;
+            private FilteredList<Recensione> filteredList;
+            private RistoratoreDashboardController parentController;
+            private Parent rootToRestore;
+            private Runnable tornaAlMenuPrincipaleCallback;
 
 
-    /**
-     * Imposta il controller della dashboard del ristoratore come parent.
-     *
-     * @param controller il controller padre della dashboard
-     */
-    public void setParentController(RistoratoreDashboardController controller) {
-        this.parentController = controller;
-    }
+            /**
+             * Imposta il controller della dashboard del ristoratore come parent.
+             *
+             * @param controller il controller padre della dashboard
+             */
+            public void setParentController(RistoratoreDashboardController controller) {
+                this.parentController = controller;
+            }
 
-    /**
-     * Notifica il controller padre di eventuali aggiornamenti alle recensioni.
-     */
-    private void notificaAggiornamentoRecensioni() {
-        if (parentController != null) {
-            parentController.onRecensioneUpdated();
-        }
-    }
+            /**
+             * Notifica il controller padre di eventuali aggiornamenti alle recensioni.
+             */
+            private void notificaAggiornamentoRecensioni() {
+                if (parentController != null) {
+                    parentController.onRecensioneUpdated();
+                }
+            }
 
-    public void setRootToRestore(Parent root) {
-        this.rootToRestore = root;
-    }
-    public void setTornaAlMenuPrincipaleCallback(Runnable callback) {
-        this.tornaAlMenuPrincipaleCallback = callback;
-    }
+            public void setRootToRestore(Parent root) {
+                this.rootToRestore = root;
+            }
+            public void setTornaAlMenuPrincipaleCallback(Runnable callback) {
+                this.tornaAlMenuPrincipaleCallback = callback;
+            }
 
-    /**
-     * Inizializza il controller.
-     */
-    @FXML
-    public void initialize() {
-        setupUI();
-        setupTable();
-        setupListeners();
-    }
+            /**
+             * Inizializza il controller e disabilita il riordino delle colonne.
+             */
+            @FXML
+            public void initialize() {
+                setupUI();
+                setupTable();
+                setupListeners();
 
-    /**
-     * Configura l'interfaccia utente in base al ruolo e allo stato dell'utente corrente.
-     * <p>
-     * - Mostra i pulsanti e i campi di input per le recensioni se l'utente è loggato
-     *   e non è un ristoratore proprietario del ristorante.
-     * - Mostra i pulsanti per rispondere/modificare risposte se l'utente è un ristoratore
-     *   proprietario del ristorante.
-     * </p>
-     */
-    private void setupUI() {
-        boolean isUtenteLoggato = SessioneUtente.isUtenteLoggato();
-        boolean isRistoratore = SessioneUtente.isRistoratore();
 
-        // Verifica se il ristoratore possiede questo ristorante
-        boolean isProprietario = false;
-        if (isRistoratore && ristoranteId != null) {
-            String currentUser = SessioneUtente.getUsernameUtente();
-            List<String> ownedRestaurants = ownershipService.getOwnedRestaurants(currentUser);
-            isProprietario = ownedRestaurants.contains(ristoranteId);
-        }
+                colStelle.setReorderable(false);
+                colTesto.setReorderable(false);
+                colData.setReorderable(false);
+                colUtente.setReorderable(false);
+                colRisposta.setReorderable(false);
+            }
 
-        boolean puo_recensire = isUtenteLoggato && (!isRistoratore || !isProprietario);
+            /**
+             * Configura l'interfaccia utente in base al ruolo e allo stato dell'utente corrente.
+             * <p>
+             * - Mostra i pulsanti e i campi di input per le recensioni se l'utente è loggato
+             *   e non è un ristoratore proprietario del ristorante.
+             * - Mostra i pulsanti per rispondere/modificare risposte se l'utente è un ristoratore
+             *   proprietario del ristorante.
+             * </p>
+             */
+            private void setupUI() {
+                boolean isUtenteLoggato = SessioneUtente.isUtenteLoggato();
+                boolean isRistoratore = SessioneUtente.isRistoratore();
 
-        // Nasconde o mostra i bottoni in base al ruolo dell'utente
-        inviaButton.setVisible(puo_recensire);
-        modificaButton.setVisible(false);
-        eliminaButton.setVisible(false);
-        rispondiButton.setVisible(isRistoratore && isProprietario);
-        modificaRispostaButton.setVisible(false); // Inizialmente nascosto
-        rispostaBox.setVisible(isRistoratore && isProprietario);
+                // Verifica se il ristoratore possiede questo ristorante
+                boolean isProprietario = false;
+                if (isRistoratore && ristoranteId != null) {
+                    String currentUser = SessioneUtente.getUsernameUtente();
+                    List<String> ownedRestaurants = ownershipService.getOwnedRestaurants(currentUser);
+                    isProprietario = ownedRestaurants.contains(ristoranteId);
+                }
 
-        // I campi di input per le recensioni sono visibili per chi può recensire
-        recensioneTextArea.setVisible(puo_recensire);
-        stelleSlider.setVisible(puo_recensire);
-    }
-    /**
-     * Inizializza la tabella delle recensioni configurando le colonne
-     * e preparando le liste osservabili necessarie per filtrare i dati.
-     */
-    private void setupTable() {
-        colStelle.setCellValueFactory(new PropertyValueFactory<>("stelle"));
-        colTesto.setCellValueFactory(new PropertyValueFactory<>("testo"));
-        colData.setCellValueFactory(new PropertyValueFactory<>("data"));
-        colUtente.setCellValueFactory(new PropertyValueFactory<>("username"));
-        colRisposta.setCellValueFactory(new PropertyValueFactory<>("risposta"));
+                boolean puo_recensire = isUtenteLoggato && (!isRistoratore || !isProprietario);
 
-        masterRecensioniList = FXCollections.observableArrayList();
-        filteredList = new FilteredList<>(masterRecensioniList, p -> true);
-        tableView.setItems(filteredList);
+                // Nasconde o mostra i bottoni in base al ruolo dell'utente
+                inviaButton.setVisible(puo_recensire);
+                modificaButton.setVisible(false);
+                eliminaButton.setVisible(false);
+                rispondiButton.setVisible(isRistoratore && isProprietario);
+                modificaRispostaButton.setVisible(false); // Inizialmente nascosto
+                rispostaBox.setVisible(isRistoratore && isProprietario);
+
+                // I campi di input per le recensioni sono visibili per chi può recensire
+                recensioneTextArea.setVisible(puo_recensire);
+                stelleSlider.setVisible(puo_recensire);
+            }
+            /**
+             * Inizializza la tabella delle recensioni configurando le colonne
+             * e preparando le liste osservabili necessarie per filtrare i dati.
+             */
+            private void setupTable() {
+                colStelle.setCellValueFactory(new PropertyValueFactory<>("stelle"));
+                colTesto.setCellValueFactory(new PropertyValueFactory<>("testo"));
+                colData.setCellValueFactory(new PropertyValueFactory<>("data"));
+                colUtente.setCellValueFactory(new PropertyValueFactory<>("username"));
+                colRisposta.setCellValueFactory(new PropertyValueFactory<>("risposta"));
+
+                masterRecensioniList = FXCollections.observableArrayList();
+                filteredList = new FilteredList<>(masterRecensioniList, p -> true);
+                tableView.setItems(filteredList);
+                tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
     }
     /**
      * Imposta i listener sugli elementi dell'interfaccia, in particolare

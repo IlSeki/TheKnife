@@ -131,6 +131,15 @@ public class UserProfileController implements Initializable {
         testoColumn.setCellValueFactory(new PropertyValueFactory<>("testo"));
         dataColumn.setCellValueFactory(new PropertyValueFactory<>("data"));
 
+        // Disabilita il riordino delle colonne
+        ristoranteColumn.setReorderable(false);
+        stelleColumn.setReorderable(false);
+        testoColumn.setReorderable(false);
+        dataColumn.setReorderable(false);
+
+        // Imposta la politica di ridimensionamento per riempire la larghezza della tabella
+        recensioniTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         // Carica e visualizza le recensioni dell'utente corrente.
         List<Recensione> recensioniUtente = gestioneRecensioni.getRecensioniUtente(SessioneUtente.getUsernameUtente());
         recensioniTable.setItems(FXCollections.observableArrayList(recensioniUtente));
