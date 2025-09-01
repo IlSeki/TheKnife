@@ -97,6 +97,10 @@ public class RistoratoreDashboardController implements Initializable {
      */
     @FXML private Label totaleRecensioniLabel;
     /**
+     * Pulsante per eseguire il logout dall'applicazione.
+     */
+    @FXML private Button logoutButton;
+    /**
      * Grafico a torta che visualizza la distribuzione delle recensioni per stelle.
      */
     @FXML private PieChart recensioniChart;
@@ -130,6 +134,7 @@ public class RistoratoreDashboardController implements Initializable {
         detailsContainer.setVisible(false);
         // Carica i ristoranti di proprietà dell'utente
         loadRistoranti();
+        logoutButton.setOnAction(event -> handleLogout());
     }
 
     /**
@@ -463,6 +468,32 @@ public class RistoratoreDashboardController implements Initializable {
     }
 
     /**
+     * Gestisce l'operazione di logout dell'utente.
+     * Resetta la sessione utente e riporta l'applicazione alla schermata di login ({@code login.fxml}).
+     *
+     * @throws IOException se il file FXML della schermata di login non viene trovato.
+     */
+    @FXML
+    private void handleLogout() {
+        SessioneUtente.eseguiLogout();
+        try {
+            URL resourceUrl = getClass().getResource("/com/example/theknife/login.fxml");
+            if (resourceUrl == null) {
+                throw new IOException("FXML file not found: login.fxml");
+            }
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
+            Stage currentStage = (Stage) logoutButton.getScene().getWindow();
+            Scene scene = new Scene(root);
+            currentStage.setScene(scene);
+            currentStage.show();
+        } catch (IOException e) {
+            System.err.println("Error during logout: " + e.getMessage());
+            showError("Errore", "Impossibile tornare alla schermata di login");
+        }
+    }
+
+    /**
      * Gestisce l'evento di click sul pulsante "Apri Recensioni".
      * Apre una nuova schermata per visualizzare tutte le recensioni del ristorante selezionato.
      *
@@ -509,6 +540,20 @@ public class RistoratoreDashboardController implements Initializable {
         alert.setTitle("Errore");
         alert.setHeaderText(header);
         alert.setContentText(e.getMessage());
+        alert.showAndWait();
+    }
+
+    /**
+     * Mostra una finestra di dialogo di errore all'utente.
+     *
+     * @param header Il titolo dell'errore.
+     * @param content Il messaggio descrittivo dell'errore.
+     */
+    private void showError(String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Errore");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
         alert.showAndWait();
     }
 }

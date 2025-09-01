@@ -148,6 +148,11 @@ public class RistorantiController implements Initializable {
         if(!"ristoratore".equals(ruoloUtente) && !"cliente".equals(ruoloUtente)){
             profiloButton.setText("Registrati");
         }
+        if("ristoratore".equals(ruoloUtente))
+            profiloButton.setVisible(false);
+        else
+            profiloButton.setVisible(true);
+
         dashboardButton.setVisible("ristoratore".equals(ruoloUtente));
         dashboardButton.setManaged("ristoratore".equals(ruoloUtente));
 
