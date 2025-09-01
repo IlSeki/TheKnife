@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="5e8c60be-3db7-4653-89de-3d7331e507ce" name="Changes" comment="piccoli aggiustamenti">
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/theknife/Utente.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/theknife/Utente.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="FxmlFile" />
+        <option value="JavaFXApplication" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;FlavioMarin82&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/IlSeki/TheKnife&quot;,
+    &quot;accountId&quot;: &quot;a2e6ac39-9021-4f0a-9c6a-571756d66df6&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="2wAUHH5R1j1vtW3Yhqe8OP9o3KA" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.App.executor": "Run",
+    "Application.HelloApplication.executor": "Run",
+    "Application.Main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.JavaFX",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-a94e463ab2e7-intellij.indexing.shared.core-IU-243.26053.27" />
+        <option value="bundled-js-predefined-d6986cc7102b-1632447f56bf-JavaScript-IU-243.26053.27" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5e8c60be-3db7-4653-89de-3d7331e507ce" name="Changes" comment="" />
+      <created>1745483783418</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1745483783418</updated>
+      <workItem from="1745483785007" duration="3875000" />
+      <workItem from="1747297323129" duration="2836000" />
+      <workItem from="1747379042452" duration="2138000" />
+      <workItem from="1747383963722" duration="24000" />
+      <workItem from="1747383999169" duration="527000" />
+      <workItem from="1747384574678" duration="119000" />
+      <workItem from="1747735120053" duration="513000" />
+      <workItem from="1747735645573" duration="1340000" />
+      <workItem from="1747737048585" duration="2816000" />
+      <workItem from="1748336195583" duration="13006000" />
+      <workItem from="1749110822738" duration="6759000" />
+      <workItem from="1749806405952" duration="2380000" />
+      <workItem from="1756199903268" duration="187000" />
+      <workItem from="1756200102883" duration="6598000" />
+      <workItem from="1756501054784" duration="14687000" />
+    </task>
+    <task id="LOCAL-00001" summary="ho aggiunto una scritta">
+      <option name="closed" value="true" />
+      <created>1745484414061</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1745484414061</updated>
+    </task>
+    <task id="LOCAL-00002" summary=":(">
+      <option name="closed" value="true" />
+      <created>1748349696431</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1748349696431</updated>
+    </task>
+    <task id="LOCAL-00003" summary=":)">
+      <option name="closed" value="true" />
+      <created>1748350541574</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1748350541574</updated>
+    </task>
+    <task id="LOCAL-00004" summary="apposto?">
+      <option name="closed" value="true" />
+      <created>1749124940704</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1749124940704</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Sistemato piccolo errore in GestionePossessoRistorante.java">
+      <option name="closed" value="true" />
+      <created>1756715788279</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1756715788279</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Sistemato il salvataggio dei dati dell'input ristoranti">
+      <option name="closed" value="true" />
+      <created>1756718248604</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1756718248604</updated>
+    </task>
+    <task id="LOCAL-00007" summary="cambiati requisiti minimi password e anche la loro visualizzazione">
+      <option name="closed" value="true" />
+      <created>1756719633909</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1756719633909</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Sistemate alcune maiuscole/minuscole">
+      <option name="closed" value="true" />
+      <created>1756719965844</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1756719965844</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Sistemate alcune maiuscole/minuscole pt2">
+      <option name="closed" value="true" />
+      <created>1756720022805</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1756720022805</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Altre modifiche nella visualizzazione">
+      <option name="closed" value="true" />
+      <created>1756720105717</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1756720105717</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Altre modifiche nella visualizzazione pt 2">
+      <option name="closed" value="true" />
+      <created>1756720390229</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1756720390230</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Sitemato nome delle schede">
+      <option name="closed" value="true" />
+      <created>1756720487480</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1756720487480</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Sitemato nome delle schede pt 2">
+      <option name="closed" value="true" />
+      <created>1756725019427</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1756725019427</updated>
+    </task>
+    <task id="LOCAL-00014" summary="sistemata alcune parti della javadoc">
+      <option name="closed" value="true" />
+      <created>1756725695213</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1756725695213</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Javadoc fino a ristorante dal basso">
+      <option name="closed" value="true" />
+      <created>1756728210565</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1756728210565</updated>
+    </task>
+    <task id="LOCAL-00016" summary="piccoli aggiustamenti">
+      <option name="closed" value="true" />
+      <created>1756729200563</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1756729200563</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="ho aggiunto una scritta" />
+    <MESSAGE value=":(" />
+    <MESSAGE value=":)" />
+    <MESSAGE value="apposto?" />
+    <MESSAGE value="Sistemato piccolo errore in GestionePossessoRistorante.java" />
+    <MESSAGE value="Sistemato il salvataggio dei dati dell'input ristoranti" />
+    <MESSAGE value="cambiati requisiti minimi password e anche la loro visualizzazione" />
+    <MESSAGE value="Sistemate alcune maiuscole/minuscole" />
+    <MESSAGE value="Sistemate alcune maiuscole/minuscole pt2" />
+    <MESSAGE value="Altre modifiche nella visualizzazione" />
+    <MESSAGE value="Altre modifiche nella visualizzazione pt 2" />
+    <MESSAGE value="Sitemato nome delle schede" />
+    <MESSAGE value="Sitemato nome delle schede pt 2" />
+    <MESSAGE value="sistemata alcune parti della javadoc" />
+    <MESSAGE value="Javadoc fino a ristorante dal basso" />
+    <MESSAGE value="piccoli aggiustamenti" />
+    <option name="LAST_COMMIT_MESSAGE" value="piccoli aggiustamenti" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

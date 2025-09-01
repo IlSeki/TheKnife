@@ -68,11 +68,14 @@
     <!-- Tabella ristoranti -->
     <TableView fx:id="tabellaRistoranti" VBox.vgrow="ALWAYS">
         <columns>
-            <TableColumn fx:id="colonnaNome" text="Nome" />
-            <TableColumn fx:id="colonnaIndirizzo" text="Indirizzo" />
-            <TableColumn fx:id="colonnaLocalita" text="Località" />
-            <TableColumn fx:id="colonnaPrezzo" text="Prezzo" />
-            <TableColumn fx:id="colonnaCucina" text="Cucina" />
+            <TableColumn fx:id="colonnaNome" editable="false" sortable="false" text="Nome" />
+            <TableColumn fx:id="colonnaIndirizzo" editable="false" sortable="false" text="Indirizzo" />
+            <TableColumn fx:id="colonnaLocalita" editable="false" sortable="false" text="Località" />
+            <TableColumn fx:id="colonnaPrezzo" editable="false" sortable="false" text="Prezzo" />
+            <TableColumn fx:id="colonnaCucina" editable="false" sortable="false" text="Cucina" />
         </columns>
+      <columnResizePolicy>
+         <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+      </columnResizePolicy>
     </TableView>
 </VBox>

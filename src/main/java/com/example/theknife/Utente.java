@@ -34,7 +34,7 @@ public class Utente {
      * Costruttore completo per inizializzare un nuovo utente con tutti i parametri necessari.
      * Questo costruttore è utilizzato per la registrazione e il caricamento dei dati da database.
      *
-     * @param nome Il nome di battesimo dell'utente.
+     * @param nome Il nome dell'utente.
      * @param cognome Il cognome dell'utente.
      * @param username Lo username univoco utilizzato per l'accesso e l'identificazione.
      * @param passwordHash L'hash della password dell'utente, generato tramite algoritmo di hashing sicuro.
@@ -63,7 +63,7 @@ public class Utente {
     // Metodi Getter
 
     /**
-     * Restituisce il nome di battesimo dell'utente.
+     * Restituisce il nome dell'utente.
      *
      * @return Il nome dell'utente.
      */
@@ -128,9 +128,9 @@ public class Utente {
     // Metodi Setter
 
     /**
-     * Imposta il nome di battesimo dell'utente.
+     * Imposta il nome dell'utente.
      *
-     * @param nome Il nuovo nome di battesimo.
+     * @param nome Il nuovo nome.
      */
     public void setNome(String nome) {
         this.nome = nome;
