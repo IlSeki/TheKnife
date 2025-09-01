@@ -20,6 +20,25 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * Controller per la gestione dell'interfaccia di inserimento di un nuovo ristorante.
+ * Questa classe gestisce l'interazione tra l'interfaccia utente FXML e la logica di business
+ * per l'aggiunta di nuovi ristoranti nel sistema.
+ *
+ * Il controller si occupa di:
+ * - Inizializzazione dei componenti dell'interfaccia
+ * - Validazione degli input dell'utente
+ * - Salvataggio dei dati del ristorante
+ * - Gestione degli errori e feedback utente
+ * @author Samuele Secchi, 761031, Sede CO
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
+ * @version 1.0
+ * @since 2025-05-20
+ */
+
+
 public class RistoranteInputController implements Initializable {
     @FXML private TextField nomeField;
     @FXML private TextField indirizzoField;
@@ -42,14 +61,35 @@ public class RistoranteInputController implements Initializable {
     private Runnable tornaAllaDashboardCallback;
     private Runnable aggiornaDatabaseRistorantiCallback;
 
+    /**
+     * Imposta il callback per tornare alla dashboard principale.
+     *
+     * @param callback il callback da eseguire per tornare alla dashboard
+     */
     public void setTornaAllaDashboardCallback(Runnable callback) {
         this.tornaAllaDashboardCallback = callback;
     }
-
+    /**
+     * Imposta il callback per aggiornare il database dei ristoranti.
+     *
+     * @param callback il callback da eseguire per aggiornare il database
+     */
     public void setAggiornaDatabaseRistorantiCallback(Runnable callback) {
         this.aggiornaDatabaseRistorantiCallback = callback;
     }
 
+    /**
+     * Inizializza i componenti dell'interfaccia utente.
+     * Questo metodo viene chiamato automaticamente dal framework JavaFX dopo il caricamento del file FXML.
+     *
+     * Si occupa di:
+     * - Popolare le ComboBox con i valori predefiniti
+     * - Configurare le ListView per la selezione multipla
+     * - Impostare i valori di default
+     *
+     * @param location L'URL utilizzato per risolvere i percorsi relativi per l'oggetto root, o null se non conosciuto
+     * @param resources Le risorse utilizzate per localizzare l'oggetto root, o null se non localizzato
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         prezzoComboBox.setItems(FXCollections.observableArrayList("€", "€€", "€€€", "€€€€"));
@@ -77,6 +117,19 @@ public class RistoranteInputController implements Initializable {
         ));
     }
 
+    /**
+     * Gestisce il salvataggio di un nuovo ristorante.
+     * Questo metodo viene chiamato quando l'utente clicca il pulsante "Salva".
+     * Esegue le seguenti operazioni:
+     * 1. Valida tutti gli input dell'utente
+     * 2. Verifica che non esista già un ristorante con lo stesso nome
+     * 3. Crea un nuovo oggetto Ristorante con i dati inseriti
+     * 4. Salva il ristorante nel file CSV
+     * 5. Associa il ristorante al proprietario se l'utente è un ristoratore
+     * 6. Aggiorna il database e torna alla dashboard
+     *
+     * @throws Exception se si verifica un errore durante il salvataggio
+     */
     @FXML
     private void handleSalva() {
         if (!validaInput()) {
@@ -84,17 +137,18 @@ public class RistoranteInputController implements Initializable {
         }
 
         try {
+            // Parsing delle coordinate con valori di default
             double longitudine = longitudineField.getText().isEmpty() ? 0.0 :
                     Double.parseDouble(longitudineField.getText());
             double latitudine = latitudineField.getText().isEmpty() ? 0.0 :
                     Double.parseDouble(latitudineField.getText());
-
+            // Verifica unicità del nome
             String nome = nomeField.getText().trim();
             if (gestioneRistorante.getRistorante(nome) != null) {
                 mostraErrore("Errore", "Esiste già un ristorante con questo nome. Scegli un nome diverso.");
                 return;
             }
-
+            // Costruzione stringhe per campi multipli
             String cucine = cucinaListView.getSelectionModel().getSelectedItems()
                     .stream()
                     .collect(Collectors.joining(", "));
@@ -102,7 +156,7 @@ public class RistoranteInputController implements Initializable {
             String servizi = checkBoxServizi.getSelectionModel().getSelectedItems()
                     .stream()
                     .collect(Collectors.joining(", "));
-
+            // Creazione del nuovo ristorante
             Ristorante nuovoRistorante = new Ristorante(
                     nome,
                     indirizzoField.getText().trim(),
@@ -119,7 +173,7 @@ public class RistoranteInputController implements Initializable {
                     servizi,
                     descrizioneArea.getText().trim()
             );
-
+            // Salvataggio nel CSV
             aggiungiRistoranteAlCSV(nuovoRistorante);
 
             String username = SessioneUtente.getUsernameUtente();
@@ -134,7 +188,7 @@ public class RistoranteInputController implements Initializable {
             successAlert.showAndWait();
 
             System.out.println("Debug: Salvataggio ristorante completato");
-
+            // Salvataggio nel CSV
             GestioneRistorante.getInstance().forceRefresh();
 
             if (aggiornaDatabaseRistorantiCallback != null) {
@@ -153,7 +207,15 @@ public class RistoranteInputController implements Initializable {
             mostraErrore("Errore", e.getMessage());
         }
     }
-
+    /**
+     * Valida tutti gli input dell'utente prima del salvataggio.
+     *
+     * Controlla che:
+     * - I campi obbligatori non siano vuoti (nome, indirizzo, località, prezzo, cucina)
+     * - Le coordinate, se inserite, siano numeri validi
+     *
+     * @return true se tutti gli input sono validi, false altrimenti
+     */
     private boolean validaInput() {
         StringBuilder errori = new StringBuilder();
         if (nomeField.getText().trim().isEmpty()) {
@@ -193,14 +255,23 @@ public class RistoranteInputController implements Initializable {
         }
         return true;
     }
-
+    /**
+     * Gestisce l'annullamento dell'inserimento del ristorante.
+     * Questo metodo viene chiamato quando l'utente clicca il pulsante "Annulla".
+     * Riporta l'utente alla dashboard principale senza salvare i dati.
+     */
     @FXML
     private void handleAnnulla() {
         if (tornaAllaDashboardCallback != null) {
             tornaAllaDashboardCallback.run();
         }
     }
-
+    /**
+     * Mostra un messaggio di errore all'utente tramite una finestra di dialogo.
+     *
+     * @param titolo il titolo della finestra di errore
+     * @param messaggio il messaggio di errore da visualizzare
+     */
     private void mostraErrore(String titolo, String messaggio) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titolo);
@@ -208,7 +279,17 @@ public class RistoranteInputController implements Initializable {
         alert.setContentText(messaggio);
         alert.showAndWait();
     }
-
+    /**
+     * Aggiunge un nuovo ristorante al file CSV.
+     * Questo metodo scrive i dati del ristorante in formato CSV nel file specificato,
+     * mantenendo la persistenza dei dati del sistema.
+     *
+     * Il file CSV utilizzato è "data/michelin_my_maps.csv" e viene aperto in modalità append
+     * per preservare i dati esistenti.
+     *
+     * @param ristorante l'oggetto Ristorante da salvare nel file CSV
+     * @throws IOException se si verifica un errore durante la scrittura del file
+     */
     private void aggiungiRistoranteAlCSV(Ristorante ristorante) {
         String filePath = "data/michelin_my_maps.csv";
         try (CSVWriter writer = new CSVWriter(new FileWriter(filePath, true))) {

@@ -14,7 +14,15 @@ import java.util.Map;
  *
  * NOTA: Questa classe è ora deprecata in favore di GestioneRistorante
  * che gestisce anche la proprietà dei ristoranti in modo più efficiente.
+ *
+ * @author Samuele Secchi, 761031, Sede CO
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
+ * @version 1.0
+ * @since 2025-05-20
  */
+
 public class GestionePossessoRistorante {
     private static final String OWNERSHIP_FILE_PATH = "data/proprietari_ristoranti.csv";
     private static final String CSV_HEADER = "username,ristorante";
@@ -96,7 +104,12 @@ public class GestionePossessoRistorante {
             }
         }
     }
-
+    /**
+     * Restituisce la lista degli ID dei ristoranti posseduti da un utente.
+     *
+     * @param username username del ristoratore
+     * @return lista degli ID dei ristoranti posseduti (vuota se nessuno)
+     */
     public List<String> getOwnedRestaurants(String username) {
         return ownershipMap.getOrDefault(username, new ArrayList<>());
     }

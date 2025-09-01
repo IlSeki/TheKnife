@@ -10,6 +10,13 @@ import java.util.Set;
  * Servizio per la gestione delle preferenze degli utenti.
  * Implementa il pattern Singleton e gestisce i ristoranti preferiti
  * degli utenti, mantenendo la persistenza su file CSV.
+ *
+ * @author Samuele Secchi, 761031, Sede CO
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
+ * @version 1.0
+ * @since 2025-05-20
  */
 public class GestionePreferiti {
     private static final String CSV_FILE = "data/preferiti.csv";

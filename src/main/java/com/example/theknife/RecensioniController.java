@@ -109,6 +109,15 @@ public class RecensioniController {
         setupListeners();
     }
 
+    /**
+     * Configura l'interfaccia utente in base al ruolo e allo stato dell'utente corrente.
+     * <p>
+     * - Mostra i pulsanti e i campi di input per le recensioni se l'utente è loggato
+     *   e non è un ristoratore proprietario del ristorante.
+     * - Mostra i pulsanti per rispondere/modificare risposte se l'utente è un ristoratore
+     *   proprietario del ristorante.
+     * </p>
+     */
     private void setupUI() {
         boolean isUtenteLoggato = SessioneUtente.isUtenteLoggato();
         boolean isRistoratore = SessioneUtente.isRistoratore();
@@ -135,7 +144,10 @@ public class RecensioniController {
         recensioneTextArea.setVisible(puo_recensire);
         stelleSlider.setVisible(puo_recensire);
     }
-
+    /**
+     * Inizializza la tabella delle recensioni configurando le colonne
+     * e preparando le liste osservabili necessarie per filtrare i dati.
+     */
     private void setupTable() {
         colStelle.setCellValueFactory(new PropertyValueFactory<>("stelle"));
         colTesto.setCellValueFactory(new PropertyValueFactory<>("testo"));
@@ -147,7 +159,16 @@ public class RecensioniController {
         filteredList = new FilteredList<>(masterRecensioniList, p -> true);
         tableView.setItems(filteredList);
     }
-
+    /**
+     * Imposta i listener sugli elementi dell'interfaccia, in particolare
+     * sulla selezione della tabella delle recensioni.
+     * <p>
+     * Gestisce la visibilità dei pulsanti e dei campi in base:
+     * - al ruolo dell'utente (cliente o ristoratore),
+     * - al fatto che sia autore della recensione,
+     * - alla presenza o meno di una risposta già esistente.
+     * </p>
+     */
     private void setupListeners() {
         // ... codice esistente ...
 
@@ -387,6 +408,20 @@ public class RecensioniController {
         alert.showAndWait();
     }
 
+    /**
+     * Gestisce la modifica della risposta a una recensione da parte del ristoratore.
+     * <p>
+     * Controlla che:
+     * <ul>
+     *   <li>ci sia una recensione selezionata,</li>
+     *   <li>l'utente sia un ristoratore,</li>
+     *   <li>il ristoratore sia proprietario del ristorante,</li>
+     *   <li>il testo della risposta non sia vuoto.</li>
+     * </ul>
+     * Se le condizioni sono soddisfatte, aggiorna la risposta e la salva tramite
+     * {@code gestioneRecensioni}, ricaricando i dati e notificando l'aggiornamento.
+     * In caso di successo mostra un messaggio di conferma.
+     */
     @FXML
     private void handleModificaRisposta() {
         Recensione selected = tableView.getSelectionModel().getSelectedItem();

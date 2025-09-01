@@ -69,7 +69,14 @@ public class UserProfileController implements Initializable {
             System.err.println("Impossibile caricare il CSS: " + e.getMessage());
         }
     }
-
+    /**
+     * Inizializza il controller dopo che il file FXML è stato caricato.
+     * Configura l'interfaccia utente, imposta i dati dell'utente corrente,
+     * configura le tabelle e gestisce la visibilità dei componenti in base al ruolo.
+     *
+     * @param location  l'URL utilizzato per risolvere percorsi relativi per l'oggetto root, o null se non noto
+     * @param resources i ResourceBundle utilizzati per localizzare l'oggetto root, o null se non localizzato
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Setup informazioni utente
@@ -206,14 +213,13 @@ public class UserProfileController implements Initializable {
     /**
      * Apre i dettagli di un ristorante a partire dal suo nome.
      * Se il ristorante non è più disponibile, mostra un messaggio di errore.
+     * Implementa diversi tentativi di ricerca per garantire la massima compatibilità.
      *
      * @param nomeRistorante identificativo o nome del ristorante da mostrare
      */
     private void openRistoranteDetail(String nomeRistorante) {
         System.out.println("DEBUG: Cercando ristorante con nome: '" + nomeRistorante + "'");
 
-        // FORZARE IL CARICAMENTO DEI RISTORANTI
-        // Questo potrebbe essere necessario se GestioneRistorante ha un lazy loading
         try {
             // Prova a chiamare un metodo che forza il caricamento
             gestioneRistorante.caricaRistoranti(); // Se questo metodo esiste
@@ -244,7 +250,6 @@ public class UserProfileController implements Initializable {
             System.out.println("DEBUG: Totale ristoranti disponibili: " + tuttiRistoranti.size());
 
             if (tuttiRistoranti.isEmpty()) {
-                // Se non ci sono ristoranti, proviamo approcci alternativi
                 System.out.println("DEBUG: Nessun ristorante caricato, usando approccio alternativo...");
 
                 // Usa lo stesso approccio del PreferitiController
@@ -303,10 +308,10 @@ public class UserProfileController implements Initializable {
 
             Stage currentStage = (Stage) nomeLabel.getScene().getWindow();
 
-            // 🔹 Salvo la scena originale
+            // Salvo la scena originale
             Scene originalScene = currentStage.getScene();
 
-            // 🔹 Callback: ripristina la scena originale
+            // Callback: ripristina la scena originale
             controller.setTornaAlMenuPrincipaleCallback(() -> {
                 System.out.println("DEBUG: Callback eseguita, torno al menu principale");
                 currentStage.setScene(originalScene);
@@ -314,7 +319,7 @@ public class UserProfileController implements Initializable {
                 this.refreshData();
             });
 
-            // 🔹 Creo e setto la nuova scena dei dettagli
+            // Creo e setto la nuova scena dei dettagli
             Scene newScene = new Scene(root);
             addStylesheet(newScene);
             currentStage.setScene(newScene);
@@ -328,6 +333,8 @@ public class UserProfileController implements Initializable {
 
     /**
      * Aggiorna dinamicamente la lista delle recensioni e dei preferiti utente.
+     * Questo metodo viene chiamato quando si torna dalla visualizzazione
+     * dei dettagli di un ristorante per riflettere eventuali modifiche.
      */
     public void refreshData() {
         // Aggiorna recensioni

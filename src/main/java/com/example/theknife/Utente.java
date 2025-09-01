@@ -201,12 +201,28 @@ public class Utente {
         return "ospite".equalsIgnoreCase(ruolo);
     }
 
+    /**
+     * Restituisce una rappresentazione testuale dell'oggetto Utente.
+     * La stringa include tutti i campi principali dell'utente formattati
+     * in modo leggibile.
+     *
+     * @return una stringa che rappresenta l'utente nel formato
+     *         "Utente{nome='...', cognome='...', username='...', ruolo='...', luogo='...'}"
+     */
     @Override
     public String toString() {
         return String.format("Utente{nome='%s', cognome='%s', username='%s', ruolo='%s', luogo='%s'}",
                 nome, cognome, username, ruolo, luogoDomicilio);
     }
 
+    /**
+     * Confronta questo utente con l'oggetto specificato per verificare l'uguaglianza.
+     * Due utenti sono considerati uguali se hanno lo stesso username.
+     *
+     * @param obj l'oggetto con cui confrontare questo utente
+     * @return {@code true} se l'oggetto specificato è uguale a questo utente,
+     *         {@code false} altrimenti
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -216,6 +232,12 @@ public class Utente {
         return username != null && username.equals(utente.username);
     }
 
+    /**
+     * Restituisce il valore hash code per questo utente.
+     * Il hash code è basato sull'username dell'utente.
+     *
+     * @return il valore hash code per questo utente, o 0 se l'username è null
+     */
     @Override
     public int hashCode() {
         return username != null ? username.hashCode() : 0;

@@ -23,6 +23,12 @@ import javafx.stage.Stage;
 /**
  * Controller per la gestione del login degli utenti.
  * Gestisce l'autenticazione degli utenti e il reindirizzamento alla schermata principale.
+ * @author Samuele Secchi, 761031, Sede CO
+ * @author Flavio Marin, 759910, Sede CO
+ * @author Matilde Lecchi, 759875, Sede CO
+ * @author Davide Caccia, 760742, Sede CO
+ * @version 1.0
+ * @since 2025-05-20
  */
 public class LoginController {
     private static final String USERS_FILE = "data/utenti.csv";
