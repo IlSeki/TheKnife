@@ -224,12 +224,28 @@ public class RegistrazioneController {
             errori.add("L'username può contenere solo lettere, numeri, punti, underscore e trattini");
         }
 
-        // Valida password
-        if (campoPassword.getText().isEmpty()) {
+        String password = campoPassword.getText();
+
+        if (password.isEmpty()) {
             errori.add("La password è obbligatoria");
-        } else if (campoPassword.getText().length() < 5) {
-            errori.add("La password deve avere almeno 5 caratteri");
+        } else if (password.length() < 8) {
+            errori.add("La password deve avere almeno 8 caratteri");
+        } else {
+            // Controllo complessità
+            if (!password.matches(".*[A-Z].*")) {
+                errori.add("La password deve contenere almeno una lettera maiuscola");
+            }
+            if (!password.matches(".*[a-z].*")) {
+                errori.add("La password deve contenere almeno una lettera minuscola");
+            }
+            if (!password.matches(".*\\d.*")) {
+                errori.add("La password deve contenere almeno un numero");
+            }
+            if (!password.matches(".*[^a-zA-Z0-9].*")) {
+                errori.add("La password deve contenere almeno un carattere speciale");
+            }
         }
+
 
         // Valida conferma password
         if (!campoPassword.getText().equals(campoConfermaPassword.getText())) {
