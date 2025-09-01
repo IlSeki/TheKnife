@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import com.opencsv.CSVWriter;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -140,7 +141,6 @@ public class RistoranteInputController implements Initializable {
                 aggiornaDatabaseRistorantiCallback.run();
             }
 
-            // Forza il refresh dei dati di proprietà
             GestionePossessoRistorante.getInstance().refreshOwnershipData();
 
             if (tornaAllaDashboardCallback != null) {
@@ -152,13 +152,10 @@ public class RistoranteInputController implements Initializable {
             e.printStackTrace();
             mostraErrore("Errore", e.getMessage());
         }
-
-
     }
 
     private boolean validaInput() {
         StringBuilder errori = new StringBuilder();
-
         if (nomeField.getText().trim().isEmpty()) {
             errori.append("- Il nome è obbligatorio\n");
         }
@@ -174,7 +171,6 @@ public class RistoranteInputController implements Initializable {
         if (cucinaListView.getSelectionModel().getSelectedItems().isEmpty()) {
             errori.append("- Il tipo di cucina è obbligatorio\n");
         }
-
         if (!longitudineField.getText().trim().isEmpty() || !latitudineField.getText().trim().isEmpty()) {
             try {
                 if (!longitudineField.getText().trim().isEmpty()) {
@@ -187,7 +183,6 @@ public class RistoranteInputController implements Initializable {
                 errori.append("- Le coordinate devono essere numeri validi\n");
             }
         }
-
         if (errori.length() > 0) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Errore");
@@ -196,7 +191,6 @@ public class RistoranteInputController implements Initializable {
             alert.showAndWait();
             return false;
         }
-
         return true;
     }
 
@@ -217,25 +211,24 @@ public class RistoranteInputController implements Initializable {
 
     private void aggiungiRistoranteAlCSV(Ristorante ristorante) {
         String filePath = "data/michelin_my_maps.csv";
-        String csvLine = String.format("%s,%s,%s,%s,%s,%.6f,%.6f,%s,%s,%s,%s,%s,%s,%s\n",
-                ristorante.getNome().replace(",", ";"),
-                ristorante.getIndirizzo().replace(",", ";"),
-                ristorante.getLocalita().replace(",", ";"),
-                ristorante.getPrezzo(),
-                ristorante.getCucina().replace(",", ";"),
-                ristorante.getLongitudine(),
-                ristorante.getLatitudine(),
-                ristorante.getNumeroTelefono().replace(",", ";"),
-                ristorante.getUrl().replace(",", ";"),
-                ristorante.getSitoWeb().replace(",", ";"),
-                ristorante.getPremio().replace(",", ";"),
-                ristorante.getStellaVerde(),
-                ristorante.getServizi().replace(",", ";"),
-                ristorante.getDescrizione().replace(",", ";")
-        );
-
-        try (FileWriter writer = new FileWriter(filePath, true)) {
-            writer.append(csvLine);
+        try (CSVWriter writer = new CSVWriter(new FileWriter(filePath, true))) {
+            String[] record = new String[]{
+                    ristorante.getNome(),
+                    ristorante.getIndirizzo(),
+                    ristorante.getLocalita(),
+                    ristorante.getPrezzo(),
+                    ristorante.getCucina(),
+                    String.valueOf(ristorante.getLongitudine()),
+                    String.valueOf(ristorante.getLatitudine()),
+                    ristorante.getNumeroTelefono(),
+                    ristorante.getUrl(),
+                    ristorante.getSitoWeb(),
+                    ristorante.getPremio(),
+                    ristorante.getStellaVerde(),
+                    ristorante.getServizi(),
+                    ristorante.getDescrizione()
+            };
+            writer.writeNext(record);
             System.out.println("Ristorante aggiunto al file CSV.");
         } catch (IOException e) {
             System.err.println("Errore durante l'aggiunta del ristorante al CSV: " + e.getMessage());
