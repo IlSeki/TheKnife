@@ -330,7 +330,6 @@ public class RistoratoreDashboardController implements Initializable {
 
             currentScene.setRoot(root);
             Stage stage = (Stage) currentScene.getWindow();
-            stage.setTitle("Aggiungi ristorante");
 
         } catch (IOException e) {
             e.printStackTrace();
