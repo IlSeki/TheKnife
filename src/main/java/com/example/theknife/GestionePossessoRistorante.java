@@ -100,12 +100,6 @@ public class GestionePossessoRistorante {
     public List<String> getOwnedRestaurants(String username) {
         return ownershipMap.getOrDefault(username, new ArrayList<>());
     }
-
-    public boolean isOwner(String username, String ristoranteId) {
-        List<String> ownedRestaurants = ownershipMap.get(username);
-        return ownedRestaurants != null && ownedRestaurants.contains(ristoranteId);
-    }
-
     /**
      * Associa un ristorante a un proprietario.
      */

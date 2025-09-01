@@ -201,15 +201,6 @@ public class Utente {
         return "ospite".equalsIgnoreCase(ruolo);
     }
 
-    /**
-     * Verifica se la password fornita corrisponde a quella dell'utente.
-     * @param passwordHashDaVerificare L'hash della password da verificare
-     * @return true se le password corrispondono
-     */
-    public boolean verificaPassword(String passwordHashDaVerificare) {
-        return this.passwordHash != null && this.passwordHash.equals(passwordHashDaVerificare);
-    }
-
     @Override
     public String toString() {
         return String.format("Utente{nome='%s', cognome='%s', username='%s', ruolo='%s', luogo='%s'}",

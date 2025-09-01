@@ -52,26 +52,6 @@ public class Recensione {
         this.risposta = new SimpleStringProperty("");
     }
 
-    // ------------------ Property Getters ------------------
-
-    /** Restituisce la property delle stelle */
-    public IntegerProperty stelleProperty() { return stelle; }
-
-    /** Restituisce la property del testo della recensione */
-    public StringProperty testoProperty() { return testo; }
-
-    /** Restituisce la property dell'ID del ristorante */
-    public StringProperty ristoranteProperty() { return ristoranteId; }
-
-    /** Restituisce la property dell'username dell'utente */
-    public StringProperty usernameProperty() { return username; }
-
-    /** Restituisce la property della data della recensione */
-    public StringProperty dataProperty() { return data; }
-
-    /** Restituisce la property della risposta del ristorante */
-    public StringProperty rispostaProperty() { return risposta; }
-
     // ------------------ Value Getters ------------------
 
     /** Restituisce il numero di stelle della recensione */

@@ -171,25 +171,6 @@ public class GestioneRecensioni {
     }
 
     /**
-     * Aggiunge una risposta a una recensione.
-     */
-    public void aggiungiRisposta(String username, String ristoranteId, String risposta) {
-        String currentUser = SessioneUtente.getUsernameUtente();
-        if (!GestioneRistorante.getInstance().isProprietario(currentUser, ristoranteId)) {
-            throw new IllegalStateException("Non sei autorizzato a rispondere a questa recensione");
-        }
-
-        List<Recensione> recensioni = recensioniMap.get(ristoranteId);
-        if (recensioni != null) {
-            recensioni.stream()
-                    .filter(r -> r.getUsername().equals(username) && r.getRistoranteId().equals(ristoranteId))
-                    .findFirst()
-                    .ifPresent(r -> r.setRisposta(risposta));
-            salvaRecensioni();
-        }
-    }
-
-    /**
      * Salva la risposta a una recensione.
      */
     public void salvaRispostaRecensione(Recensione recensione) {
@@ -213,26 +194,5 @@ public class GestioneRecensioni {
                 .flatMap(List::stream)
                 .filter(r -> r.getUsername().equals(username))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Calcola la media delle stelle per un ristorante.
-     */
-    public double getMediaStelleRistorante(String ristoranteId) {
-        List<Recensione> recensioni = recensioniMap.get(ristoranteId);
-        if (recensioni == null || recensioni.isEmpty()) {
-            return 0.0;
-        }
-        return recensioni.stream()
-                .mapToInt(Recensione::getStelle)
-                .average()
-                .orElse(0.0);
-    }
-
-    /**
-     * Controlla se un utente è l'autore di una recensione.
-     */
-    public boolean isRecensioneOwner(String username, Recensione recensione) {
-        return recensione != null && recensione.getUsername().equals(username);
     }
 }

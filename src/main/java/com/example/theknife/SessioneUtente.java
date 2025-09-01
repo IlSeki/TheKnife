@@ -45,10 +45,10 @@ public class SessioneUtente {
     /**
      * Imposta i dati dell'utente corrente e segna la sessione come attiva.
      *
-     * @param nome Il nome dell'utente.
-     * @param cognome Il cognome dell'utente.
+     * @param nome     Il nome dell'utente.
+     * @param cognome  Il cognome dell'utente.
      * @param username Lo username dell'utente.
-     * @param ruolo Il ruolo dell'utente ("cliente", "ristoratore", "ospite").
+     * @param ruolo    Il ruolo dell'utente ("cliente", "ristoratore", "ospite").
      */
     public static void impostaUtenteCorrente(String nome, String cognome, String username, String ruolo) {
         SessioneUtente sessione = getIstanza();
@@ -70,26 +70,6 @@ public class SessioneUtente {
     public static boolean isUtenteLoggato() {
         SessioneUtente sessione = getIstanza();
         return sessione.isLoggato && sessione.username != null && !sessione.username.isEmpty();
-    }
-
-    /**
-     * Restituisce il nome dell'utente corrente.
-     *
-     * @return Il nome dell'utente o null se nessun utente è autenticato.
-     */
-    public static String getNomeUtente() {
-        SessioneUtente sessione = getIstanza();
-        return sessione.isLoggato ? sessione.nome : null;
-    }
-
-    /**
-     * Restituisce il cognome dell'utente corrente.
-     *
-     * @return Il cognome dell'utente o null se nessun utente è autenticato.
-     */
-    public static String getCognomeUtente() {
-        SessioneUtente sessione = getIstanza();
-        return sessione.isLoggato ? sessione.cognome : null;
     }
 
     /**
@@ -213,47 +193,5 @@ public class SessioneUtente {
      */
     public static String getStringaSessione() {
         return getIstanza().toString();
-    }
-
-    /**
-     * Restituisce informazioni dettagliate di debug sulla sessione corrente.
-     *
-     * @return Stringa con informazioni complete di debug.
-     */
-    public static String getDebugInfo() {
-        SessioneUtente sessione = getIstanza();
-        return String.format("DEBUG - Sessione: loggato=%s, nome=%s, cognome=%s, username=%s, ruolo=%s, istanza=%s",
-                sessione.isLoggato, sessione.nome, sessione.cognome, sessione.username, sessione.ruolo,
-                sessione.hashCode());
-    }
-
-    /**
-     * Restituisce informazioni di stato della sessione in formato compatto.
-     *
-     * @return Stringa con stato della sessione.
-     */
-    public static String getStatoSessione() {
-        if (isUtenteLoggato()) {
-            return String.format("Utente loggato: %s (%s)", getNomeCompletoUtente(), getRuoloUtente());
-        } else {
-            return "Nessun utente loggato";
-        }
-    }
-
-    /**
-     * Metodo di utilità per verificare se la sessione è valida.
-     * Controlla la coerenza dei dati della sessione.
-     *
-     * @return true se la sessione è in uno stato valido, false altrimenti.
-     */
-    public static boolean isSessioneValida() {
-        SessioneUtente sessione = getIstanza();
-        if (!sessione.isLoggato) {
-            return true; // Sessione non loggata è valida
-        }
-
-        // Se loggato, deve avere almeno username e ruolo
-        return sessione.username != null && !sessione.username.isEmpty() &&
-                sessione.ruolo != null && !sessione.ruolo.isEmpty();
     }
 }
