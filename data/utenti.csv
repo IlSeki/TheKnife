@@ -1,0 +1,8 @@
+
+nome,cognome,username,passwordHash,dataNascita,luogoDomicilio,ruolo
+flavio,marin,Broder,1912766d6ba0e50e8b1bacfb51207e83b95b7ac0cd8ce15307cdf4965e7e3f6c,2004-02-17,costa masnaga,cliente
+samuele,secchi,seki,f40dee019286cb0cc5695d57adf7943f716ee05e37623424c28766bb1c070688,2000-01-01,Como,ristoratore
+davide,daveice,davide,f40dee019286cb0cc5695d57adf7943f716ee05e37623424c28766bb1c070688,2000-01-01,napoli,cliente
+JI,JO,bob,1d707811988069ca760826861d6d63a10e8c3b7f171c4441a6472ea58c11711b,2000-01-01,como,cliente
+bobo,bibo,skagga,b5ba1ee4b6cbe1d8685948ff1ed77c6d42226e50c7cfde1694eea4e2131d9a4c,2000-01-01,napoloi,Ristoratore
+DFAVIAGJSG,AGSGASGAG,Skibidi,e7b9342fec6851664de78ec47fc5fbe7edabaa335887744f8c75f20e02102d12,2000-01-01,Catania,ristoratore
