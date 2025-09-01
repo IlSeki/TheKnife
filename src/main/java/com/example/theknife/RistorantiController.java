@@ -110,6 +110,9 @@ public class RistorantiController implements Initializable {
         colonnaPrezzo.setCellValueFactory(new PropertyValueFactory<>("prezzo"));
         colonnaCucina.setCellValueFactory(new PropertyValueFactory<>("cucina"));
 
+        // Configura le colonne per larghezza uguale e non ridimensionabili dall'utente
+        tabellaRistoranti.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         // Aggiunge un listener per gestire il doppio click sulla tabella
         tabellaRistoranti.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
