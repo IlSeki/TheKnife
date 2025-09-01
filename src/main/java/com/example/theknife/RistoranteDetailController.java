@@ -325,6 +325,16 @@ public class RistoranteDetailController implements Initializable {
                     }
                 }
 
+                // Prezzo
+                if (prezzoLabel != null) {
+                    String prezzo = ristorante.getPrezzo();
+                    if (prezzo != null && !prezzo.trim().isEmpty()) {
+                        telefonoLabel.setText(prezzo);
+                    } else {
+                        prezzoLabel.setText("Non disponibile");
+                    }
+                }
+
                 // Sito web
                 if (sitoWebLink != null) {
                     String sitoWeb = ristorante.getSitoWeb();
@@ -368,7 +378,6 @@ public class RistoranteDetailController implements Initializable {
                     }
                 }
 
-                // Descrizione - CORREZIONE IMPORTANTE
                 if (descrizioneTextArea != null) {
                     String descrizione = ristorante.getDescrizione();
                     System.out.println("Descrizione dal ristorante: '" + descrizione + "'"); // Debug
