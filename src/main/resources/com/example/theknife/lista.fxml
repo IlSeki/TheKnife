@@ -38,7 +38,7 @@
             <Insets left="20" right="20" />
         </padding>
         <TextField fx:id="campoRicerca" promptText="Cerca ristoranti..." HBox.hgrow="ALWAYS" />
-        <TextField fx:id="campoRicerca1" layoutX="30.0" layoutY="10.0" promptText="Cerca citta..." />
+        <TextField fx:id="campoRicerca1" layoutX="30.0" layoutY="10.0" promptText="Cerca città..." />
         <TextField fx:id="campoRicerca2" layoutX="30.0" layoutY="10.0" promptText="Cerca cucina..." />
         <!-- SOLUZIONE 1: Larghezza automatica basata sul contenuto -->
         <Button onAction="#onCercaClick" prefHeight="26.0" styleClass="primary-button" text="Cerca" />
