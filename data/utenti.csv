@@ -1,3 +1,7 @@
 nome,cognome,username,passwordHash,dataNascita,luogoDomicilio,ruolo
 Samuele,Secchi,Ristoratore,9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08,2005-09-20,Como,ristoratore
 Roberto,Bolle,Utente,9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08,2007-09-07,Napoli,cliente
+Roberto,Bolle,Utente1,9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08,2007-09-07,Napoli,cliente
+Roberto,Bolle,Utente2,9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08,2007-09-07,Napoli,cliente
+Roberto,Bolle,Utente3,9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08,2007-09-07,Napoli,cliente
+Roberto,Bolle,Utente4,9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08,2007-09-07,Napoli,cliente
